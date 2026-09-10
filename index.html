@@ -7,6 +7,13 @@
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- JsBarcode for product barcode rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
@@ -44,6 +51,42 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="bg-[#f7f7f7] text-slate-800 antialiased min-h-screen flex flex-col selection:bg-[#EE4D2D] selection:text-white" style="font-family:'Inter',system-ui,sans-serif">
+
+  <!-- ========================================== -->
+  <!-- AUTH OVERLAY (Login Required)            -->
+  <!-- ========================================== -->
+  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 animate-fadeIn">
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 mx-auto rounded-xl bg-[#EE4D2D] text-white flex items-center justify-center text-2xl font-black">D</div>
+        <h2 id="auth-title" class="text-2xl font-black text-slate-900 mt-3">Masuk</h2>
+        <p id="auth-subtitle" class="text-sm text-slate-500 mt-1">Masuk ke dashboard daisyfumarket</p>
+      </div>
+      <form id="auth-form" class="space-y-4">
+        <div id="auth-name-field" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
+          <input type="text" id="auth-name" placeholder="Nama anda" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#EE4D2D]">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
+          <input type="email" id="auth-email" required placeholder="admin@daisyfumarket.com" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#EE4D2D]">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+          <input type="password" id="auth-password" required placeholder="Min. 6 karakter" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#EE4D2D]">
+        </div>
+        <div id="auth-loading" class="hidden text-center text-sm text-slate-500 py-2">Memuat...</div>
+        <button type="submit" id="auth-submit-btn" class="w-full py-3 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold transition-colors">Masuk</button>
+        <p class="text-xs text-center text-slate-500">
+          Belum punya akun? <a href="#" id="auth-switch-link" class="text-[#EE4D2D] font-bold hover:underline">Daftar</a>
+        </p>
+      </form>
+      <div id="auth-error" class="hidden mt-3 px-3 py-2 bg-rose-50 text-rose-600 text-xs rounded-lg"></div>
+      <div class="mt-4 pt-4 border-t border-slate-200 text-center">
+        <button onclick="enterDemoMode()" class="text-xs text-slate-400 hover:text-[#EE4D2D] transition-colors cursor-pointer">Masuk tanpa akun (Mode Demo)</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================== -->
   <!-- TOP UTILITY STRIP                         -->
@@ -92,6 +135,7 @@
             id="search-input"
             placeholder="Search daisyfumarket"
             class="w-full pl-4 pr-24 py-2.5 border-2 border-[#EE4D2D] rounded-tl-sm rounded-bl-sm text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0"
+            onkeydown="if(event.key==='Enter'){doCatalogSearch();}"
           />
           <button 
             onclick="doCatalogSearch()"
@@ -146,6 +190,9 @@
           <button onclick="switchView('inventory')" id="nav-btn-inventory" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer text-slate-500 hover:bg-slate-100">Produk</button>
           <button onclick="switchView('reports')" id="nav-btn-reports" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer text-slate-500 hover:bg-slate-100">Laporan</button>
         </div>
+
+        <!-- Logout -->
+        <button onclick="handleLogout()" id="btn-logout" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 transition-colors cursor-pointer hidden">Keluar</button>
       </div>
 
     </div>
@@ -357,6 +404,38 @@
       </div>
     </div>
 
+    <!-- BARCODE SCAN TOOLBAR -->
+    <div class="bg-white rounded-lg shadow-sm">
+      <div class="flex items-center px-4 py-3 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-[#EE4D2D] font-bold text-sm shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6V6a2 2 0 012-2h1m6 0h1a2 2 0 012 2v1m0 10v1a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2v-1m-1-8h3m10 0h3M6 9v6m4-6v6m4-6v6m4-6v6"/>
+            </svg>
+            <span>Scan Barcode</span>
+          </div>
+          <div class="relative w-full sm:w-80">
+            <input 
+              id="barcode-scan-catalog"
+              type="text"
+              placeholder="Scan barcode produk atau ketik kode lalu Enter"
+              class="w-full pl-3.5 pr-20 py-2 border-2 border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#EE4D2D]"
+              onkeydown="if(event.key==='Enter'){handleBarcodeScan(this);}"
+              autocomplete="off"
+            />
+            <button 
+              onclick="handleBarcodeScan(document.getElementById('barcode-scan-catalog'))"
+              class="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-md bg-[#EE4D2D] hover:bg-[#d9471e] text-white text-[11px] font-bold transition-colors cursor-pointer"
+            >
+              Cari
+            </button>
+          </div>
+          <span class="hidden xl:block text-[10px] text-slate-400">💡 Kompatibel dengan scanner USB (mode keyboard)</span>
+        </div>
+
+      </div>
+    </div>
+
     <!-- DAILY DISCOVERY HEADER + FILTERS -->
     <div class="bg-white rounded-lg shadow-sm">
       <div class="flex items-center px-4 py-3 border-b border-slate-100">
@@ -421,6 +500,32 @@
       <button onclick="openAddProductModal()" class="px-4 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 self-start sm:self-auto cursor-pointer active:scale-95">
         <span>➕</span> Tambah Produk Baru
       </button>
+    </div>
+
+    <!-- Barcode Scan Toolbar (Inventory) -->
+    <div class="bg-white rounded-lg border border-slate-200 shadow-sm px-4 py-3 flex items-center gap-3">
+      <div class="flex items-center gap-2 text-[#EE4D2D] font-bold text-sm shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6V6a2 2 0 012-2h1m6 0h1a2 2 0 012 2v1m0 10v1a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2v-1m-1-8h3m10 0h3M6 9v6m4-6v6m4-6v6m4-6v6"/>
+        </svg>
+        <span>Scan Barcode</span>
+      </div>
+      <div class="relative w-full sm:w-96">
+        <input 
+          id="barcode-scan-inventory"
+          type="text"
+          placeholder="Scan barcode untuk langsung mencari produk..."
+          class="w-full pl-3.5 pr-20 py-2 border-2 border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#EE4D2D]"
+          onkeydown="if(event.key==='Enter'){handleBarcodeScan(this);}"
+          autocomplete="off"
+        />
+        <button 
+          onclick="handleBarcodeScan(document.getElementById('barcode-scan-inventory'))"
+          class="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-md bg-[#EE4D2D] hover:bg-[#d9471e] text-white text-[11px] font-bold transition-colors cursor-pointer"
+        >
+          Cari
+        </button>
+      </div>
     </div>
 
     <!-- Stats Overview Cards -->
@@ -496,6 +601,7 @@
             <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-wider font-extrabold text-slate-500">
               <th class="px-4 py-3 w-12"><input type="checkbox" id="select-all-products" onchange="toggleSelectAll()" class="accent-[#EE4D2D] cursor-pointer" /></th>
               <th class="px-4 py-3">Produk</th>
+              <th class="px-4 py-3">Barcode</th>
               <th class="px-4 py-3">Kategori</th>
               <th class="px-4 py-3 text-right">Harga</th>
               <th class="px-4 py-3 text-center">Stok</th>
@@ -623,9 +729,25 @@
         <input type="hidden" id="product-edit-id" value="" />
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">URL Gambar Produk *</label>
-          <input type="url" id="product-image" required placeholder="https://images.unsplash.com/photo-..." oninput="previewProductImage()" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#EE4D2D] focus:ring-1 focus:ring-[#EE4D2D]/30" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">Gambar Produk *</label>
+          <div class="flex gap-2">
+            <input type="url" id="product-image" required placeholder="https://images.unsplash.com/photo-..." oninput="previewProductImage()" class="flex-1 px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#EE4D2D] focus:ring-1 focus:ring-[#EE4D2D]/30" />
+            <input type="file" id="product-image-file" accept="image/*" hidden />
+            <button type="button" onclick="document.getElementById('product-image-file').click()" class="shrink-0 px-3 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-sm cursor-pointer" title="Pilih file">📷</button>
+            <button type="button" onclick="uploadProductImage()" class="shrink-0 px-3 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white text-xs font-bold transition-colors cursor-pointer">Unggah</button>
+          </div>
           <div id="product-image-preview" class="mt-2 hidden"><img src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg border border-slate-200 bg-slate-100" /></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Barcode (EAN-13 / 13 digit) *</label>
+          <div class="flex gap-2">
+            <input type="text" id="product-barcode" required placeholder="899XXXXXXXXXXX" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 font-mono text-sm text-slate-900 focus:outline-none focus:border-[#EE4D2D] focus:ring-1 focus:ring-[#EE4D2D]/30" oninput="previewProductBarcode()" />
+            <button type="button" onclick="generateProductBarcode()" class="shrink-0 px-3.5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-bold text-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer" title="Generate barcode otomatis">
+              🎲 Generate
+            </button>
+          </div>
+          <div id="product-barcode-preview" class="mt-2 hidden"></div>
         </div>
 
         <div>
@@ -697,6 +819,24 @@
         <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-colors cursor-pointer">Batal</button>
         <button onclick="confirmDeleteProduct()" class="flex-1 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs transition-colors shadow-md cursor-pointer">🗑️ Ya, Hapus</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCAN RESULT MODAL                        -->
+  <!-- ========================================== -->
+  <div id="scan-result-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-lg shadow-2xl border border-slate-200 overflow-hidden animate-fadeIn">
+      <div class="p-4 bg-[#EE4D2D] text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6V6a2 2 0 012-2h1m6 0h1a2 2 0 012 2v1m0 10v1a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2v-1m-1-8h3m10 0h3M6 9v6m4-6v6m4-6v6m4-6v6"/>
+          </svg>
+          <h3 class="font-extrabold text-white">Hasil Scan Barcode</h3>
+        </div>
+        <button onclick="closeScanResultModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors cursor-pointer">✕</button>
+      </div>
+      <div id="scan-result-content" class="p-5"></div>
     </div>
   </div>
 

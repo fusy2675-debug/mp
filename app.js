@@ -1,6 +1,23 @@
 /**
  * daisyfumarket - Marketplace Application Core JavaScript
+ * Firebase: Firestore (data) + Auth (login) + Storage (images)
  */
+
+// ==========================================
+// 0. FIREBASE INITIALIZATION
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyCizKUeVCy_3Wr9YQkw9B7xQ2GPyjN8H-I",
+  authDomain: "kasir-syfu.firebaseapp.com",
+  projectId: "kasir-syfu",
+  storageBucket: "kasir-syfu.firebasestorage.app",
+  messagingSenderId: "399419573703",
+  appId: "1:399419573703:web:c3764021249482cbfdc5e2"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const storage = firebase.storage();
 
 // ==========================================
 // 1. DUMMY DATA PRODUCT CATALOG (16 ITEMS)
@@ -439,142 +456,301 @@ const INITIAL_TRANSACTIONS = [
 ];
 
 // ==========================================
-// 2. APP STATE MANAGEMENT
+// 2. APP STATE MANAGEMENT (Firestore-backed)
 // ==========================================
 class StoreState {
   constructor() {
-    this.products = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
-    this.saveProducts();
-    this.cart = JSON.parse(localStorage.getItem('nexamart_cart')) || [];
-    this.transactions = JSON.parse(localStorage.getItem('nexamart_transactions')) || [...INITIAL_TRANSACTIONS];
-    
+    this.products = [];
+    this.cart = [];
+    this.transactions = [];
+    this.uid = null;
     this.activeCategory = 'Semua';
     this.searchQuery = '';
     this.bestSellerOnly = false;
-    this.currentView = 'catalog'; // 'catalog' or 'reports'
-    
-    // Save initial transactions if none in localStorage
-    if (!localStorage.getItem('nexamart_transactions')) {
-      this.saveTransactions();
+    this.currentView = 'catalog';
+
+    auth.onAuthStateChanged((user) => {
+      if (demoMode) return;
+      if (user) {
+        this.uid = user.uid;
+        Promise.all([this.loadProducts(), this.loadCart(), this.loadTransactions()]).then(() => {
+          updateFilterUI();
+          renderProductGrid();
+          renderInventoryTable();
+          renderDashboardStats();
+          renderReportsView();
+        }).catch(() => {});
+      } else {
+        this.uid = null;
+        this.products = [];
+        this.cart = [];
+        this.transactions = [];
+        updateFilterUI();
+        renderProductGrid();
+        renderInventoryTable();
+        renderDashboardStats();
+        renderReportsView();
+        updateCartBadge();
+      }
+      const overlay = document.getElementById('auth-overlay');
+      const logoutBtn = document.getElementById('btn-logout');
+      if (overlay) { if (user) overlay.classList.add('hidden'); else overlay.classList.remove('hidden'); }
+      if (logoutBtn) { if (user) logoutBtn.classList.remove('hidden'); else logoutBtn.classList.add('hidden'); }
+    });
+  }
+
+  async loadProducts() {
+    if (!this.uid || demoMode) return;
+    try {
+      const snap = await db.collection('products').get();
+      if (snap.empty) {
+        const local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
+        for (const p of local) {
+          const id = p.id || ('PRD-' + Date.now().toString().slice(-6).toUpperCase());
+          await db.collection('products').doc(id).set({ ...p, id });
+        }
+        this.products = local.map(p => ({ id: p.id, ...p }));
+      } else {
+        this.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+    } catch (e) {
+      showToast('Gagal memuat produk dari cloud: ' + e.message, 'error');
+      this.products = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
     }
+    this.ensureBarcodes();
   }
 
-  saveCart() {
-    localStorage.setItem('nexamart_cart', JSON.stringify(this.cart));
+  async addProduct(product) {
+    const id = 'PRD-' + Date.now().toString().slice(-6).toUpperCase();
+    product.id = id;
+    product.stock = product.stock || 0;
+    product.buyPrice = product.buyPrice || 0;
+    product.sellPrice = product.sellPrice || product.price;
+    product.isBestSeller = product.isBestSeller || false;
+    product.reviewsCount = product.reviewsCount || 0;
+    this.products.unshift(product);
+    try { if (!demoMode) await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
+    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
-  saveProducts() {
-    localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+  async updateProduct(updatedProduct) {
+    const idx = this.products.findIndex(p => p.id === updatedProduct.id);
+    if (idx > -1) this.products[idx] = { ...this.products[idx], ...updatedProduct };
+    try { if (!demoMode) await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
+    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
-  saveTransactions() {
-    localStorage.setItem('nexamart_transactions', JSON.stringify(this.transactions));
+  async deleteProduct(productId) {
+    this.products = this.products.filter(p => p.id !== productId);
+    try { if (!demoMode) await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
+    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
+
+  ensureBarcodes() {
+    let changed = false;
+    this.products.forEach(p => {
+      if (!p.barcode || !String(p.barcode).trim()) {
+        const num = parseInt(String(p.id || '').replace(/\D/g, ''), 10) || 0;
+        p.barcode = makeEAN13('899' + String(num).padStart(9, '0'));
+        changed = true;
+      }
+    });
+    if (changed) this.syncProducts();
+  }
+
+  syncProducts() {
+    if (demoMode) return;
+    this.products.forEach(p => { db.collection('products').doc(p.id).set(p).catch(() => {}); });
+  }
+
+  async loadCart() {
+    if (!this.uid || demoMode) return;
+    try { const snap = await db.collection('carts').doc(this.uid).get(); this.cart = snap.exists() ? (snap.data().items || []) : []; } catch (e) { this.cart = []; }
+    updateCartBadge(); renderCartDrawer();
+  }
+
+  saveCart() { if (!this.uid) return; if (demoMode) return; db.collection('carts').doc(this.uid).set({ items: this.cart }).catch(() => {}); }
 
   addToCart(productId, qty = 1) {
     const product = this.products.find(p => p.id === productId);
     if (!product) return;
-
     const existingIndex = this.cart.findIndex(item => item.id === productId);
-    if (existingIndex > -1) {
-      this.cart[existingIndex].quantity += qty;
-    } else {
-      this.cart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        category: product.category,
-        quantity: qty
-      });
-    }
-    this.saveCart();
+    if (existingIndex > -1) { this.cart[existingIndex].quantity += qty; }
+    else { this.cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, category: product.category, quantity: qty }); }
+    this.saveCart(); updateCartBadge(); renderCartDrawer();
+    showToast(`"${product.name}" ditambahkan ke keranjang!`, 'success');
   }
 
-  getProductById(productId) {
-    return this.products.find(p => p.id === productId);
-  }
-
-  addProduct(newProduct) {
-    newProduct.id = 'PRD-' + Date.now().toString().slice(-6).toUpperCase();
-    newProduct.stock = newProduct.stock || 0;
-    newProduct.buyPrice = newProduct.buyPrice || 0;
-    newProduct.sellPrice = newProduct.sellPrice || newProduct.price;
-    newProduct.isBestSeller = newProduct.isBestSeller || false;
-    this.products.unshift(newProduct);
-    this.saveProducts();
-  }
-
-  updateProduct(updatedProduct) {
-    const index = this.products.findIndex(p => p.id === updatedProduct.id);
-    if (index !== -1) {
-      this.products[index] = { ...this.products[index], ...updatedProduct };
-      this.saveProducts();
-    }
-  }
-
-  deleteProduct(productId) {
-    this.products = this.products.filter(p => p.id !== productId);
-    this.saveProducts();
-  }
+  getProductById(productId) { return this.products.find(p => p.id === productId); }
 
   updateCartQty(productId, delta) {
     const item = this.cart.find(i => i.id === productId);
     if (!item) return;
-
     item.quantity += delta;
-    if (item.quantity <= 0) {
-      this.removeFromCart(productId);
-      return;
-    }
-    this.saveCart();
+    if (item.quantity <= 0) { this.removeFromCart(productId); return; }
+    this.saveCart(); updateCartBadge(); renderCartDrawer();
   }
 
   removeFromCart(productId) {
     this.cart = this.cart.filter(i => i.id !== productId);
-    this.saveCart();
+    this.saveCart(); updateCartBadge(); renderCartDrawer();
+    showToast('Item berhasil dihapus dari keranjang.', 'success');
   }
 
-  clearCart() {
-    this.cart = [];
-    this.saveCart();
-  }
+  clearCart() { this.cart = []; this.saveCart(); updateCartBadge(); renderCartDrawer(); }
 
-  getCartTotal() {
-    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }
-
-  getCartCount() {
-    return this.cart.reduce((sum, item) => sum + item.quantity, 0);
-  }
+  getCartTotal() { return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0); }
+  getCartCount() { return this.cart.reduce((sum, item) => sum + item.quantity, 0); }
 
   getFilteredProducts() {
     return this.products.filter(p => {
-      // Category filter
       const matchCategory = this.activeCategory === 'Semua' || p.category === this.activeCategory;
-      // Search filter
       const query = this.searchQuery.toLowerCase().trim();
-      const matchSearch = !query || p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
-      // Best Seller filter
+      const matchSearch = !query || p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query) || (p.barcode && String(p.barcode).includes(query));
       const matchBestSeller = !this.bestSellerOnly || p.isBestSeller;
-
       return matchCategory && matchSearch && matchBestSeller;
     });
   }
 
-  addTransaction(transactionData) {
-    this.transactions.unshift(transactionData);
-    this.saveTransactions();
+  async loadTransactions() {
+    if (!this.uid || demoMode) return;
+    try { const snap = await db.collection('transactions').get(); this.transactions = snap.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { this.transactions = []; }
   }
 
-  clearAllTransactions() {
-    this.transactions = [];
-    this.saveTransactions();
+  async addTransaction(transactionData) {
+    if (demoMode) {
+      this.transactions.unshift(transactionData);
+      return;
+    }
+    try { await db.collection('transactions').add(transactionData); } catch (e) { showToast('Gagal menyimpan transaksi: ' + e.message, 'error'); }
+    await this.loadTransactions();
+  }
+
+  async clearAllTransactions() {
+    if (demoMode) {
+      this.transactions = [];
+      renderReportsView(); renderDashboardStats();
+      return;
+    }
+    try {
+      const snap = await db.collection('transactions').get();
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      this.transactions = [];
+    } catch (e) { showToast('Gagal menghapus transaksi: ' + e.message, 'error'); }
+    renderReportsView(); renderDashboardStats();
+  }
+
+  async uploadImage(file) {
+    if (!this.uid || !file) return '';
+    if (demoMode) return URL.createObjectURL(file);
+    const ext = file.name.split('.').pop().toLowerCase();
+    const path = `products/${this.uid}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
+    const storageRef = storage.ref(path);
+    const snapshot = await storageRef.put(file);
+    return await snapshot.ref.getDownloadURL();
   }
 }
 
 // Global state instance
+let demoMode = false;
 const store = new StoreState();
+
+// Auth helpers
+let authMode = 'login';
+
+function enterDemoMode() {
+  demoMode = true;
+  store.uid = 'demo';
+  store.products = [...INITIAL_PRODUCTS];
+  store.cart = [];
+  store.transactions = [...INITIAL_TRANSACTIONS];
+  store.ensureBarcodes();
+  const overlay = document.getElementById('auth-overlay');
+  const logoutBtn = document.getElementById('btn-logout');
+  if (overlay) overlay.classList.add('hidden');
+  if (logoutBtn) logoutBtn.classList.remove('hidden');
+  updateFilterUI();
+  renderProductGrid();
+  renderInventoryTable();
+  renderDashboardStats();
+  renderReportsView();
+  updateCartBadge();
+  showToast('Mode Demo aktif — data hanya tersimpan di browser ini.', 'success');
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const title = document.getElementById('auth-title');
+  const subtitle = document.getElementById('auth-subtitle');
+  const nameField = document.getElementById('auth-name-field');
+  const submitBtn = document.getElementById('auth-submit-btn');
+  const switchLink = document.getElementById('auth-switch-link');
+  if (authMode === 'register') {
+    if (title) title.textContent = 'Daftar';
+    if (subtitle) subtitle.textContent = 'Buat akun dashboard';
+    if (nameField) nameField.classList.remove('hidden');
+    if (submitBtn) submitBtn.textContent = 'Daftar';
+    if (switchLink) switchLink.textContent = 'Sudah punya akun? Masuk';
+  } else {
+    if (title) title.textContent = 'Masuk';
+    if (subtitle) subtitle.textContent = 'Masuk ke dashboard daisyfumarket';
+    if (nameField) nameField.classList.add('hidden');
+    if (submitBtn) submitBtn.textContent = 'Masuk';
+    if (switchLink) switchLink.textContent = 'Belum punya akun? Daftar';
+  }
+}
+
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  const nameEl = document.getElementById('auth-name');
+  const btn = document.getElementById('auth-submit-btn');
+  const errEl = document.getElementById('auth-error');
+  const loadingEl = document.getElementById('auth-loading');
+  const email = emailEl?.value?.trim() || '';
+  const password = passEl?.value || '';
+  const name = nameEl?.value?.trim() || '';
+  if (!email || !password) { showToast('Isi email dan password.', 'error'); return; }
+  btn.disabled = true;
+  if (loadingEl) loadingEl.classList.remove('hidden');
+  if (errEl) errEl.classList.add('hidden');
+  try {
+    if (authMode === 'login') {
+      await auth.signInWithEmailAndPassword(email, password);
+    } else {
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      await cred.user.updateProfile({ displayName: name });
+    }
+  } catch (err) {
+    if (errEl) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
+  } finally {
+    btn.disabled = false;
+    if (loadingEl) loadingEl.classList.add('hidden');
+  }
+}
+
+function handleLogout() {
+  if (demoMode) {
+    demoMode = false;
+    store.uid = null;
+    store.products = [];
+    store.cart = [];
+    store.transactions = [];
+    const overlay = document.getElementById('auth-overlay');
+    const logoutBtn = document.getElementById('btn-logout');
+    if (overlay) overlay.classList.remove('hidden');
+    if (logoutBtn) logoutBtn.classList.add('hidden');
+    updateCartBadge();
+    renderProductGrid();
+    renderInventoryTable();
+    renderReportsView();
+    return;
+  }
+  auth.signOut();
+}
 
 // Helper: Format Rupiah
 function formatIDR(amount) {
@@ -583,6 +759,53 @@ function formatIDR(amount) {
     currency: 'IDR',
     maximumFractionDigits: 0
   }).format(amount);
+}
+
+// ==========================================
+// 2b. BARCODE HELPERS (EAN-13)
+// ==========================================
+function ean13CheckDigit(base12) {
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    const d = parseInt(base12[i], 10);
+    sum += (i % 2 === 0) ? d : d * 3;
+  }
+  return (10 - (sum % 10)) % 10;
+}
+
+function makeEAN13(base) {
+  const stub = String(base).replace(/\D/g, '').slice(0, 12);
+  return stub + ean13CheckDigit(stub);
+}
+
+function generateUniqueBarcode() {
+  let next = 1;
+  store.products.forEach(p => {
+    const m = String(p.barcode || '').match(/^899(\d{9})/);
+    if (m) next = Math.max(next, parseInt(m[1], 10) + 1);
+  });
+  return makeEAN13('899' + String(next).padStart(9, '0'));
+}
+
+function renderBarcodes(scope) {
+  if (!window.JsBarcode) return;
+  const nodes = (scope || document).querySelectorAll('[data-barcode]');
+  nodes.forEach(node => {
+    const code = (node.dataset.barcode || '').trim();
+    if (!code || node.dataset.rendered === '1') return;
+    try {
+      const fmt = /^\d{13}$/.test(code) ? 'EAN13' : 'CODE128';
+      JsBarcode(node, code, {
+        format: fmt,
+        width: node.dataset.bwidth ? parseFloat(node.dataset.bwidth) : 1,
+        height: node.dataset.bheight ? parseFloat(node.dataset.bheight) : 20,
+        displayValue: false,
+        margin: 1,
+        background: 'transparent'
+      });
+      node.dataset.rendered = '1';
+    } catch (e) { /* ignore invalid barcodes */ }
+  });
 }
 
 // Helper: Toast Notification
@@ -655,6 +878,11 @@ function renderProductGrid() {
           ${product.isBestSeller ? `<span class="px-1.5 py-0.5 text-[9px] font-black rounded bg-[#EE4D2D] text-white shadow-sm">🔥 BEST</span>` : ''}
           <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-white/90 text-[#EE4D2D] shadow-sm">${product.category}</span>
         </div>
+        <button 
+          onclick="openEditProductModal('${product.id}')"
+          class="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/95 shadow-sm flex items-center justify-center text-[11px] text-slate-600 hover:text-[#EE4D2D] hover:bg-white transition-colors cursor-pointer"
+          title="Edit Produk"
+        >✏️</button>
       </div>
 
       <!-- Body -->
@@ -672,7 +900,12 @@ function renderProductGrid() {
           <span class="text-[16px] font-black text-[#EE4D2D]">${formatIDR(product.price)}</span>
         </div>
 
-        <div class="mt-auto pt-2 flex items-center justify-between">
+        <div class="mt-1.5 flex items-center justify-between border-t border-dashed border-slate-100 pt-1">
+          <svg class="product-barcode" data-barcode="${product.barcode || ''}" data-bwidth="1" data-bheight="14" width="72" height="14"></svg>
+          <span class="text-[8px] font-mono text-slate-400 tracking-tight">${product.barcode || '-'}</span>
+        </div>
+
+        <div class="mt-auto pt-1.5 flex items-center justify-between">
           <span class="text-[9px] text-slate-400">Stok: ${product.stock}</span>
           <button 
             onclick="handleAddToCart('${product.id}')"
@@ -685,6 +918,8 @@ function renderProductGrid() {
       </div>
     </div>
   `).join('');
+
+  renderBarcodes(container);
 }
 
 // Render Cart Badge
@@ -1055,6 +1290,156 @@ function startFlashSaleCountdown() {
   };
   update();
   setInterval(update, 1000);
+}
+
+// Barcode scanning: triggered by scanner (keyboard-mode) Enter / button click
+function handleBarcodeScan(input) {
+  const code = (typeof input === 'string' ? input : (input && input.value) || '').trim();
+  if (!code) {
+    showToast('Silakan scan barcode atau ketik kode produk.', 'error');
+    return;
+  }
+
+  const q = code.toLowerCase();
+  const product = store.products.find(p =>
+    (p.barcode && String(p.barcode).trim().toLowerCase() === q) ||
+    String(p.id).toLowerCase() === q
+  );
+
+  if (!product) {
+    openScanNotFoundModal(code);
+    if (input && input.value !== undefined) { input.value = ''; }
+    return;
+  }
+
+  if (input && input.value !== undefined) { input.value = ''; }
+  openScanResultModal(product);
+}
+
+function openScanResultModal(product) {
+  const modal = document.getElementById('scan-result-modal');
+  const content = document.getElementById('scan-result-content');
+  if (!modal || !content) return;
+
+  let stockText, stockClass;
+  if (product.stock === 0) { stockText = 'Habis'; stockClass = 'text-rose-600'; }
+  else if (product.stock <= 10) { stockText = 'Menipis'; stockClass = 'text-amber-600'; }
+  else { stockText = 'Tersedia'; stockClass = 'text-emerald-600'; }
+
+  content.innerHTML = `
+    <div class="text-center border-b border-slate-100 pb-4">
+      <svg class="product-barcode mx-auto" data-barcode="${product.barcode || ''}" data-bwidth="1.5" data-bheight="40" width="150" height="40"></svg>
+      <p class="text-[10px] font-mono text-slate-400 mt-1">Kode Barcode: ${product.barcode || '-'}</p>
+    </div>
+
+    <div class="flex items-start gap-3 mt-4">
+      <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg bg-slate-100 border border-slate-200 flex-shrink-0"
+        onerror="this.onerror=null; this.style.opacity='0.2';" />
+      <div class="min-w-0">
+        <p class="font-bold text-sm text-slate-800 line-clamp-2">${product.name}</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">${product.category} · ⭐ ${product.rating || '-'}</p>
+        <p class="mt-2 text-lg font-black text-[#EE4D2D]">${formatIDR(product.price)}</p>
+        <p class="text-[10px] font-medium text-slate-500">Stok: <span class="font-bold ${stockClass}">${product.stock} (${stockText})</span></p>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-5">
+      <button onclick="handleAddToCart('${product.id}'); closeScanResultModal();"
+        class="flex-1 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs transition-colors cursor-pointer shadow-md">
+        🛒 Tambah ke Keranjang
+      </button>
+      <button onclick="switchView('inventory'); closeScanResultModal(); openEditProductModal('${product.id}');"
+        class="px-4 py-2.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold text-xs transition-colors cursor-pointer">
+        ✏️ Edit
+      </button>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  renderBarcodes(content);
+}
+
+function closeScanResultModal() {
+  const modal = document.getElementById('scan-result-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+  const input = document.getElementById('barcode-scan-catalog');
+  if (input) input.focus();
+}
+
+function openScanNotFoundModal(code) {
+  const modal = document.getElementById('scan-result-modal');
+  const content = document.getElementById('scan-result-content');
+  if (!modal || !content) return;
+
+  content.innerHTML = `
+    <div class="text-center">
+      <div class="w-14 h-14 mx-auto rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-2xl">🔍</div>
+      <h4 class="font-extrabold text-slate-800 mt-3">Produk Tidak Ditemukan</h4>
+      <p class="text-xs text-slate-500 mt-1">Barcode <span class="font-mono font-bold text-[#EE4D2D]">${code}</span> belum terdaftar pada produk manapun.</p>
+      <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">Tambahkan produk baru dengan barcode ini,<br/>atau edit produk yang sudah ada.</p>
+    </div>
+    <div class="flex flex-col gap-2 mt-5">
+      <button onclick="closeScanResultModal(); openAddProductModal('${code}');"
+        class="w-full py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs transition-colors cursor-pointer shadow-md">
+        ➕ Tambah Produk Baru dengan Barcode Ini
+      </button>
+      <button onclick="closeScanResultModal(); switchView('inventory');"
+        class="w-full py-2.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold text-xs transition-colors cursor-pointer">
+        ✏️ Edit Produk di Dashboard
+      </button>
+      <button onclick="closeScanResultModal()"
+        class="w-full py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold text-xs transition-colors cursor-pointer">
+        Tutup
+      </button>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+// Barcode preview in product add/edit modal
+function previewProductBarcode() {
+  const code = (document.getElementById('product-barcode')?.value || '').trim();
+  const preview = document.getElementById('product-barcode-preview');
+  if (!preview) return;
+  if (!code) {
+    preview.classList.add('hidden');
+    preview.innerHTML = '';
+    return;
+  }
+  preview.classList.remove('hidden');
+  preview.innerHTML = `<svg class="product-barcode" data-barcode="${code}" data-bwidth="1.5" data-bheight="42" width="170" height="42"></svg>`;
+  renderBarcodes(preview);
+}
+
+function generateProductBarcode() {
+  const input = document.getElementById('product-barcode');
+  if (!input) return;
+  input.value = generateUniqueBarcode();
+  previewProductBarcode();
+  showToast('Barcode baru berhasil dibuat otomatis.', 'success');
+}
+
+// Upload product image to Firebase Storage
+async function uploadProductImage() {
+  const fileInput = document.getElementById('product-image-file');
+  const file = fileInput?.files?.[0];
+  if (!file) { showToast('Pilih file gambar terlebih dahulu.', 'error'); return; }
+  if (!file.type.startsWith('image/')) { showToast('File harus berupa gambar.', 'error'); return; }
+  showToast('Mengunggah gambar...', 'success');
+  try {
+    const url = await store.uploadImage(file);
+    document.getElementById('product-image').value = url;
+    previewProductImage();
+    showToast('Gambar berhasil diunggah!', 'success');
+  } catch (e) {
+    showToast('Gagal mengunggah gambar: ' + e.message, 'error');
+  }
 }
 
 function openCartDrawer() {
@@ -1498,14 +1883,41 @@ function printLastReceipt() {
 // Reset data helper for testing
 function resetDemoData() {
   if (confirm('Apakah Anda yakin ingin mereset semua data demo ke kondisi awal? Data yang sudah ada akan hilang permanen.')) {
+    if (!demoMode) {
+      (async () => {
+        try {
+          const pSnap = await db.collection('products').get();
+          const tSnap = await db.collection('transactions').get();
+          const cSnap = await db.collection('carts').get();
+          const batch = db.batch();
+          pSnap.docs.forEach(d => batch.delete(d.ref));
+          tSnap.docs.forEach(d => batch.delete(d.ref));
+          cSnap.docs.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+          for (const p of INITIAL_PRODUCTS) {
+            const id = p.id || ('PRD-' + Date.now().toString().slice(-6).toUpperCase());
+            await db.collection('products').doc(id).set({ ...p, id, barcode: makeEAN13('899' + String(parseInt(id.replace(/\D/g,''))||0).toString().padStart(9,'0')) });
+          }
+          for (const t of INITIAL_TRANSACTIONS) {
+            await db.collection('transactions').add(t);
+          }
+        } catch (e) {
+          showToast('Gagal mereset data cloud: ' + e.message, 'error');
+        }
+      })();
+    }
     localStorage.removeItem('nexamart_cart');
     localStorage.removeItem('nexamart_transactions');
     localStorage.removeItem('nexamart_products');
     store.products = [...INITIAL_PRODUCTS];
+    store.products.forEach((p, idx) => {
+      if (!p.barcode) {
+        const num = parseInt(String(p.id || '').replace(/\D/g, ''), 10) || idx + 1;
+        p.barcode = makeEAN13('899' + String(num).padStart(9, '0'));
+      }
+    });
     store.cart = [];
     store.transactions = [...INITIAL_TRANSACTIONS];
-    store.saveProducts();
-    store.saveTransactions();
     updateFilterUI();
     updateCartBadge();
     renderCartDrawer();
@@ -1608,6 +2020,10 @@ function renderInventoryTable() {
             </div>
           </div>
         </td>
+        <td class="px-4 py-3 text-center">
+          <svg class="product-barcode inline-block" data-barcode="${product.barcode || ''}" data-bwidth="1" data-bheight="22" width="96" height="22"></svg>
+          <p class="text-[9px] font-mono text-slate-400 mt-0.5">${product.barcode || '-'}</p>
+        </td>
         <td class="px-4 py-3">
           <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200">${product.category}</span>
         </td>
@@ -1641,6 +2057,7 @@ function renderInventoryTable() {
     `;
   }).join('');
 
+  renderBarcodes(tbody);
   renderPagination(filtered.length, startIdx + 1, Math.min(startIdx + inventoryPerPage, filtered.length));
 }
 
@@ -1706,12 +2123,17 @@ function toggleSelectAll() {
 // 8b. PRODUCT MODAL (ADD/EDIT)
 // ==========================================
 
-function openAddProductModal() {
+function openAddProductModal(presetBarcode) {
   document.getElementById('product-modal-title').textContent = 'Tambah Produk Baru';
   document.getElementById('product-submit-btn').innerHTML = '<span>💾</span> Simpan Produk';
   document.getElementById('product-form').reset();
   document.getElementById('product-edit-id').value = '';
   document.getElementById('product-image-preview').classList.add('hidden');
+  const barcodeInput = document.getElementById('product-barcode');
+  barcodeInput.value = (presetBarcode && /^\d{8,13}$/.test(String(presetBarcode)))
+    ? String(presetBarcode)
+    : generateUniqueBarcode();
+  previewProductBarcode();
   
   const modal = document.getElementById('product-modal');
   modal.classList.remove('hidden');
@@ -1733,8 +2155,10 @@ function openEditProductModal(productId) {
   document.getElementById('product-rating').value = product.rating || '';
   document.getElementById('product-bestseller').checked = product.isBestSeller || false;
   document.getElementById('product-image').value = product.image || '';
+  document.getElementById('product-barcode').value = product.barcode || '';
   
   previewProductImage();
+  previewProductBarcode();
 
   const modal = document.getElementById('product-modal');
   modal.classList.remove('hidden');
@@ -1762,6 +2186,22 @@ function processProductSubmit(e) {
   e.preventDefault();
 
   const editId = document.getElementById('product-edit-id').value;
+  const barcode = (document.getElementById('product-barcode').value || '').trim();
+
+  if (!/^\d{8,13}$/.test(barcode)) {
+    showToast('Barcode harus berupa 8-13 digit angka.', 'error');
+    document.getElementById('product-barcode').focus();
+    return;
+  }
+
+  const duplicate = store.products.find(p =>
+    p.barcode === barcode && p.id !== editId
+  );
+  if (duplicate) {
+    showToast(`Barcode ${barcode} sudah dipakai oleh "${duplicate.name}".`, 'error');
+    return;
+  }
+
   const productData = {
     name: document.getElementById('product-name').value.trim(),
     description: document.getElementById('product-description').value.trim(),
@@ -1771,6 +2211,7 @@ function processProductSubmit(e) {
     rating: parseFloat(document.getElementById('product-rating').value) || 4.5,
     isBestSeller: document.getElementById('product-bestseller').checked,
     image: document.getElementById('product-image').value.trim(),
+    barcode: barcode,
     reviewsCount: 0
   };
 
@@ -1828,10 +2269,19 @@ function confirmDeleteProduct() {
 // 5. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Render filters & grid
+  // Auth form listeners
+  const authForm = document.getElementById('auth-form');
+  if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
+  const authSwitchLink = document.getElementById('auth-switch-link');
+  if (authSwitchLink) authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); toggleAuthMode(); });
+
+  // Initial render
   updateFilterUI();
   updateCartBadge();
   startFlashSaleCountdown();
+  renderProductGrid();
+  renderInventoryTable();
+  renderReportsView();
 
   // Search input listener
   const searchInput = document.getElementById('search-input');

@@ -163,6 +163,15 @@ body {
   background-color: #f0f9ff;
 }
 
+/* Barcode svg sizing */
+.product-barcode {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
 /* Modal animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
@@ -233,4 +242,21 @@ body {
     padding: 0 !important;
     margin: 0 !important;
   }
+}
+
+/* Auth overlay & logout */
+#auth-overlay {
+  backdrop-filter: blur(8px);
+}
+
+#auth-overlay .animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+#btn-logout {
+  transition: all 0.2s ease;
+}
+
+#btn-logout:hover {
+  transform: scale(1.05);
 }
