@@ -497,9 +497,14 @@
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1">Kelola semua produk toko Anda dalam satu tempat</p>
       </div>
-      <button onclick="openAddProductModal()" class="px-4 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 self-start sm:self-auto cursor-pointer active:scale-95">
-        <span>➕</span> Tambah Produk Baru
-      </button>
+      <div class="flex items-center gap-2 self-start sm:self-auto">
+        <button onclick="syncToFirebase()" class="px-4 py-2.5 rounded-lg border-2 border-[#EE4D2D] text-[#EE4D2D] hover:bg-[#EE4D2D] hover:text-white font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95">
+          <span>☁️</span> Sync ke Firebase
+        </button>
+        <button onclick="openAddProductModal()" class="px-4 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95">
+          <span>➕</span> Tambah Produk Baru
+        </button>
+      </div>
     </div>
 
     <!-- Barcode Scan Toolbar (Inventory) -->

@@ -500,7 +500,7 @@ class StoreState {
   }
 
   async loadProducts() {
-    if (!this.uid || demoMode) return;
+    if (!this.uid) return;
     try {
       const snap = await db.collection('products').get();
       if (snap.empty) {
@@ -529,20 +529,20 @@ class StoreState {
     product.isBestSeller = product.isBestSeller || false;
     product.reviewsCount = product.reviewsCount || 0;
     this.products.unshift(product);
-    try { if (!demoMode) await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
+    try { await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
   async updateProduct(updatedProduct) {
     const idx = this.products.findIndex(p => p.id === updatedProduct.id);
     if (idx > -1) this.products[idx] = { ...this.products[idx], ...updatedProduct };
-    try { if (!demoMode) await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
+    try { await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
   async deleteProduct(productId) {
     this.products = this.products.filter(p => p.id !== productId);
-    try { if (!demoMode) await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
+    try { await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
@@ -559,17 +559,16 @@ class StoreState {
   }
 
   syncProducts() {
-    if (demoMode) return;
     this.products.forEach(p => { db.collection('products').doc(p.id).set(p).catch(() => {}); });
   }
 
   async loadCart() {
-    if (!this.uid || demoMode) return;
+    if (!this.uid) return;
     try { const snap = await db.collection('carts').doc(this.uid).get(); this.cart = snap.exists() ? (snap.data().items || []) : []; } catch (e) { this.cart = []; }
     updateCartBadge(); renderCartDrawer();
   }
 
-  saveCart() { if (!this.uid) return; if (demoMode) return; db.collection('carts').doc(this.uid).set({ items: this.cart }).catch(() => {}); }
+  saveCart() { if (!this.uid) return; db.collection('carts').doc(this.uid).set({ items: this.cart }).catch(() => {}); }
 
   addToCart(productId, qty = 1) {
     const product = this.products.find(p => p.id === productId);
@@ -613,25 +612,16 @@ class StoreState {
   }
 
   async loadTransactions() {
-    if (!this.uid || demoMode) return;
+    if (!this.uid) return;
     try { const snap = await db.collection('transactions').get(); this.transactions = snap.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { this.transactions = []; }
   }
 
   async addTransaction(transactionData) {
-    if (demoMode) {
-      this.transactions.unshift(transactionData);
-      return;
-    }
     try { await db.collection('transactions').add(transactionData); } catch (e) { showToast('Gagal menyimpan transaksi: ' + e.message, 'error'); }
     await this.loadTransactions();
   }
 
   async clearAllTransactions() {
-    if (demoMode) {
-      this.transactions = [];
-      renderReportsView(); renderDashboardStats();
-      return;
-    }
     try {
       const snap = await db.collection('transactions').get();
       const batch = db.batch();
@@ -644,7 +634,6 @@ class StoreState {
 
   async uploadImage(file) {
     if (!this.uid || !file) return '';
-    if (demoMode) return URL.createObjectURL(file);
     const ext = file.name.split('.').pop().toLowerCase();
     const path = `products/${this.uid}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
     const storageRef = storage.ref(path);
@@ -1883,12 +1872,11 @@ function printLastReceipt() {
 // Reset data helper for testing
 function resetDemoData() {
   if (confirm('Apakah Anda yakin ingin mereset semua data demo ke kondisi awal? Data yang sudah ada akan hilang permanen.')) {
-    if (!demoMode) {
-      (async () => {
-        try {
-          const pSnap = await db.collection('products').get();
-          const tSnap = await db.collection('transactions').get();
-          const cSnap = await db.collection('carts').get();
+    (async () => {
+      try {
+        const pSnap = await db.collection('products').get();
+        const tSnap = await db.collection('transactions').get();
+        const cSnap = await db.collection('carts').get();
           const batch = db.batch();
           pSnap.docs.forEach(d => batch.delete(d.ref));
           tSnap.docs.forEach(d => batch.delete(d.ref));
@@ -1905,7 +1893,6 @@ function resetDemoData() {
           showToast('Gagal mereset data cloud: ' + e.message, 'error');
         }
       })();
-    }
     localStorage.removeItem('nexamart_cart');
     localStorage.removeItem('nexamart_transactions');
     localStorage.removeItem('nexamart_products');
@@ -1925,6 +1912,31 @@ function resetDemoData() {
     renderReportsView();
     showToast('Data demo berhasil di-reset!', 'success');
   }
+}
+
+// Sync web data (products + transactions) to Firebase Firestore
+async function syncToFirebase() {
+  showToast('Menyinkronkan data ke Firebase...', 'success');
+  const btn = document.querySelector('button[onclick="syncToFirebase()"]');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+  try {
+    store.ensureBarcodes();
+    let prodOk = 0, trxOk = 0;
+    for (const p of store.products) {
+      if (!p.id) continue;
+      await db.collection('products').doc(p.id).set(p);
+      prodOk++;
+    }
+    for (const t of store.transactions) {
+      const tid = t.id || ('TRX-' + Date.now());
+      await db.collection('transactions').doc(tid).set({ ...t, id: tid });
+      trxOk++;
+    }
+    showToast(`Sinkron selesai: ${prodOk} produk + ${trxOk} transaksi di-Firestore-kan.`, 'success');
+  } catch (e) {
+    showToast('Gagal sync ke Firebase: ' + e.message, 'error');
+  }
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
 }
 
 // ==========================================
