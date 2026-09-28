@@ -1,0 +1,15 @@
+{
+  "name": "daisyfumarket-seed",
+  "version": "1.0.0",
+  "description": "Script untuk seed data ke Firebase Firestore",
+  "main": "seed-firebase.js",
+  "scripts": {
+    "seed": "node seed-firebase.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

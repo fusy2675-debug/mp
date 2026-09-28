@@ -1,0 +1,159 @@
+/**
+ * Seed data produk & transaksi ke Firebase Firestore menggunakan Admin SDK
+ * 
+ * CARA PAKAI:
+ * 1. Download Service Account Key dari Firebase Console:
+ *    Project Settings → Service Accounts → Generate New Private Key
+ *    Simpan sebagai `service-account.json` di folder ini.
+ * 
+ * 2. Install dependency:
+ *    npm install firebase-admin
+ * 
+ * 3. Jalankan:
+ *    node seed-firebase.js
+ */
+
+const admin = require('firebase-admin');
+const fs = require('fs');
+const path = require('path');
+
+// ==========================================
+// KONFIGURASI
+// ==========================================
+const SERVICE_ACCOUNT_PATH = path.join(__dirname, 'service-account.json');
+
+// Data produk (sama persis dengan app.js / seed.html)
+const PRODUCTS = [
+  { id:'PRD-001', name:'Nasi Goreng Spesial Rempah Nusantara', category:'Makanan & Minuman', price:28000, rating:4.9, reviewsCount:142, isBestSeller:true, image:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80', description:'Nasi goreng racikan resep warisan dengan telur, ayam suwir, bakso, dan piring kerupuk renyah.', stock:45 },
+  { id:'PRD-002', name:'Kopi Susu Gula Aren Creamy 500ml', category:'Makanan & Minuman', price:18000, rating:4.8, reviewsCount:215, isBestSeller:true, image:'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80', description:'Espresso robusta & arabica dipadu susu segar dingin dan gula aren murni khas Nusantara.', stock:60 },
+  { id:'PRD-003', name:'Snack Gourmet Potato Chips Truffle', category:'Makanan & Minuman', price:15000, rating:4.6, reviewsCount:88, isBestSeller:false, image:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=600&q=80', description:'Keripik kentang pilihan berpotongan tebal dengan taburan bumbu truffle khas gurih.', stock:80 },
+  { id:'PRD-004', name:'Kaos Oversize Cotton Combed 30s Slate', category:'Pakaian & Fashion', price:85000, rating:4.9, reviewsCount:310, isBestSeller:true, image:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80', description:'Bahan 100% cotton combed super lembut, tidak panas, dan potongan oversized ala streetwear modern.', stock:30 },
+  { id:'PRD-005', name:'Jaket Denim Classic Vintage Unisex', category:'Pakaian & Fashion', price:245000, rating:4.7, reviewsCount:94, isBestSeller:false, image:'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80', description:'Bahan denim tebal berkualitas premium dengan wash indigo klasik yang stylish dan tahan lama.', stock:18 },
+  { id:'PRD-006', name:'Sepatu Sneakers Urban White Minimalist', category:'Pakaian & Fashion', price:350000, rating:4.9, reviewsCount:180, isBestSeller:true, image:'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80', description:'Sneakers kulit sintetis elastis dengan insole cushioned empuk untuk kenyamanan aktivitas harian.', stock:25 },
+  { id:'PRD-007', name:'Topi Snapback Streetwear Edition', category:'Pakaian & Fashion', price:65000, rating:4.5, reviewsCount:64, isBestSeller:false, image:'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80', description:'Topi dengan pengatur ukuran snapback belakang dan bordir presisi berkualitas tinggi.', stock:50 },
+  { id:'PRD-008', name:'TWS Wireless Earphone Active Noise Cancelling', category:'Elektronik', price:199000, rating:4.8, reviewsCount:420, isBestSeller:true, image:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80', description:'Koneksi Bluetooth 5.3 stabil, bass bertenaga, daya tahan baterai hingga 28 jam dengan case.', stock:40 },
+  { id:'PRD-009', name:'Smartwatch Sport Fitness Tracker AMOLED', category:'Elektronik', price:299000, rating:4.9, reviewsCount:289, isBestSeller:true, image:'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80', description:'Layar jernih AMOLED, monitor detak jantung, SpO2, sleep tracker, dan ketahanan air 5ATM.', stock:22 },
+  { id:'PRD-010', name:'Keyboard Mekanikal RGB Mechanical Switch', category:'Elektronik', price:450000, rating:4.7, reviewsCount:115, isBestSeller:false, image:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80', description:'Switch mekanikal tactile hotswap, backlight RGB 18 mode lighting, dan kabel braided Type-C.', stock:15 },
+  { id:'PRD-011', name:'Fast Charger 65W GaN Dual Port USB-C & USB-A', category:'Elektronik', price:145000, rating:4.8, reviewsCount:98, isBestSeller:false, image:'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80', description:'Teknologi GaN menghemat energi, ukuran ringkas, kompatibel untuk smartphone, tablet & laptop.', stock:35 },
+  { id:'PRD-012', name:'Tumbler Termos Stainless Steel 500ml', category:'Rumah Tangga', price:75000, rating:4.9, reviewsCount:340, isBestSeller:true, image:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80', description:'Double wall vacuum insulation, menjaga dingin/panas hingga 12 jam, bebas BPA & anti bocor.', stock:70 },
+  { id:'PRD-013', name:'Lampu Meja LED Smart Touch Eye Care', category:'Rumah Tangga', price:110000, rating:4.6, reviewsCount:76, isBestSeller:false, image:'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&w=600&q=80', description:'Lampu baca dengan 3 mode kecerahan touch sensor, ramah mata, dan leher fleksibel 360 derajat.', stock:28 },
+  { id:'PRD-014', name:'Air Humidifier Essential Oil Diffuser 300ml', category:'Rumah Tangga', price:135000, rating:4.7, reviewsCount:152, isBestSeller:false, image:'https://images.unsplash.com/photo-1545231027-637d2f6210f8?auto=format&fit=crop&w=600&q=80', description:'Pelembab udara ultra-hening dengan lampu malam 7 warna LED dan timer otomatis.', stock:40 },
+  { id:'PRD-015', name:'Serum Wajah Glowing Vitamin C + Niacinamide', category:'Kesehatan & Kecantikan', price:95000, rating:4.8, reviewsCount:204, isBestSeller:false, image:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80', description:'Formula mencerahkan noda hitam, meratakan warna kulit, dan meningkatkan kelembapan alami.', stock:55 },
+  { id:'PRD-016', name:'Sunscreen UV Shield SPF 50+ PA++++', category:'Kesehatan & Kecantikan', price:68000, rating:4.9, reviewsCount:512, isBestSeller:true, image:'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80', description:'Tabur surya tekstur watery ringan, tanpa whitecast, cepat meresap, dan aman untuk kulit sensitif.', stock:90 },
+  { id:'PRD-017', name:'Sabun Mandi Gentle Care Body Wash 500ml', category:'Kesehatan & Kecantikan', price:35000, rating:4.7, reviewsCount:180, isBestSeller:false, image:'https://images.unsplash.com/photo-1608248597279-f99d160bfbc8?auto=format&fit=crop&w=600&q=80', description:'Sabun cair dengan pH seimbang, melembapkan kulit, dan aroma segar tahan lama.', stock:100 },
+  { id:'PRD-018', name:'Masker Wajah Brightening Sheet Mask Pack', category:'Kesehatan & Kecantikan', price:25000, rating:4.6, reviewsCount:95, isBestSeller:false, image:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=600&q=80', description:'Sheet mask dengan kandungan niacinamide & vitamin C untuk mencerahkan kulit secara instan.', stock:150 },
+  { id:'PRD-019', name:'Parfum Unisex Eau de Parfum 100ml', category:'Kesehatan & Kecantikan', price:185000, rating:4.8, reviewsCount:67, isBestSeller:true, image:'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80', description:'Parfum dengan aroma woody & floral yang elegan, tahan lama hingga 12 jam.', stock:30 },
+  { id:'PRD-020', name:'Ransel Laptop Anti Theft 15.6 inch', category:'Pakaian & Fashion', price:275000, rating:4.8, reviewsCount:143, isBestSeller:true, image:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80', description:'Ransel anti maling dengan slot USB charging, material waterproof, dan desain ergonomis.', stock:25 },
+  { id:'PRD-021', name:'Dapur Cookware Set Panci & Wajan 5pcs', category:'Rumah Tangga', price:450000, rating:4.9, reviewsCount:88, isBestSeller:true, image:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80', description:'Set panci & wajan anti lengket marble coating, bebas PFOA, cocok untuk semua kompor.', stock:15 },
+  { id:'PRD-022', name:'Blender Portable USB Mini 380ml', category:'Elektronik', price:125000, rating:4.5, reviewsCount:210, isBestSeller:false, image:'https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=600&q=80', description:'Blender portabel baterai rechargeable, mudah dibawa traveling, 6 bilah pisau stainless.', stock:45 },
+  { id:'PRD-023', name:'Tas Selempang Crossbody Bag Waterproof', category:'Pakaian & Fashion', price:125000, rating:4.7, reviewsCount:156, isBestSeller:false, image:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80', description:'Tas selempang anti air dengan banyak kompartemen, ringan dan nyaman untuk aktivitas harian.', stock:40 },
+  { id:'PRD-024', name:'Sepatu Sandal Casual Sport Outdoor', category:'Pakaian & Fashion', price:185000, rating:4.6, reviewsCount:198, isBestSeller:false, image:'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=600&q=80', description:'Sandal sport dengan sol anti slip, ringan, breathable mesh, cocok untuk outdoor & daily.', stock:55 },
+  { id:'PRD-025', name:'Mie Instan Goreng Premium Spesial 5 Pack', category:'Makanan & Minuman', price:22000, rating:4.8, reviewsCount:320, isBestSeller:true, image:'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=80', description:'Mie goreng premium dengan bumbu khas, topping ayam suwir, dan kerupuk udang.', stock:200 },
+  { id:'PRD-026', name:'Teh Hijau Matcha Latte Premium 20 Sachet', category:'Makanan & Minuman', price:45000, rating:4.7, reviewsCount:145, isBestSeller:false, image:'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', description:'Matcha latte bubuk premium dari teh hijau pilihan, tanpa pemanis buatan.', stock:80 },
+  { id:'PRD-027', name:'Powerbank Fast Charging 20000mAh LED', category:'Elektronik', price:195000, rating:4.8, reviewsCount:267, isBestSeller:true, image:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=600&q=80', description:'Powerbank kapasitas besar 20000mAh, dual output USB-C & Lightning, fast charging 22.5W.', stock:35 },
+  { id:'PRD-028', name:'Set Peralatan Dapur Stainless Steel 12pcs', category:'Rumah Tangga', price:285000, rating:4.7, reviewsCount:92, isBestSeller:false, image:'https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&w=600&q=80', description:'Set spatula, sendok, garpu masak stainless steel, tahan panas, dengan stand holder.', stock:20 },
+  { id:'PRD-029', name:'Headphone Over Ear Wireless ANC Pro', category:'Elektronik', price:389000, rating:4.9, reviewsCount:178, isBestSeller:true, image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80', description:'Headphone over-ear ANC, bass jernih, baterai 40 jam, foldable design, microphone HD.', stock:18 },
+  { id:'PRD-030', name:'Organizer Box Penyimpanan Kosmetik Acrylic', category:'Rumah Tangga', price:85000, rating:4.5, reviewsCount:134, isBestSeller:false, image:'https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?auto=format&fit=crop&w=600&q=80', description:'Tempat penyimpanan kosmetik transparan acrylic, multi layer, elegan dan rapi.', stock:60 },
+  { id:'PRD-031', name:'Sneakers Running Sport Breathable Shoes', category:'Pakaian & Fashion', price:299000, rating:4.8, reviewsCount:225, isBestSeller:true, image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80', description:'Sepatu lari breathable mesh, sole empuk cushioning, ringan untuk jogging & gym.', stock:22 },
+  { id:'PRD-032', name:'Lilin Aromaterapi Soy Wax Calm Night', category:'Rumah Tangga', price:75000, rating:4.6, reviewsCount:89, isBestSeller:false, image:'https://images.unsplash.com/photo-1602028915047-37269d1a73f7?auto=format&fit=crop&w=600&q=80', description:'Lilin aromaterapi dari soy wax murni, aroma lavender & vanilla, tahan bakar 40 jam.', stock:70 }
+];
+
+const TRANSACTIONS = [
+  {
+    id: 'TRX-20260806-001', date: '2026-08-06T14:20:00.000Z',
+    customerName: 'Budi Santoso', customerPhone: '081234567890',
+    customerAddress: 'Jl. Sudirman No. 45, Jakarta Selatan',
+    items: [
+      { id:'PRD-008', name:'TWS Wireless Earphone Active Noise Cancelling', price:199000, quantity:1, image:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80' },
+      { id:'PRD-012', name:'Tumbler Termos Stainless Steel 500ml', price:75000, quantity:2, image:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80' }
+    ],
+    totalAmount: 349000, paymentMethod: 'Transfer Bank (BCA)', status: 'Selesai'
+  },
+  {
+    id: 'TRX-20260806-002', date: '2026-08-06T16:45:00.000Z',
+    customerName: 'Siti Rahmawati', customerPhone: '085712345678',
+    customerAddress: 'Jl. Dago Atas No. 12, Bandung',
+    items: [
+      { id:'PRD-016', name:'Sunscreen UV Shield SPF 50+ PA++++', price:68000, quantity:2, image:'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80' },
+      { id:'PRD-002', name:'Kopi Susu Gula Aren Creamy 500ml', price:18000, quantity:3, image:'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80' }
+    ],
+    totalAmount: 190000, paymentMethod: 'E-Wallet (Gopay)', status: 'Selesai'
+  },
+  {
+    id: 'TRX-20260807-003', date: '2026-08-07T09:15:00.000Z',
+    customerName: 'Rian Hidayat', customerPhone: '087899887766',
+    customerAddress: 'Jl. Malioboro No. 88, Yogyakarta',
+    items: [
+      { id:'PRD-004', name:'Kaos Oversize Cotton Combed 30s Slate', price:85000, quantity:2, image:'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' },
+      { id:'PRD-006', name:'Sepatu Sneakers Urban White Minimalist', price:350000, quantity:1, image:'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80' }
+    ],
+    totalAmount: 520000, paymentMethod: 'Cash on Delivery (COD)', status: 'Selesai'
+  }
+];
+
+// ==========================================
+// FUNGSI UTAMA
+// ==========================================
+async function seedData() {
+  // Cek service account
+  if (!fs.existsSync(SERVICE_ACCOUNT_PATH)) {
+    console.error('❌ File service-account.json tidak ditemukan!');
+    console.log('');
+    console.log('📋 Cara mendapatkannya:');
+    console.log('   1. Buka Firebase Console → Project Settings (⚙️)');
+    console.log('   2. Tab "Service Accounts" → klik "Generate New Private Key"');
+    console.log('   3. Simpan file JSON sebagai "service-account.json" di folder ini');
+    console.log('   4. Jalankan script ini lagi: node seed-firebase.js');
+    process.exit(1);
+  }
+
+  // Init Firebase Admin
+  const serviceAccount = require(SERVICE_ACCOUNT_PATH);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+
+  const db = admin.firestore();
+  console.log('🔥 Terhubung ke Firebase:', serviceAccount.project_id);
+  console.log('');
+
+  // Seed Products
+  console.log('📦 Seeding Products...');
+  const productsBatch = db.batch();
+  let productCount = 0;
+  
+  for (const product of PRODUCTS) {
+    const ref = db.collection('products').doc(product.id);
+    productsBatch.set(ref, product);
+    productCount++;
+    if (productCount % 10 === 0) {
+      console.log(`   ${productCount}/${PRODUCTS.length} produk...`);
+    }
+  }
+  
+  await productsBatch.commit();
+  console.log(`✅ ${PRODUCTS.length} produk berhasil di-upload!`);
+
+  // Seed Transactions
+  console.log('');
+  console.log('🧾 Seeding Transactions...');
+  const transactionsBatch = db.batch();
+  
+  for (const transaction of TRANSACTIONS) {
+    const ref = db.collection('transactions').doc(transaction.id);
+    transactionsBatch.set(ref, transaction);
+  }
+  
+  await transactionsBatch.commit();
+  console.log(`✅ ${TRANSACTIONS.length} transaksi berhasil di-upload!`);
+
+  console.log('');
+  console.log('🎉 SEED SELESAI! Data sudah ada di Firestore.');
+  console.log('   Project:', serviceAccount.project_id);
+  console.log('   Cek di Firebase Console → Firestore Database');
+}
+
+seedData().catch(err => {
+  console.error('❌ Error:', err.message);
+  process.exit(1);
+});
