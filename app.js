@@ -2236,6 +2236,9 @@ function openEditProductModal(productId) {
   document.getElementById('product-image').value = product.image || '';
   document.getElementById('product-barcode').value = product.barcode || '';
   
+  // Reset file input & show current image preview
+  const fileInput = document.getElementById('product-image-file');
+  if (fileInput) fileInput.value = '';
   previewProductImage();
   previewProductBarcode();
 
