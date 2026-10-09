@@ -1421,11 +1421,28 @@ function generateProductBarcode() {
   showToast('Barcode baru berhasil dibuat otomatis.', 'success');
 }
 
-// Upload product image (Firebase Storage if logged in, Base64 for demo/offline)
-function convertImageToBase64(file) {
+// Upload product image (Firebase Storage if logged in, compressed Base64 for demo/offline)
+function compressImage(file, maxWidth = 400, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('Gagal memuat gambar'));
+      img.src = e.target.result;
+    };
     reader.onerror = () => reject(new Error('Gagal membaca file gambar'));
     reader.readAsDataURL(file);
   });
@@ -1436,14 +1453,14 @@ async function uploadProductImage() {
   const file = fileInput?.files?.[0];
   if (!file) { showToast('Pilih file gambar terlebih dahulu.', 'error'); return; }
   if (!file.type.startsWith('image/')) { showToast('File harus berupa gambar.', 'error'); return; }
-  if (file.size > 2 * 1024 * 1024) { showToast('Ukuran gambar maksimal 2MB.', 'error'); return; }
-  showToast('Mengunggah gambar...', 'success');
+  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran gambar maksimal 5MB.', 'error'); return; }
+  showToast('Mengompres & mengunggah gambar...', 'success');
   try {
     let imageData;
     if (store.uid && store.uid !== 'demo') {
       imageData = await store.uploadImage(file);
     } else {
-      imageData = await convertImageToBase64(file);
+      imageData = await compressImage(file);
     }
     document.getElementById('product-image').value = imageData;
     previewProductImage();
