@@ -536,6 +536,7 @@ class StoreState {
     product.isBestSeller = product.isBestSeller || false;
     product.reviewsCount = product.reviewsCount || 0;
     this.products.unshift(product);
+    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
     try { await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
@@ -543,12 +544,14 @@ class StoreState {
   async updateProduct(updatedProduct) {
     const idx = this.products.findIndex(p => p.id === updatedProduct.id);
     if (idx > -1) this.products[idx] = { ...this.products[idx], ...updatedProduct };
+    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
     try { await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
   async deleteProduct(productId) {
     this.products = this.products.filter(p => p.id !== productId);
+    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
     try { await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
@@ -659,7 +662,8 @@ let authMode = 'login';
 function enterDemoMode() {
   demoMode = true;
   store.uid = 'demo';
-  store.products = [...INITIAL_PRODUCTS];
+  const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
+  store.products = saved || [...INITIAL_PRODUCTS];
   store.cart = [];
   store.transactions = [...INITIAL_TRANSACTIONS];
   store.ensureBarcodes();
