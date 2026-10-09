@@ -1498,6 +1498,24 @@ async function uploadProductImage() {
   }
 }
 
+// Auto upload saat pilih file (tanpa perlu klik tombol)
+function handleProductFileSelect(input) {
+  const file = input?.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('File harus berupa gambar.', 'error'); input.value = ''; return; }
+  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran gambar maksimal 5MB.', 'error'); input.value = ''; return; }
+  showToast('Mengompres & memproses gambar...', 'success');
+  compressImage(file).then(imageData => {
+    document.getElementById('product-image').value = imageData;
+    previewProductImage();
+    input.value = ''; // Reset
+    showToast('Gambar siap digunakan!', 'success');
+  }).catch(e => {
+    showToast('Gagal memproses gambar: ' + e.message, 'error');
+    input.value = '';
+  });
+}
+
 function openCartDrawer() {
   renderCartDrawer();
   const drawer = document.getElementById('cart-drawer');
