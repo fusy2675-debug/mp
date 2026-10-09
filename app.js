@@ -536,7 +536,13 @@ class StoreState {
     product.isBestSeller = product.isBestSeller || false;
     product.reviewsCount = product.reviewsCount || 0;
     this.products.unshift(product);
-    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    if (demoMode) {
+      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          showToast('Storage penuh! Hapus produk lama atau gunakan gambar lebih kecil.', 'error');
+        }
+      }
+    }
     try { await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
@@ -544,14 +550,26 @@ class StoreState {
   async updateProduct(updatedProduct) {
     const idx = this.products.findIndex(p => p.id === updatedProduct.id);
     if (idx > -1) this.products[idx] = { ...this.products[idx], ...updatedProduct };
-    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    if (demoMode) {
+      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          showToast('Storage penuh! Hapus produk lama atau gunakan gambar lebih kecil.', 'error');
+        }
+      }
+    }
     try { await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
 
   async deleteProduct(productId) {
     this.products = this.products.filter(p => p.id !== productId);
-    if (demoMode) localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    if (demoMode) {
+      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          showToast('Storage penuh!', 'error');
+        }
+      }
+    }
     try { await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
     renderProductGrid(); renderInventoryTable(); renderDashboardStats();
   }
@@ -662,8 +680,13 @@ let authMode = 'login';
 function enterDemoMode() {
   demoMode = true;
   store.uid = 'demo';
-  const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
-  store.products = saved || [...INITIAL_PRODUCTS];
+  try {
+    const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
+    store.products = saved || [...INITIAL_PRODUCTS];
+  } catch (e) {
+    console.error('Failed to load products from localStorage:', e);
+    store.products = [...INITIAL_PRODUCTS];
+  }
   store.cart = [];
   store.transactions = [...INITIAL_TRANSACTIONS];
   store.ensureBarcodes();
@@ -1426,7 +1449,7 @@ function generateProductBarcode() {
 }
 
 // Upload product image (Firebase Storage if logged in, compressed Base64 for demo/offline)
-function compressImage(file, maxWidth = 400, quality = 0.7) {
+function compressImage(file, maxWidth = 300, quality = 0.6) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -1468,6 +1491,7 @@ async function uploadProductImage() {
     }
     document.getElementById('product-image').value = imageData;
     previewProductImage();
+    fileInput.value = ''; // Reset file input
     showToast('Gambar berhasil diunggah!', 'success');
   } catch (e) {
     showToast('Gagal mengunggah gambar: ' + e.message, 'error');

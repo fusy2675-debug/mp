@@ -758,7 +758,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Unggah Foto Produk *</label>
-          <input type="hidden" id="product-image" required />
+          <input type="hidden" id="product-image" />
           <div class="flex items-center gap-2">
             <input type="file" id="product-image-file" accept="image/*" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:border-[#EE4D2D] file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-[#EE4D2D]/10 file:text-[#EE4D2D] file:font-bold file:cursor-pointer" />
             <button type="button" onclick="uploadProductImage()" class="shrink-0 px-5 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white text-xs font-bold transition-colors cursor-pointer">
@@ -766,6 +766,7 @@
             </button>
           </div>
           <div id="product-image-preview" class="mt-2 hidden"><img src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg border border-slate-200 bg-slate-100" /></div>
+          <p class="text-[10px] text-slate-500 mt-1">Pilih file gambar (max 5MB, akan dikompres otomatis)</p>
         </div>
 
         <div>
