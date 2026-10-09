@@ -1421,16 +1421,31 @@ function generateProductBarcode() {
   showToast('Barcode baru berhasil dibuat otomatis.', 'success');
 }
 
-// Upload product image to Firebase Storage
+// Upload product image (Firebase Storage if logged in, Base64 for demo/offline)
+function convertImageToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Gagal membaca file gambar'));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadProductImage() {
   const fileInput = document.getElementById('product-image-file');
   const file = fileInput?.files?.[0];
   if (!file) { showToast('Pilih file gambar terlebih dahulu.', 'error'); return; }
   if (!file.type.startsWith('image/')) { showToast('File harus berupa gambar.', 'error'); return; }
+  if (file.size > 2 * 1024 * 1024) { showToast('Ukuran gambar maksimal 2MB.', 'error'); return; }
   showToast('Mengunggah gambar...', 'success');
   try {
-    const url = await store.uploadImage(file);
-    document.getElementById('product-image').value = url;
+    let imageData;
+    if (store.uid && store.uid !== 'demo') {
+      imageData = await store.uploadImage(file);
+    } else {
+      imageData = await convertImageToBase64(file);
+    }
+    document.getElementById('product-image').value = imageData;
     previewProductImage();
     showToast('Gambar berhasil diunggah!', 'success');
   } catch (e) {
