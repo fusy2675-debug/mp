@@ -1687,8 +1687,9 @@ function generateReceiptContent(transaction) {
   return `
   <div class="receipt-wrapper">
     <div class="receipt-header">
-      <h2>NEXA MART</h2>
-      <p>Future Interactive Marketplace</p>
+      <img src="favicon.svg" alt="logo" style="width:32px;height:32px;border-radius:6px;vertical-align:middle;margin-bottom:6px;display:inline-block;" />
+      <h2 style="margin:0;font-size:16px;font-weight:800;color:#fff;">daisyfumarket</h2>
+      <p style="margin:2px 0 0;font-size:10px;opacity:0.9;">Marketplace Gaya Shopee</p>
     </div>
 
     <div class="receipt-body">
@@ -1780,7 +1781,7 @@ function generateReceiptHTML(transaction) {
       overflow: hidden;
     }
     .receipt-header {
-      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      background: linear-gradient(135deg, #EE4D2D 0%, #ff6a52 100%);
       color: #fff;
       padding: 14px 16px;
       text-align: center;
