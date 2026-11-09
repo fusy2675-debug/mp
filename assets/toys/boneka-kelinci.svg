@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F3E5F5"/><stop offset="100%" stop-color="#FCE4EC"/></linearGradient>
+           <linearGradient id="bunny" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#F3EBF6"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Ears -->
+      <g transform="rotate(-15 140 120)">
+        <ellipse cx="140" cy="90" rx="26" ry="75" fill="url(#bunny)"/>
+        <ellipse cx="140" cy="95" rx="15" ry="58" fill="#F8BBD0"/>
+      </g>
+      <g transform="rotate(15 260 120)">
+        <ellipse cx="260" cy="90" rx="26" ry="75" fill="url(#bunny)"/>
+        <ellipse cx="260" cy="95" rx="15" ry="58" fill="#F8BBD0"/>
+      </g>
+      <!-- Body & Dress -->
+      <ellipse cx="200" cy="285" rx="75" ry="70" fill="url(#bunny)"/>
+      <!-- Cute ruffled dress -->
+      <path d="M140 250 Q200 235 260 250 L275 320 Q200 335 125 320 Z" fill="#CE93D8"/>
+      <circle cx="160" cy="285" r="4" fill="#FFFFFF"/>
+      <circle cx="200" cy="285" r="4" fill="#FFFFFF"/>
+      <circle cx="240" cy="285" r="4" fill="#FFFFFF"/>
+      <circle cx="180" cy="305" r="4" fill="#FFFFFF"/>
+      <circle cx="220" cy="305" r="4" fill="#FFFFFF"/>
+      <!-- Paws -->
+      <ellipse cx="130" cy="270" rx="20" ry="16" fill="url(#bunny)"/>
+      <ellipse cx="270" cy="270" rx="20" ry="16" fill="url(#bunny)"/>
+      <ellipse cx="155" cy="345" rx="24" ry="16" fill="url(#bunny)"/>
+      <ellipse cx="245" cy="345" rx="24" ry="16" fill="url(#bunny)"/>
+      <!-- Head -->
+      <circle cx="200" cy="180" r="72" fill="url(#bunny)"/>
+      <!-- Flower on ear -->
+      <circle cx="140" cy="120" r="10" fill="#FFD54F"/>
+      <circle cx="140" cy="108" r="8" fill="#FFFFFF"/>
+      <circle cx="151" cy="115" r="8" fill="#FFFFFF"/>
+      <circle cx="148" cy="128" r="8" fill="#FFFFFF"/>
+      <circle cx="132" cy="128" r="8" fill="#FFFFFF"/>
+      <circle cx="129" cy="115" r="8" fill="#FFFFFF"/>
+      <!-- Eyes (curved happy) -->
+      <path d="M162 175 Q172 165 182 175" stroke="#4A148C" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+      <path d="M218 175 Q228 165 238 175" stroke="#4A148C" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+      <!-- Nose & Mouth -->
+      <polygon points="200,188 194,182 206,182" fill="#EC407A"/>
+      <path d="M200 188 L200 196 Q194 202 188 198 M200 196 Q206 202 212 198" stroke="#4A148C" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- Cheeks -->
+      <ellipse cx="150" cy="190" rx="14" ry="8" fill="#FF80AB" opacity="0.6"/>
+      <ellipse cx="250" cy="190" rx="14" ry="8" fill="#FF80AB" opacity="0.6"/>
+    
+  </g>
+</svg>

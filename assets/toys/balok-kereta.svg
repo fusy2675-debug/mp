@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8F5E9"/><stop offset="100%" stop-color="#FFF9C4"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Track -->
+      <line x1="40" y1="330" x2="360" y2="330" stroke="#D7CCC8" stroke-width="8" stroke-linecap="round"/>
+      <!-- Train Engine -->
+      <rect x="70" y="220" width="100" height="75" rx="10" fill="#FF5252"/>
+      <rect x="120" y="160" width="50" height="60" rx="8" fill="#FF5252"/>
+      <rect x="130" y="175" width="30" height="25" rx="4" fill="#E0F7FA"/>
+      <!-- Chimney with puffs -->
+      <rect x="85" y="180" width="20" height="40" rx="4" fill="#FFD54F"/>
+      <circle cx="95" cy="155" r="10" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="90" cy="130" r="15" fill="#FFFFFF" opacity="0.6"/>
+      <!-- Wheels Engine -->
+      <circle cx="95" cy="305" r="22" fill="#37474F"/>
+      <circle cx="95" cy="305" r="10" fill="#FFD54F"/>
+      <circle cx="150" cy="305" r="22" fill="#37474F"/>
+      <circle cx="150" cy="305" r="10" fill="#FFD54F"/>
+
+      <!-- Carriage -->
+      <rect x="200" y="240" width="120" height="55" rx="8" fill="#42A5F5"/>
+      <line x1="170" y1="270" x2="200" y2="270" stroke="#37474F" stroke-width="6"/>
+      <!-- Cute Bear in Carriage -->
+      <circle cx="260" cy="215" r="30" fill="#BA7A36"/>
+      <circle cx="240" cy="190" r="10" fill="#BA7A36"/>
+      <circle cx="280" cy="190" r="10" fill="#BA7A36"/>
+      <circle cx="253" cy="210" r="3" fill="#212121"/>
+      <circle cx="267" cy="210" r="3" fill="#212121"/>
+      <ellipse cx="260" cy="220" rx="8" ry="6" fill="#FFF5E4"/>
+      <!-- Carriage Wheels -->
+      <circle cx="225" cy="305" r="20" fill="#37474F"/>
+      <circle cx="225" cy="305" r="9" fill="#FF5252"/>
+      <circle cx="295" cy="305" r="20" fill="#37474F"/>
+      <circle cx="295" cy="305" r="9" fill="#FF5252"/>
+    
+  </g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE0B2"/><stop offset="100%" stop-color="#FFCCBC"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Shop Building -->
+      <rect x="80" y="130" width="240" height="210" rx="16" fill="#FFF9E6"/>
+      <!-- Striped Awning -->
+      <path d="M70 130 L330 130 L315 175 L85 175 Z" fill="#F48FB1"/>
+      <!-- Stripes on awning -->
+      <polygon points="105,130 135,130 130,175 100,175" fill="#FFFFFF"/>
+      <polygon points="165,130 195,130 190,175 160,175" fill="#FFFFFF"/>
+      <polygon points="225,130 255,130 250,175 220,175" fill="#FFFFFF"/>
+      <polygon points="285,130 315,130 310,175 280,175" fill="#FFFFFF"/>
+      <!-- Shop Signboard -->
+      <rect x="140" y="85" width="120" height="36" rx="8" fill="#8D6E63"/>
+      <text x="200" y="108" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFE0B2" text-anchor="middle">BAKERY 🥐</text>
+      <!-- Glass Display Window -->
+      <rect x="100" y="200" width="110" height="110" rx="10" fill="#E0F7FA" stroke="#BA7A36" stroke-width="4"/>
+      <!-- Display shelves with mini breads -->
+      <rect x="105" y="240" width="100" height="4" fill="#BA7A36"/>
+      <ellipse cx="130" cy="232" rx="14" ry="8" fill="#D7A15C"/>
+      <ellipse cx="170" cy="232" rx="14" ry="8" fill="#D7A15C"/>
+      <rect x="105" y="280" width="100" height="4" fill="#BA7A36"/>
+      <!-- Cupcakes on shelf -->
+      <circle cx="135" cy="272" r="7" fill="#FF4081"/>
+      <circle cx="175" cy="272" r="7" fill="#7C4DFF"/>
+      <!-- Door -->
+      <rect x="235" y="200" width="65" height="140" rx="8" fill="#FFAB91"/>
+      <rect x="245" y="215" width="45" height="55" rx="4" fill="#E0F7FA"/>
+      <circle cx="290" cy="285" r="4.5" fill="#FFD700"/>
+    
+  </g>
+</svg>

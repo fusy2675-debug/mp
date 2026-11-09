@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8EAF6"/><stop offset="100%" stop-color="#C5CAE9"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Ears -->
+      <circle cx="130" cy="120" r="34" fill="#263238"/>
+      <circle cx="270" cy="120" r="34" fill="#263238"/>
+      <!-- Body -->
+      <ellipse cx="200" cy="275" rx="85" ry="80" fill="#FFFFFF"/>
+      <!-- Black vest/shoulder band -->
+      <path d="M120 250 Q200 220 280 250 L285 290 Q200 275 115 290 Z" fill="#263238"/>
+      <!-- Arms -->
+      <circle cx="115" cy="265" r="30" fill="#263238"/>
+      <circle cx="285" cy="265" r="30" fill="#263238"/>
+      <!-- Feet -->
+      <ellipse cx="145" cy="345" rx="32" ry="22" fill="#263238"/>
+      <ellipse cx="255" cy="345" rx="32" ry="22" fill="#263238"/>
+      <ellipse cx="145" cy="345" rx="16" ry="12" fill="#FF80AB"/>
+      <ellipse cx="255" cy="345" rx="16" ry="12" fill="#FF80AB"/>
+      <!-- Head -->
+      <circle cx="200" cy="175" r="76" fill="#FFFFFF"/>
+      <!-- Eye patches (tilted) -->
+      <ellipse cx="160" cy="165" rx="22" ry="28" fill="#263238" transform="rotate(-20 160 165)"/>
+      <ellipse cx="240" cy="165" rx="22" ry="28" fill="#263238" transform="rotate(20 240 165)"/>
+      <!-- Eyes inside patches -->
+      <circle cx="164" cy="162" r="8" fill="#FFFFFF"/>
+      <circle cx="164" cy="162" r="5" fill="#000000"/>
+      <circle cx="162" cy="160" r="2" fill="#FFFFFF"/>
+      <circle cx="236" cy="162" r="8" fill="#FFFFFF"/>
+      <circle cx="236" cy="162" r="5" fill="#000000"/>
+      <circle cx="234" cy="160" r="2" fill="#FFFFFF"/>
+      <!-- Nose & Mouth -->
+      <ellipse cx="200" cy="188" rx="14" ry="9" fill="#263238"/>
+      <path d="M200 196 L200 204 Q192 212 186 205 M200 204 Q208 212 214 205" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- Cheeks -->
+      <circle cx="135" cy="190" r="14" fill="#FF80AB" opacity="0.6"/>
+      <circle cx="265" cy="190" r="14" fill="#FF80AB" opacity="0.6"/>
+      <!-- Green bamboo stick -->
+      <path d="M185 240 L235 220" stroke="#81C784" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="238" cy="216" r="6" fill="#4CAF50"/>
+      <circle cx="248" cy="214" r="5" fill="#66BB6A"/>
+    
+  </g>
+</svg>

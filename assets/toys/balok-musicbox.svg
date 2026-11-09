@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FCE4EC"/><stop offset="100%" stop-color="#FFF8E1"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Base Pedestal -->
+      <rect x="90" y="300" width="220" height="35" rx="10" fill="#F8BBD0"/>
+      <rect x="110" y="280" width="180" height="20" fill="#F48FB1"/>
+      <!-- Carousel Tent Top -->
+      <polygon points="200,60 90,140 310,140" fill="#FF80AB"/>
+      <!-- Tent Stripes -->
+      <polygon points="200,60 120,140 155,140" fill="#FFFFFF"/>
+      <polygon points="200,60 190,140 210,140" fill="#FFFFFF"/>
+      <polygon points="200,60 245,140 280,140" fill="#FFFFFF"/>
+      <!-- Scalloped Edges -->
+      <circle cx="110" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="130" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="150" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="170" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="190" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="210" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="230" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="250" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="270" cy="140" r="10" fill="#FF4081"/>
+      <circle cx="290" cy="140" r="10" fill="#FF4081"/>
+      <!-- Golden Poles -->
+      <rect x="135" y="140" width="8" height="140" fill="#FFD700"/>
+      <rect x="196" y="140" width="8" height="140" fill="#FFD700"/>
+      <rect x="257" y="140" width="8" height="140" fill="#FFD700"/>
+      <!-- Cute Carousel Horse (Center) -->
+      <path d="M175 220 Q200 190 220 220 Q235 240 215 250 Q185 245 175 220 Z" fill="#FFFFFF"/>
+      <circle cx="190" cy="205" r="3" fill="#212121"/>
+      <rect x="195" y="225" width="20" height="12" rx="3" fill="#FF4081"/>
+      <!-- Star on Top -->
+      <polygon points="200,45 204,55 214,57 206,64 209,74 200,68 191,74 194,64 186,57 196,55" fill="#FFD700"/>
+    
+  </g>
+</svg>

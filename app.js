@@ -31,434 +31,470 @@ try {
 // ==========================================
 const INITIAL_PRODUCTS = [
   {
-    id: 'PRD-001',
-    name: 'Nasi Goreng Spesial Rempah Nusantara',
-    category: 'Makanan & Minuman',
-    price: 28000,
-    rating: 4.9,
-    reviewsCount: 142,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80',
-    description: 'Nasi goreng racikan resep warisan dengan telur, ayam suwir, bakso, dan piring kerupuk renyah.',
-    stock: 45
+    "id": "PRD-001",
+    "name": "Boneka Teddy Bear Pastel Fluffy",
+    "category": "Boneka & Plushie",
+    "price": 95000,
+    "rating": 4.9,
+    "reviewsCount": 248,
+    "isBestSeller": true,
+    "image": "assets/toys/boneka-beruang.svg",
+    "description": "Boneka beruang cokelat karamel super lembut, bahan velvet hypoallergenic aman untuk bayi dan anak.",
+    "stock": 45
   },
   {
-    id: 'PRD-002',
-    name: 'Kopi Susu Gula Aren Creamy 500ml',
-    category: 'Makanan & Minuman',
-    price: 18000,
-    rating: 4.8,
-    reviewsCount: 215,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80',
-    description: 'Espresso robusta & arabica dipadu susu segar dingin dan gula aren murni khas Nusantara.',
-    stock: 60
+    "id": "PRD-002",
+    "name": "Boneka Kelinci Pinkie Velvet Telinga Panjang",
+    "category": "Boneka & Plushie",
+    "price": 89000,
+    "rating": 4.8,
+    "reviewsCount": 195,
+    "isBestSeller": true,
+    "image": "assets/toys/boneka-kelinci.svg",
+    "description": "Kelinci merah muda manis dengan telinga panjang empuk dan pita satin cantik di dada.",
+    "stock": 50
   },
   {
-    id: 'PRD-003',
-    name: 'Snack Gourmet Potato Chips Truffle',
-    category: 'Makanan & Minuman',
-    price: 15000,
-    rating: 4.6,
-    reviewsCount: 88,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=600&q=80',
-    description: 'Keripik kentang pilihan berpotongan tebal dengan taburan bumbu truffle khas gurih.',
-    stock: 80
+    "id": "PRD-003",
+    "name": "Boneka Kucing Meow Kitty Soft",
+    "category": "Boneka & Plushie",
+    "price": 78000,
+    "rating": 4.7,
+    "reviewsCount": 142,
+    "isBestSeller": false,
+    "image": "assets/toys/boneka-kucing.svg",
+    "description": "Boneka anak kucing oranye ceria dengan mata bulat berbinar dan pipi bersemu merah muda.",
+    "stock": 35
   },
   {
-    id: 'PRD-004',
-    name: 'Kaos Oversize Cotton Combed 30s Slate',
-    category: 'Pakaian & Fashion',
-    price: 85000,
-    rating: 4.9,
-    reviewsCount: 310,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
-    description: 'Bahan 100% cotton combed super lembut, tidak panas, dan potongan oversized ala streetwear modern.',
-    stock: 30
+    "id": "PRD-004",
+    "name": "Boneka Dino Mungil Minty Sahabat Cilik",
+    "category": "Boneka & Plushie",
+    "price": 82000,
+    "rating": 4.9,
+    "reviewsCount": 310,
+    "isBestSeller": true,
+    "image": "assets/toys/boneka-dino.svg",
+    "description": "Dinosaurus hijau sage lucu dengan punggung bulat bergelombang dan senyum ramah yang menggemaskan.",
+    "stock": 60
   },
   {
-    id: 'PRD-005',
-    name: 'Jaket Denim Classic Vintage Unisex',
-    category: 'Pakaian & Fashion',
-    price: 245000,
-    rating: 4.7,
-    reviewsCount: 94,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80',
-    description: 'Bahan denim tebal berkualitas premium dengan wash indigo klasik yang stylish dan tahan lama.',
-    stock: 18
+    "id": "PRD-005",
+    "name": "Boneka Panda Boba Chubby Peluk Hangat",
+    "category": "Boneka & Plushie",
+    "price": 99000,
+    "rating": 4.8,
+    "reviewsCount": 180,
+    "isBestSeller": false,
+    "image": "assets/toys/boneka-panda.svg",
+    "description": "Boneka panda bulat menggemaskan dengan perut empuk yang nyaman dipeluk saat tidur lelap.",
+    "stock": 28
   },
   {
-    id: 'PRD-006',
-    name: 'Sepatu Sneakers Urban White Minimalist',
-    category: 'Pakaian & Fashion',
-    price: 350000,
-    rating: 4.9,
-    reviewsCount: 180,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80',
-    description: 'Sneakers kulit sintetis elastis dengan insole cushioned empuk untuk kenyamanan aktivitas harian.',
-    stock: 25
+    "id": "PRD-006",
+    "name": "Boneka Bebek Kuning Ducky Quack Quack",
+    "category": "Boneka & Plushie",
+    "price": 65000,
+    "rating": 4.6,
+    "reviewsCount": 95,
+    "isBestSeller": false,
+    "image": "assets/toys/boneka-bebek.svg",
+    "description": "Anak bebek kuning cerah berparuh jingga lembut, favorit teman mandi dan teman bermain di kamar.",
+    "stock": 40
   },
   {
-    id: 'PRD-007',
-    name: 'Topi Snapback Streetwear Edition',
-    category: 'Pakaian & Fashion',
-    price: 65000,
-    rating: 4.5,
-    reviewsCount: 64,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80',
-    description: 'Topi dengan pengatur ukuran snapback belakang dan bordir presisi berkualitas tinggi.',
-    stock: 50
+    "id": "PRD-007",
+    "name": "Boneka Unicorn Rainbow Tanduk Bintang Emas",
+    "category": "Boneka & Plushie",
+    "price": 125000,
+    "rating": 5,
+    "reviewsCount": 420,
+    "isBestSeller": true,
+    "image": "assets/toys/boneka-unicorn.svg",
+    "description": "Unicorn putih magis dengan surai pelangi pastel dan tanduk emas berkilau impian setiap anak.",
+    "stock": 32
   },
   {
-    id: 'PRD-008',
-    name: 'TWS Wireless Earphone Active Noise Cancelling',
-    category: 'Elektronik',
-    price: 199000,
-    rating: 4.8,
-    reviewsCount: 420,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80',
-    description: 'Koneksi Bluetooth 5.3 stabil, bass bertenaga, daya tahan baterai hingga 28 jam dengan case.',
-    stock: 40
+    "id": "PRD-008",
+    "name": "Barbie Princess Mahkota Bintang Emas",
+    "category": "Barbie & Fashion Doll",
+    "price": 185000,
+    "rating": 4.9,
+    "reviewsCount": 260,
+    "isBestSeller": true,
+    "image": "assets/toys/barbie-princess.svg",
+    "description": "Boneka Barbie putri kerajaan bergaun pesta mekar bertabur mutiara dengan mahkota tiara berkilau.",
+    "stock": 25
   },
   {
-    id: 'PRD-009',
-    name: 'Smartwatch Sport Fitness Tracker AMOLED',
-    category: 'Elektronik',
-    price: 299000,
-    rating: 4.9,
-    reviewsCount: 289,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80',
-    description: 'Layar jernih AMOLED, monitor detak jantung, SpO2, sleep tracker, dan ketahanan air 5ATM.',
-    stock: 22
+    "id": "PRD-009",
+    "name": "Barbie Peri Sayap Kupu-Kupu Gemerlap",
+    "category": "Barbie & Fashion Doll",
+    "price": 165000,
+    "rating": 4.8,
+    "reviewsCount": 175,
+    "isBestSeller": false,
+    "image": "assets/toys/barbie-peri.svg",
+    "description": "Boneka peri bersayap kupu-kupu transparan gradasi pelangi dengan tongkat sihir bintang mungil.",
+    "stock": 30
   },
   {
-    id: 'PRD-010',
-    name: 'Keyboard Mekanikal RGB Mechanical Switch',
-    category: 'Elektronik',
-    price: 450000,
-    rating: 4.7,
-    reviewsCount: 115,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80',
-    description: 'Switch mekanikal tactile hotswap, backlight RGB 18 mode lighting, dan kabel braided Type-C.',
-    stock: 15
+    "id": "PRD-010",
+    "name": "Barbie Pastry Chef Cilik & Set Kue Mini",
+    "category": "Barbie & Fashion Doll",
+    "price": 175000,
+    "rating": 4.7,
+    "reviewsCount": 130,
+    "isBestSeller": false,
+    "image": "assets/toys/barbie-chef.svg",
+    "description": "Barbie koki berbakat lengkap dengan topi koki putih, celemek motif strawberry, dan nampan kue bolu.",
+    "stock": 20
   },
   {
-    id: 'PRD-011',
-    name: 'Fast Charger 65W GaN Dual Port USB-C & USB-A',
-    category: 'Elektronik',
-    price: 145000,
-    rating: 4.8,
-    reviewsCount: 98,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80',
-    description: 'Teknologi GaN menghemat energi, ukuran ringkas, kompatibel untuk smartphone, tablet & laptop.',
-    stock: 35
+    "id": "PRD-011",
+    "name": "Barbie Mermaid Putri Duyung Ekor Shimmer",
+    "category": "Barbie & Fashion Doll",
+    "price": 195000,
+    "rating": 4.9,
+    "reviewsCount": 340,
+    "isBestSeller": true,
+    "image": "assets/toys/barbie-mermaid.svg",
+    "description": "Putri duyung cantik berekor sisik berkilau warna toska-ungu yang bisa berubah pantulan di dalam air.",
+    "stock": 18
   },
   {
-    id: 'PRD-012',
-    name: 'Tumbler Termos Stainless Steel 500ml',
-    category: 'Rumah Tangga',
-    price: 75000,
-    rating: 4.9,
-    reviewsCount: 340,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80',
-    description: 'Double wall vacuum insulation, menjaga dingin/panas hingga 12 jam, bebas BPA & anti bocor.',
-    stock: 70
+    "id": "PRD-012",
+    "name": "Barbie Ballerina Gaun Tutu Pink Rose",
+    "category": "Barbie & Fashion Doll",
+    "price": 145000,
+    "rating": 4.8,
+    "reviewsCount": 110,
+    "isBestSeller": false,
+    "image": "assets/toys/barbie-ballerina.svg",
+    "description": "Penari balet anggun dengan gaun tutu mekar tiga lapis pita dan sepatu balet satin bertali silang.",
+    "stock": 24
   },
   {
-    id: 'PRD-013',
-    name: 'Lampu Meja LED Smart Touch Eye Care',
-    category: 'Rumah Tangga',
-    price: 110000,
-    rating: 4.6,
-    reviewsCount: 76,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&w=600&q=80',
-    description: 'Lampu baca dengan 3 mode kecerahan touch sensor, ramah mata, dan leher fleksibel 360 derajat.',
-    stock: 28
+    "id": "PRD-013",
+    "name": "Barbie Fashionista Kacamata Retro Heart",
+    "category": "Barbie & Fashion Doll",
+    "price": 155000,
+    "rating": 4.6,
+    "reviewsCount": 92,
+    "isBestSeller": false,
+    "image": "assets/toys/barbie-fashionista.svg",
+    "description": "Gaya modis terkini dengan kacamata hati merah muda, celana denim pastel, dan tas selempang chic.",
+    "stock": 22
   },
   {
-    id: 'PRD-014',
-    name: 'Air Humidifier Essential Oil Diffuser 300ml',
-    category: 'Rumah Tangga',
-    price: 135000,
-    rating: 4.7,
-    reviewsCount: 152,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1545231027-637d2f6210f8?auto=format&fit=crop&w=600&q=80',
-    description: 'Pelembab udara ultra-hening dengan lampu malam 7 warna LED dan timer otomatis.',
-    stock: 40
+    "id": "PRD-014",
+    "name": "Barbie Sisters Duo Set Gaun Pastel Kembar",
+    "category": "Barbie & Fashion Doll",
+    "price": 245000,
+    "rating": 5,
+    "reviewsCount": 388,
+    "isBestSeller": true,
+    "image": "assets/toys/barbie-sisters.svg",
+    "description": "Set dua boneka kakak beradik kompak bergaun senada lengkap dengan pita rambut dan sandal manis.",
+    "stock": 15
   },
   {
-    id: 'PRD-015',
-    name: 'Serum Wajah Glowing Vitamin C + Niacinamide',
-    category: 'Kesehatan & Kecantikan',
-    price: 95000,
-    rating: 4.8,
-    reviewsCount: 204,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80',
-    description: 'Formula mencerahkan noda hitam, meratakan warna kulit, dan meningkatkan kelembapan alami.',
-    stock: 55
+    "id": "PRD-015",
+    "name": "Rumah Boneka Kayu Pastel 3 Lantai Lengkap",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 345000,
+    "rating": 5,
+    "reviewsCount": 512,
+    "isBestSeller": true,
+    "image": "assets/toys/rumah-kayu.svg",
+    "description": "Dollhouse bertingkat 3 dengan balkon jendela kayu manis, pintu buka-tutup, dan tangga spiral mini.",
+    "stock": 12
   },
   {
-    id: 'PRD-016',
-    name: 'Sunscreen UV Shield SPF 50+ PA++++',
-    category: 'Kesehatan & Kecantikan',
-    price: 68000,
-    rating: 4.9,
-    reviewsCount: 512,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80',
-    description: 'Tabur surya tekstur watery ringan, tanpa whitecast, cepat meresap, dan aman untuk kulit sensitif.',
-    stock: 90
+    "id": "PRD-016",
+    "name": "Miniatur Toko Roti Sweet Bakery Cafe",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 285000,
+    "rating": 4.9,
+    "reviewsCount": 230,
+    "isBestSeller": true,
+    "image": "assets/toys/rumah-toko-roti.svg",
+    "description": "Set pertokoan toko roti estetik dengan etalase kaca display croissant, meja kasir, dan tenda bergaris.",
+    "stock": 16
   },
   {
-    id: 'PRD-017',
-    name: 'Sabun Mandi Gentle Care Body Wash 500ml',
-    category: 'Kesehatan & Kecantikan',
-    price: 35000,
-    rating: 4.7,
-    reviewsCount: 180,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1608248597279-f99d160bfbc8?auto=format&fit=crop&w=600&q=80',
-    description: 'Sabun cair dengan pH seimbang, melembapkan kulit, dan aroma segar tahan lama.',
-    stock: 100
+    "id": "PRD-017",
+    "name": "Istana Kastil Princess Merah Muda Megah",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 395000,
+    "rating": 4.9,
+    "reviewsCount": 340,
+    "isBestSeller": true,
+    "image": "assets/toys/rumah-istana.svg",
+    "description": "Kastil megah dengan menara bendera berkibar, gerbang utama kerajaan, dan lampu miniatur yang menyala.",
+    "stock": 10
   },
   {
-    id: 'PRD-018',
-    name: 'Masker Wajah Brightening Sheet Mask Pack',
-    category: 'Kesehatan & Kecantikan',
-    price: 25000,
-    rating: 4.6,
-    reviewsCount: 95,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=600&q=80',
-    description: 'Sheet mask dengan kandungan niacinamide & vitamin C untuk mencerahkan kulit secara instan.',
-    stock: 150
+    "id": "PRD-018",
+    "name": "Miniatur Kamar Tidur Cozy Estetik Boneka",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 175000,
+    "rating": 4.7,
+    "reviewsCount": 88,
+    "isBestSeller": false,
+    "image": "assets/toys/rumah-kamar.svg",
+    "description": "Set perabot kamar tidur mencakup ranjang kanopi busa empuk, bantal guling mini, dan meja belajar.",
+    "stock": 25
   },
   {
-    id: 'PRD-019',
-    name: 'Parfum Unisex Eau de Parfum 100ml',
-    category: 'Kesehatan & Kecantikan',
-    price: 185000,
-    rating: 4.8,
-    reviewsCount: 67,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80',
-    description: 'Parfum dengan aroma woody & floral yang elegan, tahan lama hingga 12 jam.',
-    stock: 30
+    "id": "PRD-019",
+    "name": "Rumah Pondok Jamur Peri Hutan Ajaib",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 220000,
+    "rating": 4.8,
+    "reviewsCount": 165,
+    "isBestSeller": false,
+    "image": "assets/toys/rumah-jamur.svg",
+    "description": "Pondok mungil atap jamur polkadot merah lucu dengan pagar kayu kecil dan taman bunga mungil di depan.",
+    "stock": 18
   },
   {
-    id: 'PRD-020',
-    name: 'Ransel Laptop Anti Theft 15.6 inch',
-    category: 'Pakaian & Fashion',
-    price: 275000,
-    rating: 4.8,
-    reviewsCount: 143,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
-    description: 'Ransel anti maling dengan slot USB charging, material防水, dan desain ergonomis.',
-    stock: 25
+    "id": "PRD-020",
+    "name": "Miniatur Dapur Koki Cilik Lengkap Oven & Kulkas",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 195000,
+    "rating": 4.8,
+    "reviewsCount": 145,
+    "isBestSeller": false,
+    "image": "assets/toys/rumah-dapur.svg",
+    "description": "Kitchen set mini realistis berpintu oven buka-tutup, kompor simulasi putar, wajan, dan panci kecil.",
+    "stock": 20
   },
   {
-    id: 'PRD-021',
-    name: 'Dapur Cookware Set Panci & Wajan 5pcs',
-    category: 'Rumah Tangga',
-    price: 450000,
-    rating: 4.9,
-    reviewsCount: 88,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80',
-    description: 'Set panci & wajan anti lengket marble coating, bebas PFOA, cocok untuk semua kompor.',
-    stock: 15
+    "id": "PRD-021",
+    "name": "Miniatur Villa Kolam Renang Mini Santai",
+    "category": "Rumah-rumahan & Miniatur",
+    "price": 320000,
+    "rating": 4.9,
+    "reviewsCount": 205,
+    "isBestSeller": false,
+    "image": "assets/toys/rumah-villa.svg",
+    "description": "Villa modern dua lantai berpemandangan terbuka dengan area kolam renang mini dan kursi santai pantai.",
+    "stock": 14
   },
   {
-    id: 'PRD-022',
-    name: 'Blender Portable USB Mini 380ml',
-    category: 'Elektronik',
-    price: 125000,
-    rating: 4.5,
-    reviewsCount: 210,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=600&q=80',
-    description: 'Blender portabel baterai rechargeable, mudah dibawa traveling, 6 bilah pisau stainless.',
-    stock: 45
+    "id": "PRD-022",
+    "name": "Balok Kayu Susun Istana Pelangi 50 Pcs",
+    "category": "Balok Susun & Edukasi",
+    "price": 135000,
+    "rating": 4.9,
+    "reviewsCount": 380,
+    "isBestSeller": true,
+    "image": "assets/toys/balok-istana.svg",
+    "description": "Set balok kayu natural dengan cat non-toxic warna pastel melatih imajinasi arsitektur si kecil.",
+    "stock": 45
   },
   {
-    id: 'PRD-023',
-    name: 'Tas Selempang Crossbody Bag Waterproof',
-    category: 'Pakaian & Fashion',
-    price: 125000,
-    rating: 4.7,
-    reviewsCount: 156,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
-    description: 'Tas selempang anti air dengan banyak kompartemen, ringan dan nyaman untuk aktivitas harian.',
-    stock: 40
+    "id": "PRD-023",
+    "name": "Rainbow Stacker Lengkung Kayu Halus Waldorf",
+    "category": "Balok Susun & Edukasi",
+    "price": 115000,
+    "rating": 4.8,
+    "reviewsCount": 290,
+    "isBestSeller": true,
+    "image": "assets/toys/balok-rainbow.svg",
+    "description": "Lengkungan pelangi kayu bertingkat 7 warna yang dapat disusun menjadi terowongan, jembatan, atau bunga.",
+    "stock": 35
   },
   {
-    id: 'PRD-024',
-    name: 'Sepatu Sandal Casual Sport Outdoor',
-    category: 'Pakaian & Fashion',
-    price: 185000,
-    rating: 4.6,
-    reviewsCount: 198,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=600&q=80',
-    description: 'Sandal sport dengan sol anti slip, ringan, breathable mesh, cocok untuk outdoor & daily.',
-    stock: 55
+    "id": "PRD-024",
+    "name": "Kereta Api Balok Angka Ceria Tarik Tali",
+    "category": "Balok Susun & Edukasi",
+    "price": 89000,
+    "rating": 4.7,
+    "reviewsCount": 120,
+    "isBestSeller": false,
+    "image": "assets/toys/balok-kereta.svg",
+    "description": "Kereta api kayu dengan gerbong susun balok geometri angka penuh warna yang bisa ditarik berjalan.",
+    "stock": 40
   },
   {
-    id: 'PRD-025',
-    name: 'Mie Instan Goreng Premium Spesial 5 Pack',
-    category: 'Makanan & Minuman',
-    price: 22000,
-    rating: 4.8,
-    reviewsCount: 320,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=80',
-    description: 'Mie goreng premium dengan bumbu khas, topping ayam suwir, dan kerupuk udang.',
-    stock: 200
+    "id": "PRD-025",
+    "name": "Kotak Musik Putar & Balok Hewan Berputar Lucu",
+    "category": "Balok Susun & Edukasi",
+    "price": 145000,
+    "rating": 4.9,
+    "reviewsCount": 215,
+    "isBestSeller": false,
+    "image": "assets/toys/balok-musicbox.svg",
+    "description": "Music box kayu mekanik dengan melodi klasik lembut nan menenangkan saat balok hewan berputar riang.",
+    "stock": 22
   },
   {
-    id: 'PRD-026',
-    name: 'Teh Hijau Matcha Latte Premium 20 Sachet',
-    category: 'Makanan & Minuman',
-    price: 45000,
-    rating: 4.7,
-    reviewsCount: 145,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80',
-    description: 'Matcha latte bubuk premium dari teh hijau pilihan, tanpa pemanis buatan.',
-    stock: 80
+    "id": "PRD-026",
+    "name": "Puzzle Kayu Hewan Lucu Edukasi Balita",
+    "category": "Balok Susun & Edukasi",
+    "price": 55000,
+    "rating": 4.8,
+    "reviewsCount": 160,
+    "isBestSeller": false,
+    "image": "assets/toys/balok-puzzle.svg",
+    "description": "Papan puzzle kayu bergagang pegangan pin kecil cocok untuk melatih motorik halus balita usia 1-4 tahun.",
+    "stock": 50
   },
   {
-    id: 'PRD-027',
-    name: 'Powerbank Fast Charging 20000mAh LED',
-    category: 'Elektronik',
-    price: 195000,
-    rating: 4.8,
-    reviewsCount: 267,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=600&q=80',
-    description: 'Powerbank kapasitas besar 20000mAh, dual output USB-C & Lightning, fast charging 22.5W.',
-    stock: 35
+    "id": "PRD-027",
+    "name": "Set Teko & Cangkir Pesta Teh Keramik Mini",
+    "category": "Pesta Teh & Aksesori",
+    "price": 110000,
+    "rating": 4.9,
+    "reviewsCount": 310,
+    "isBestSeller": true,
+    "image": "assets/toys/pesta-teh.svg",
+    "description": "Set teko teh motif bunga mawar manis dengan 4 cangkir kecil, tatakan piring, dan mangkuk gula susu.",
+    "stock": 30
   },
   {
-    id: 'PRD-028',
-    name: 'Set Peralatan Dapur Stainless Steel 12pcs',
-    category: 'Rumah Tangga',
-    price: 285000,
-    rating: 4.7,
-    reviewsCount: 92,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&w=600&q=80',
-    description: 'Set spatula, sendok, garpu masak stainless steel, tahan panas, dengan stand holder.',
-    stock: 20
+    "id": "PRD-028",
+    "name": "Kereta Dorong Stroller Boneka Lipat Pastel",
+    "category": "Pesta Teh & Aksesori",
+    "price": 135000,
+    "rating": 4.8,
+    "reviewsCount": 195,
+    "isBestSeller": false,
+    "image": "assets/toys/stroller-boneka.svg",
+    "description": "Stroller dorong boneka beroda empuk dengan kanopi lipat motif polkadot dan sabuk pengaman mungil.",
+    "stock": 20
   },
   {
-    id: 'PRD-029',
-    name: 'Headphone Over Ear Wireless ANC Pro',
-    category: 'Elektronik',
-    price: 389000,
-    rating: 4.9,
-    reviewsCount: 178,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
-    description: 'Headphone over-ear ANC, bass jernih, baterai 40 jam, foldable design, microphone HD.',
-    stock: 18
+    "id": "PRD-029",
+    "name": "Lemari Wardrobe Barbie & Koleksi Gaun Mini",
+    "category": "Pesta Teh & Aksesori",
+    "price": 160000,
+    "rating": 4.8,
+    "reviewsCount": 170,
+    "isBestSeller": false,
+    "image": "assets/toys/wardrobe-barbie.svg",
+    "description": "Lemari pakaian portabel dengan gantungan baju mungil, rak sepatu, cermin dalam, dan handle jinjing.",
+    "stock": 24
   },
   {
-    id: 'PRD-030',
-    name: 'Organizer Box Penyimpanan Kosmetik Acrylic',
-    category: 'Rumah Tangga',
-    price: 85000,
-    rating: 4.5,
-    reviewsCount: 134,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?auto=format&fit=crop&w=600&q=80',
-    description: 'Tempat penyimpanan kosmetik transparan acrylic, multi layer, elegan dan rapi.',
-    stock: 60
+    "id": "PRD-030",
+    "name": "Meja Rias Boneka dengan Cermin & Sisir Cantik",
+    "category": "Pesta Teh & Aksesori",
+    "price": 120000,
+    "rating": 4.7,
+    "reviewsCount": 105,
+    "isBestSeller": false,
+    "image": "assets/toys/meja-rias.svg",
+    "description": "Meja rias cantik dengan cermin bentuk hati, laci perhiasan yang bisa ditarik, sisir, dan botol parfum mainan.",
+    "stock": 28
   },
   {
-    id: 'PRD-031',
-    name: 'Sneakers Running Sport Breathable Shoes',
-    category: 'Pakaian & Fashion',
-    price: 299000,
-    rating: 4.8,
-    reviewsCount: 225,
-    isBestSeller: true,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80',
-    description: 'Sepatu lari breathable mesh, sole empuk cushioning, ringan untuk jogging & gym.',
-    stock: 22
+    "id": "PRD-031",
+    "name": "Ranjang Ayunan Bayi Boneka Kelambu Tidur Nyenyak",
+    "category": "Pesta Teh & Aksesori",
+    "price": 140000,
+    "rating": 4.9,
+    "reviewsCount": 220,
+    "isBestSeller": true,
+    "image": "assets/toys/ranjang-bayi.svg",
+    "description": "Buaian ayunan ranjang tidur boneka bayi dengan tiang kelambu renda lembut dan kasur sprei bunga.",
+    "stock": 18
   },
   {
-    id: 'PRD-032',
-    name: 'Lilin Aromaterapi Soy Wax Calm Night',
-    category: 'Rumah Tangga',
-    price: 75000,
-    rating: 4.6,
-    reviewsCount: 89,
-    isBestSeller: false,
-    image: 'https://images.unsplash.com/photo-1602028915047-37269d1a73f7?auto=format&fit=crop&w=600&q=80',
-    description: 'Lilin aromaterapi dari soy wax murni, aroma lavender & vanilla, tahan bakar 40 jam.',
-    stock: 70
+    "id": "PRD-032",
+    "name": "Koper Travel Mini Barbie & Paspor Mainan Petualang",
+    "category": "Pesta Teh & Aksesori",
+    "price": 95000,
+    "rating": 4.8,
+    "reviewsCount": 150,
+    "isBestSeller": false,
+    "image": "assets/toys/koper-travel.svg",
+    "description": "Koper travel roda putar dengan pegangan teleskopik tarik, stiker dekorasi, dan kartu boarding pass mini.",
+    "stock": 35
   }
 ];
 
 // Seed Initial Transactions Sample Data
 const INITIAL_TRANSACTIONS = [
   {
-    id: 'TRX-20260806-001',
-    date: '2026-08-06T14:20:00.000Z',
-    customerName: 'Budi Santoso',
-    customerPhone: '081234567890',
-    customerAddress: 'Jl. Sudirman No. 45, Jakarta Selatan',
-    items: [
-      { id: 'PRD-008', name: 'TWS Wireless Earphone Active Noise Cancelling', price: 199000, quantity: 1, image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80' },
-      { id: 'PRD-012', name: 'Tumbler Termos Stainless Steel 500ml', price: 75000, quantity: 2, image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80' }
+    "id": "TRX-20260806-001",
+    "date": "2026-08-06T14:20:00.000Z",
+    "customerName": "Budi Santoso",
+    "customerPhone": "081234567890",
+    "customerAddress": "Jl. Sudirman No. 45, Jakarta Selatan",
+    "items": [
+      {
+        "id": "PRD-008",
+        "name": "Barbie Princess Mahkota Bintang Emas",
+        "price": 185000,
+        "quantity": 1,
+        "image": "assets/toys/barbie-princess.svg"
+      },
+      {
+        "id": "PRD-012",
+        "name": "Barbie Ballerina Gaun Tutu Pink Rose",
+        "price": 145000,
+        "quantity": 1,
+        "image": "assets/toys/barbie-ballerina.svg"
+      }
     ],
-    totalAmount: 349000,
-    paymentMethod: 'Transfer Bank (BCA)',
-    status: 'Selesai'
+    "totalAmount": 330000,
+    "paymentMethod": "Transfer Bank (BCA)",
+    "status": "Selesai"
   },
   {
-    id: 'TRX-20260806-002',
-    date: '2026-08-06T16:45:00.000Z',
-    customerName: 'Siti Rahmawati',
-    customerPhone: '085712345678',
-    customerAddress: 'Jl. Dago Atas No. 12, Bandung',
-    items: [
-      { id: 'PRD-016', name: 'Sunscreen UV Shield SPF 50+ PA++++', price: 68000, quantity: 2, image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80' },
-      { id: 'PRD-002', name: 'Kopi Susu Gula Aren Creamy 500ml', price: 18000, quantity: 3, image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80' }
+    "id": "TRX-20260806-002",
+    "date": "2026-08-06T16:45:00.000Z",
+    "customerName": "Siti Rahmawati",
+    "customerPhone": "085712345678",
+    "customerAddress": "Jl. Dago Atas No. 12, Bandung",
+    "items": [
+      {
+        "id": "PRD-015",
+        "name": "Rumah Boneka Kayu Pastel 3 Lantai Lengkap",
+        "price": 345000,
+        "quantity": 1,
+        "image": "assets/toys/rumah-kayu.svg"
+      },
+      {
+        "id": "PRD-002",
+        "name": "Boneka Kelinci Pinkie Velvet Telinga Panjang",
+        "price": 89000,
+        "quantity": 2,
+        "image": "assets/toys/boneka-kelinci.svg"
+      }
     ],
-    totalAmount: 190000,
-    paymentMethod: 'E-Wallet (Gopay)',
-    status: 'Selesai'
+    "totalAmount": 523000,
+    "paymentMethod": "E-Wallet (Gopay)",
+    "status": "Selesai"
   },
   {
-    id: 'TRX-20260807-003',
-    date: '2026-08-07T09:15:00.000Z',
-    customerName: 'Rian Hidayat',
-    customerPhone: '087899887766',
-    customerAddress: 'Jl. Malioboro No. 88, Yogyakarta',
-    items: [
-      { id: 'PRD-004', name: 'Kaos Oversize Cotton Combed 30s Slate', price: 85000, quantity: 2, image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' },
-      { id: 'PRD-006', name: 'Sepatu Sneakers Urban White Minimalist', price: 350000, quantity: 1, image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80' }
+    "id": "TRX-20260807-003",
+    "date": "2026-08-07T09:15:00.000Z",
+    "customerName": "Rian Hidayat",
+    "customerPhone": "087899887766",
+    "customerAddress": "Jl. Malioboro No. 88, Yogyakarta",
+    "items": [
+      {
+        "id": "PRD-001",
+        "name": "Boneka Teddy Bear Pastel Fluffy",
+        "price": 95000,
+        "quantity": 2,
+        "image": "assets/toys/boneka-beruang.svg"
+      },
+      {
+        "id": "PRD-027",
+        "name": "Set Teko & Cangkir Pesta Teh Keramik Mini",
+        "price": 110000,
+        "quantity": 1,
+        "image": "assets/toys/pesta-teh.svg"
+      }
     ],
-    totalAmount: 520000,
-    paymentMethod: 'Cash on Delivery (COD)',
-    status: 'Selesai'
+    "totalAmount": 300000,
+    "paymentMethod": "Cash on Delivery (COD)",
+    "status": "Selesai"
   }
 ];
 
@@ -470,12 +506,14 @@ class StoreState {
     this.products = [];
     this.cart = [];
     this.transactions = [];
+    this.accounts = [];
     this.uid = null;
     this.activeCategory = 'Semua';
     this.searchQuery = '';
     this.bestSellerOnly = false;
     this.currentView = 'catalog';
 
+    if (!auth || !auth.onAuthStateChanged) return;
     auth.onAuthStateChanged((user) => {
       if (demoMode) return;
       if (user) {
@@ -492,6 +530,7 @@ class StoreState {
         this.products = [];
         this.cart = [];
         this.transactions = [];
+        this.accounts = [];
         updateFilterUI();
         renderProductGrid();
         renderInventoryTable();
@@ -511,7 +550,11 @@ class StoreState {
     try {
       const snap = await db.collection('products').get();
       if (snap.empty) {
-        const local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
+        let local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
+        if (Array.isArray(local) && local.length > 0 && (!local[0].image || !local[0].image.includes('assets/toys/'))) {
+          local = [...INITIAL_PRODUCTS];
+          localStorage.removeItem('nexamart_products');
+        }
         for (const p of local) {
           const id = p.id || ('PRD-' + Date.now().toString().slice(-6).toUpperCase());
           await db.collection('products').doc(id).set({ ...p, id });
@@ -522,7 +565,12 @@ class StoreState {
       }
     } catch (e) {
       showToast('Gagal memuat produk dari cloud: ' + e.message, 'error');
-      this.products = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
+      let local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
+      if (Array.isArray(local) && local.length > 0 && (!local[0].image || !local[0].image.includes('assets/toys/'))) {
+        local = [...INITIAL_PRODUCTS];
+        localStorage.removeItem('nexamart_products');
+      }
+      this.products = local;
     }
     this.ensureBarcodes();
   }
@@ -682,7 +730,13 @@ function enterDemoMode() {
   store.uid = 'demo';
   try {
     const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
-    store.products = saved || [...INITIAL_PRODUCTS];
+    const isOldCatalog = Array.isArray(saved) && saved.length > 0 && (!saved[0].image || !saved[0].image.includes('assets/toys/'));
+    if (isOldCatalog) {
+      localStorage.removeItem('nexamart_products');
+      store.products = [...INITIAL_PRODUCTS];
+    } else {
+      store.products = saved || [...INITIAL_PRODUCTS];
+    }
   } catch (e) {
     console.error('Failed to load products from localStorage:', e);
     store.products = [...INITIAL_PRODUCTS];
@@ -742,10 +796,35 @@ async function handleAuthSubmit(e) {
   if (errEl) errEl.classList.add('hidden');
   try {
     if (authMode === 'login') {
-      await auth.signInWithEmailAndPassword(email, password);
+      const cred = await auth.signInWithEmailAndPassword(email, password);
+      // Cek apakah akun dinonaktifkan (best-effort; gagal baca tidak memblokir login)
+      try {
+        const doc = await db.collection('users').doc(cred.user.uid).get();
+        if (doc.exists && doc.data().isActive === false) {
+          await auth.signOut();
+          throw new Error('Akun Anda telah dinonaktifkan. Hubungi admin toko.');
+        }
+      } catch (e) {
+        if (String(e.message).includes('dinonaktifkan')) throw e;
+        // Abaikan error baca (mis. Firestore rules) agar login tidak terblokir
+      }
     } else {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       await cred.user.updateProfile({ displayName: name });
+      try {
+        await db.collection('users').doc(cred.user.uid).set({
+          uid: cred.user.uid,
+          email: email,
+          displayName: name,
+          role: 'staff',
+          isActive: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        // Jangan gagalkan registrasi hanya karena gagal menulis profil akun
+        console.warn('Gagal menyimpan profil akun:', e);
+      }
     }
   } catch (err) {
     if (errEl) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
@@ -762,6 +841,7 @@ function handleLogout() {
     store.products = [];
     store.cart = [];
     store.transactions = [];
+    store.accounts = [];
     const overlay = document.getElementById('auth-overlay');
     const logoutBtn = document.getElementById('btn-logout');
     if (overlay) overlay.classList.remove('hidden');
@@ -838,12 +918,12 @@ function showToast(message, type = 'success') {
 
   const toast = document.createElement('div');
   const isSuccess = type === 'success';
-  toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-sm font-medium toast-enter ${
-    isSuccess ? 'bg-[#EE4D2D] border-[#ff8a78] text-white' : 'bg-rose-600 border-rose-400 text-white'
+  toast.className = `flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-soft text-xs sm:text-sm font-extrabold toast-enter ${
+    isSuccess ? 'bg-gradient-to-r from-coral-500 to-coral-600 text-white shadow-btn' : 'bg-rose-500 text-white shadow-card'
   }`;
 
   toast.innerHTML = `
-    <span class="${isSuccess ? 'text-white' : 'text-rose-200'}">
+    <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs">
       ${isSuccess ? '✓' : '✕'}
     </span>
     <span>${message}</span>
@@ -887,52 +967,52 @@ function renderProductGrid() {
   const fallback = 'https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=400&q=80';
 
   container.innerHTML = filtered.map(product => `
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+    <div class="card-cute product-card overflow-hidden flex flex-col group cursor-pointer bg-white rounded-3xl shadow-card hover:shadow-soft transition-all duration-300">
       <!-- Image -->
-      <div class="relative aspect-[4/4] overflow-hidden bg-slate-100">
+      <div class="relative aspect-square overflow-hidden bg-cream-100 rounded-t-3xl">
         <img 
           src="${product.image}" 
           alt="${product.name}" 
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           onerror="this.onerror=null; this.src='${fallback}';"
         />
-        <div class="absolute top-2 left-2 flex flex-col gap-1 z-10">
-          ${product.isBestSeller ? `<span class="px-1.5 py-0.5 text-[9px] font-black rounded bg-[#EE4D2D] text-white shadow-sm">🔥 BEST</span>` : ''}
-          <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-white/90 text-[#EE4D2D] shadow-sm">${product.category}</span>
+        <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
+          ${product.isBestSeller ? `<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-gradient-to-r from-coral-500 to-amber-400 text-white shadow-md flex items-center gap-1">🔥 Best</span>` : ''}
+          <span class="px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-white/95 text-caramel-700 shadow-sm backdrop-blur">${product.category}</span>
         </div>
         <button 
           onclick="openEditProductModal('${product.id}')"
-          class="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/95 shadow-sm flex items-center justify-center text-[11px] text-slate-600 hover:text-[#EE4D2D] hover:bg-white transition-colors cursor-pointer"
+          class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/95 shadow-sm flex items-center justify-center text-xs text-caramel-700 hover:text-coral-600 hover:scale-110 transition-transform cursor-pointer"
           title="Edit Produk"
         >✏️</button>
       </div>
 
       <!-- Body -->
-      <div class="p-2.5 flex flex-col flex-1">
-        <h3 class="text-[12px] font-medium text-slate-700 line-clamp-2 leading-snug group-hover:text-[#EE4D2D] transition-colors">
+      <div class="p-3.5 flex flex-col flex-1">
+        <h3 class="font-display text-[13px] font-bold text-caramel-900 line-clamp-2 leading-snug group-hover:text-coral-600 transition-colors">
           ${product.name}
         </h3>
 
-        <div class="flex items-center gap-1 mt-1 text-[10px] text-slate-400">
-          <span class="text-amber-500 font-bold">⭐ ${product.rating}</span>
-          <span>· Terjual ${product.reviewsCount}</span>
+        <div class="flex items-center gap-1.5 mt-1.5 text-[11px]">
+          <span class="text-amber-500 font-black">⭐ ${product.rating}</span>
+          <span class="text-caramel-500 font-semibold">· Terjual ${product.reviewsCount}</span>
         </div>
 
-        <div class="mt-1.5">
-          <span class="text-[16px] font-black text-[#EE4D2D]">${formatIDR(product.price)}</span>
+        <div class="mt-2">
+          <span class="font-display text-[17px] font-black text-coral-600">${formatIDR(product.price)}</span>
         </div>
 
-        <div class="mt-1.5 flex items-center justify-between border-t border-dashed border-slate-100 pt-1">
+        <div class="mt-2 flex items-center justify-between border-t-2 border-dashed border-cream-200 pt-2">
           <svg class="product-barcode" data-barcode="${product.barcode || ''}" data-bwidth="1" data-bheight="14" width="72" height="14"></svg>
-          <span class="text-[8px] font-mono text-slate-400 tracking-tight">${product.barcode || '-'}</span>
+          <span class="text-[9px] font-mono text-caramel-500 font-bold tracking-tight">${product.barcode || '-'}</span>
         </div>
 
-        <div class="mt-auto pt-1.5 flex items-center justify-between">
-          <span class="text-[9px] text-slate-400">Stok: ${product.stock}</span>
+        <div class="mt-auto pt-2.5 flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold text-caramel-500">Stok: ${product.stock}</span>
           <button 
             onclick="handleAddToCart('${product.id}')"
-            class="px-2.5 py-1.5 rounded bg-[#EE4D2D]/10 text-[#EE4D2D] hover:bg-[#EE4D2D] hover:text-white text-[11px] font-bold transition-colors cursor-pointer"
+            class="btn-cute px-3 py-1.5 text-xs rounded-2xl"
             title="Tambah ke keranjang"
           >
             🛒 + Keranjang
@@ -985,28 +1065,28 @@ function renderCartDrawer() {
   cartFooterElem.classList.remove('hidden');
 
   cartItemsContainer.innerHTML = items.map(item => `
-    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-      <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg bg-slate-100 flex-shrink-0" />
+    <div class="flex items-center gap-3 p-3.5 bg-white rounded-2xl border-2 border-cream-200 shadow-sm hover:border-coral-400/40 transition-colors">
+      <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl bg-cream-100 flex-shrink-0 shadow-inner" />
       <div class="flex-1 min-w-0">
-        <h4 class="font-bold text-xs sm:text-sm text-slate-800 truncate">${item.name}</h4>
-        <span class="text-xs font-semibold text-[#EE4D2D] block mt-0.5">${formatIDR(item.price)}</span>
+        <h4 class="font-display font-bold text-xs sm:text-sm text-caramel-900 truncate">${item.name}</h4>
+        <span class="text-xs font-black text-coral-600 block mt-0.5">${formatIDR(item.price)}</span>
         
         <div class="flex items-center gap-2 mt-2">
-          <div class="flex items-center border border-slate-300 rounded-lg overflow-hidden bg-slate-50">
+          <div class="flex items-center border border-cream-300 rounded-xl overflow-hidden bg-cream-100 shadow-inner">
             <button 
               onclick="handleCartQty('${item.id}', -1)"
-              class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 text-xs font-bold"
+              class="px-2.5 py-1 text-caramel-700 hover:bg-cream-200 text-xs font-black transition-colors"
             >-</button>
-            <span class="px-2.5 py-0.5 text-xs font-bold text-slate-800">${item.quantity}</span>
+            <span class="px-3 py-1 text-xs font-black text-caramel-900">${item.quantity}</span>
             <button 
               onclick="handleCartQty('${item.id}', 1)"
-              class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 text-xs font-bold"
+              class="px-2.5 py-1 text-caramel-700 hover:bg-cream-200 text-xs font-black transition-colors"
             >+</button>
           </div>
 
           <button 
             onclick="handleCartRemove('${item.id}')" 
-            class="text-xs text-rose-500 hover:text-rose-700 font-medium ml-auto transition-colors"
+            class="text-xs text-rose-500 hover:text-rose-600 font-extrabold ml-auto transition-colors cursor-pointer"
           >
             Hapus
           </button>
@@ -1070,61 +1150,116 @@ function renderReportsView() {
   if (statTopProduct) statTopProduct.textContent = topProduct;
   if (statMethod) statMethod.textContent = topMethod;
 
-  // Render Table
-  const tableBody = document.getElementById('reports-table-body');
+  // Render Grouped-by-Day Report
+  const container = document.getElementById('reports-by-day');
   const reportsEmpty = document.getElementById('reports-empty');
 
-  if (!tableBody) return;
+  if (!container) return;
 
   if (transactions.length === 0) {
-    tableBody.innerHTML = '';
+    container.innerHTML = '';
     if (reportsEmpty) reportsEmpty.classList.remove('hidden');
     return;
   }
 
   if (reportsEmpty) reportsEmpty.classList.add('hidden');
 
-  tableBody.innerHTML = transactions.map(trx => {
-    const formattedDate = new Date(trx.date).toLocaleString('id-ID', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  // Group transactions by local calendar day (key: YYYY-MM-DD)
+  const groupsMap = new Map();
+  transactions.forEach(t => {
+    const d = new Date(t.date);
+    if (isNaN(d)) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!groupsMap.has(key)) {
+      groupsMap.set(key, { date: new Date(d.getFullYear(), d.getMonth(), d.getDate()), items: [], total: 0 });
+    }
+    const g = groupsMap.get(key);
+    g.items.push(t);
+    g.total += t.totalAmount || 0;
+  });
+
+  const groups = [...groupsMap.values()].sort((a, b) => b.date - a.date);
+  groups.forEach(g => g.items.sort((a, b) => new Date(b.date) - new Date(a.date)));
+
+  container.innerHTML = groups.map(group => {
+    const dayTitle = group.date.toLocaleDateString('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
 
-    const itemsSummary = trx.items.map(i => `${i.name} (${i.quantity}x)`).join(', ');
+    const rows = group.items.map(trx => {
+      const timeText = new Date(trx.date).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const itemsSummary = trx.items.map(i => `${i.name} (${i.quantity}x)`).join(', ');
+
+      return `
+        <tr class="hover:bg-cream-100 transition-colors border-b border-cream-200 text-xs sm:text-sm">
+          <td class="px-4 py-3.5 font-mono font-bold text-coral-600">${trx.id}</td>
+          <td class="px-4 py-3.5 text-caramel-500 whitespace-nowrap font-mono font-semibold">${timeText}</td>
+          <td class="px-4 py-3.5 font-bold text-caramel-900">
+            <div>${trx.customerName}</div>
+            <div class="text-xs text-caramel-500 font-semibold truncate max-w-xs">${trx.customerAddress}</div>
+          </td>
+          <td class="px-4 py-3.5 text-caramel-700 font-medium max-w-xs truncate" title="${itemsSummary}">
+            ${itemsSummary}
+          </td>
+          <td class="px-4 py-3.5 font-black text-caramel-900 font-display whitespace-nowrap">${formatIDR(trx.totalAmount)}</td>
+          <td class="px-4 py-3.5 whitespace-nowrap">
+            <span class="px-3 py-1 text-[11px] font-black rounded-full bg-sage-500/20 text-sage-600 border border-sage-500/30">
+              ✓ ${trx.status}
+            </span>
+          </td>
+           <td class="px-4 py-3.5 text-caramel-700 font-semibold whitespace-nowrap">${trx.paymentMethod}</td>
+           <td class="px-4 py-3.5 text-center whitespace-nowrap">
+             <button
+               onclick="printReceipt('${trx.id}')"
+               class="px-3 py-1.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-caramel-800 font-extrabold text-xs transition-colors inline-flex items-center justify-center gap-1 shadow-sm cursor-pointer border border-amber-200/60"
+               title="Cetak Struk ${trx.id}"
+             >
+               🖨️
+             </button>
+           </td>
+         </tr>
+      `;
+    }).join('');
 
     return `
-      <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 text-xs sm:text-sm">
-        <td class="px-4 py-3.5 font-mono font-bold text-sky-600">${trx.id}</td>
-        <td class="px-4 py-3.5 text-slate-500 whitespace-nowrap">${formattedDate}</td>
-        <td class="px-4 py-3.5 font-medium text-slate-800">
-          <div>${trx.customerName}</div>
-          <div class="text-xs text-slate-400 font-normal truncate max-w-xs">${trx.customerAddress}</div>
-        </td>
-        <td class="px-4 py-3.5 text-slate-700 max-w-xs truncate" title="${itemsSummary}">
-          ${itemsSummary}
-        </td>
-        <td class="px-4 py-3.5 font-extrabold text-slate-900 whitespace-nowrap">${formatIDR(trx.totalAmount)}</td>
-        <td class="px-4 py-3.5 whitespace-nowrap">
-          <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-800 border border-sky-200">
-            ✓ ${trx.status}
-          </span>
-        </td>
-         <td class="px-4 py-3.5 text-slate-600 font-medium whitespace-nowrap">${trx.paymentMethod}</td>
-         <td class="px-4 py-3.5 text-center whitespace-nowrap">
-           <button 
-             onclick="printReceipt('${trx.id}')"
-             class="px-2.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1 shadow-sm cursor-pointer"
-             title="Cetak Struk ${trx.id}"
-           >
-             🖨️
-           </button>
-         </td>
-       </tr>
-     `;
-   }).join('');
+      <div class="card-cute overflow-hidden bg-white mb-4">
+        <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-dashed border-cream-200 bg-gradient-to-r from-cream-100 via-cream-50 to-cream-100">
+          <div>
+            <h4 class="font-display font-bold text-caramel-900 text-base sm:text-lg flex items-center gap-2"><span class="text-coral-600">📅</span> ${dayTitle}</h4>
+            <p class="text-[11px] text-caramel-500 font-semibold mt-0.5">${group.items.length} transaksi pada hari ini</p>
+          </div>
+          <div class="text-left sm:text-right">
+            <span class="text-[9px] uppercase tracking-wider text-caramel-500 font-black">Total Hari Ini</span>
+            <div class="text-base sm:text-lg font-black text-coral-600 font-display">${formatIDR(group.total)}</div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[900px]">
+            <thead>
+              <tr class="bg-cream-100 border-b-2 border-cream-200 text-[10px] uppercase tracking-wider font-black text-caramel-500">
+                <th class="px-4 py-3.5">ID Transaksi</th>
+                <th class="px-4 py-3.5">Waktu</th>
+                <th class="px-4 py-3.5">Nama & Alamat Pembeli</th>
+                <th class="px-4 py-3.5">Item Dibeli</th>
+                <th class="px-4 py-3.5">Total Bayar</th>
+                <th class="px-4 py-3.5">Status</th>
+                <th class="px-4 py-3.5">Metode Pembayaran</th>
+                <th class="px-4 py-3.5 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // Category Pills Renderer
@@ -1134,11 +1269,11 @@ function renderCategoryPills() {
 
   const categories = [
     'Semua',
-    'Makanan & Minuman',
-    'Pakaian & Fashion',
-    'Elektronik',
-    'Rumah Tangga',
-    'Kesehatan & Kecantikan'
+    'Boneka & Plushie',
+    'Barbie & Fashion Doll',
+    'Rumah-rumahan & Miniatur',
+    'Balok Susun & Edukasi',
+    'Pesta Teh & Aksesori'
   ];
 
   container.innerHTML = categories.map(cat => {
@@ -1146,10 +1281,10 @@ function renderCategoryPills() {
     return `
       <button 
         onclick="handleCategoryChange('${cat}')"
-        class="px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
+        class="chip px-4 py-2 text-[13px] font-extrabold transition-all whitespace-nowrap cursor-pointer ${
           isActive 
-            ? 'bg-[#EE4D2D] text-white shadow-sm'
-            : 'bg-white text-slate-600 border border-slate-200 hover:text-[#EE4D2D] hover:border-[#EE4D2D]/40'
+            ? 'chip-active !bg-coral-500 !text-white shadow-btn' 
+            : 'bg-white text-caramel-700 hover:bg-cream-100 border border-cream-300'
         }"
       >
         ${cat}
@@ -1165,22 +1300,22 @@ function updateFilterUI() {
   const bestSellerBtn = document.getElementById('btn-filter-bestseller');
   if (bestSellerBtn) {
     if (store.bestSellerOnly) {
-      bestSellerBtn.classList.remove('bg-white', 'text-[#EE4D2D]', 'border-[#EE4D2D]/30');
-      bestSellerBtn.classList.add('bg-[#FFEBE8]', 'text-[#EE4D2D]', 'border-[#EE4D2D]', 'shadow-sm');
+      bestSellerBtn.classList.remove('bg-white', 'text-coral-600', 'border-coral-400/40');
+      bestSellerBtn.classList.add('!bg-coral-500', '!text-white', '!border-coral-500', 'shadow-btn');
     } else {
-      bestSellerBtn.classList.add('bg-white', 'text-[#EE4D2D]', 'border-[#EE4D2D]/30');
-      bestSellerBtn.classList.remove('bg-[#FFEBE8]', 'text-[#EE4D2D]', 'border-[#EE4D2D]', 'shadow-sm');
+      bestSellerBtn.classList.add('bg-white', 'text-coral-600', 'border-coral-400/40');
+      bestSellerBtn.classList.remove('!bg-coral-500', '!text-white', '!border-coral-500', 'shadow-btn');
     }
   }
 
   const catBestBtn = document.getElementById('cat-bestseller-btn');
   if (catBestBtn) {
     if (store.bestSellerOnly) {
-      catBestBtn.classList.remove('text-amber-600', 'bg-amber-50');
-      catBestBtn.classList.add('bg-amber-500', 'text-white', 'shadow-sm');
+      catBestBtn.classList.remove('text-amber-700', 'bg-amber-100');
+      catBestBtn.classList.add('!bg-amber-500', '!text-white', 'shadow-btn');
     } else {
-      catBestBtn.classList.add('text-amber-600', 'bg-amber-50');
-      catBestBtn.classList.remove('bg-amber-500', 'text-white', 'shadow-sm');
+      catBestBtn.classList.add('text-amber-700', 'bg-amber-100');
+      catBestBtn.classList.remove('!bg-amber-500', '!text-white', 'shadow-btn');
     }
   }
 
@@ -1193,19 +1328,22 @@ function switchView(viewName) {
   const catalogSection = document.getElementById('catalog-section');
   const reportsSection = document.getElementById('reports-section');
   const inventorySection = document.getElementById('inventory-section');
+  const akunSection = document.getElementById('akun-section');
   const navCatalogBtn = document.getElementById('nav-btn-catalog');
   const navReportsBtn = document.getElementById('nav-btn-reports');
   const navInventoryBtn = document.getElementById('nav-btn-inventory');
+  const navAkunBtn = document.getElementById('nav-btn-akun');
 
   // Hide all sections
   catalogSection.classList.add('hidden');
   reportsSection.classList.add('hidden');
   if (inventorySection) inventorySection.classList.add('hidden');
+  if (akunSection) akunSection.classList.add('hidden');
 
   // Reset nav buttons
-  const activeClass = ['text-[#EE4D2D]', 'bg-[#EE4D2D]/10'];
-  const inactiveClass = ['text-slate-500', 'bg-transparent'];
-  [navCatalogBtn, navReportsBtn, navInventoryBtn].forEach(btn => {
+  const activeClass = ['text-coral-600', 'bg-coral-400/20'];
+  const inactiveClass = ['text-caramel-500', 'bg-transparent'];
+  [navCatalogBtn, navReportsBtn, navInventoryBtn, navAkunBtn].forEach(btn => {
     if (btn) {
       activeClass.forEach(c => btn.classList.remove(c));
       inactiveClass.forEach(c => btn.classList.add(c));
@@ -1233,6 +1371,14 @@ function switchView(viewName) {
       activeClass.forEach(c => navReportsBtn.classList.add(c));
     }
     renderReportsView();
+  } else if (viewName === 'akun') {
+    if (akunSection) akunSection.classList.remove('hidden');
+    if (navAkunBtn) {
+      inactiveClass.forEach(c => navAkunBtn.classList.remove(c));
+      activeClass.forEach(c => navAkunBtn.classList.add(c));
+    }
+    loadAccounts();
+    renderAccountsTable();
   }
 }
 
@@ -1345,34 +1491,34 @@ function openScanResultModal(product) {
   if (!modal || !content) return;
 
   let stockText, stockClass;
-  if (product.stock === 0) { stockText = 'Habis'; stockClass = 'text-rose-600'; }
-  else if (product.stock <= 10) { stockText = 'Menipis'; stockClass = 'text-amber-600'; }
-  else { stockText = 'Tersedia'; stockClass = 'text-emerald-600'; }
+  if (product.stock === 0) { stockText = 'Habis'; stockClass = 'text-rose-600 font-black'; }
+  else if (product.stock <= 10) { stockText = 'Menipis'; stockClass = 'text-amber-600 font-black'; }
+  else { stockText = 'Tersedia'; stockClass = 'text-sage-600 font-black'; }
 
   content.innerHTML = `
-    <div class="text-center border-b border-slate-100 pb-4">
+    <div class="text-center border-b-2 border-dashed border-cream-200 pb-4">
       <svg class="product-barcode mx-auto" data-barcode="${product.barcode || ''}" data-bwidth="1.5" data-bheight="40" width="150" height="40"></svg>
-      <p class="text-[10px] font-mono text-slate-400 mt-1">Kode Barcode: ${product.barcode || '-'}</p>
+      <p class="text-[10px] font-mono text-caramel-500 font-bold mt-1">Kode Barcode: ${product.barcode || '-'}</p>
     </div>
 
     <div class="flex items-start gap-3 mt-4">
-      <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg bg-slate-100 border border-slate-200 flex-shrink-0"
+      <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-2xl bg-cream-100 border border-cream-200 flex-shrink-0 shadow-inner"
         onerror="this.onerror=null; this.style.opacity='0.2';" />
       <div class="min-w-0">
-        <p class="font-bold text-sm text-slate-800 line-clamp-2">${product.name}</p>
-        <p class="text-[10px] text-slate-400 mt-0.5">${product.category} · ⭐ ${product.rating || '-'}</p>
-        <p class="mt-2 text-lg font-black text-[#EE4D2D]">${formatIDR(product.price)}</p>
-        <p class="text-[10px] font-medium text-slate-500">Stok: <span class="font-bold ${stockClass}">${product.stock} (${stockText})</span></p>
+        <p class="font-display font-bold text-sm text-caramel-900 line-clamp-2">${product.name}</p>
+        <p class="text-[10px] text-caramel-500 font-semibold mt-0.5">${product.category} · ⭐ ${product.rating || '-'}</p>
+        <p class="mt-2 text-xl font-black text-coral-600 font-display">${formatIDR(product.price)}</p>
+        <p class="text-[10px] font-bold text-caramel-700">Stok: <span class="${stockClass}">${product.stock} (${stockText})</span></p>
       </div>
     </div>
 
     <div class="flex gap-2 mt-5">
       <button onclick="handleAddToCart('${product.id}'); closeScanResultModal();"
-        class="flex-1 py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs transition-colors cursor-pointer shadow-md">
-        🛒 Tambah ke Keranjang
+        class="btn-cute flex-1 py-3 text-xs">
+        🛒 + Keranjang
       </button>
       <button onclick="switchView('inventory'); closeScanResultModal(); openEditProductModal('${product.id}');"
-        class="px-4 py-2.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold text-xs transition-colors cursor-pointer">
+        class="btn-cream px-4 py-3 text-xs">
         ✏️ Edit
       </button>
     </div>
@@ -1400,22 +1546,22 @@ function openScanNotFoundModal(code) {
 
   content.innerHTML = `
     <div class="text-center">
-      <div class="w-14 h-14 mx-auto rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-2xl">🔍</div>
-      <h4 class="font-extrabold text-slate-800 mt-3">Produk Tidak Ditemukan</h4>
-      <p class="text-xs text-slate-500 mt-1">Barcode <span class="font-mono font-bold text-[#EE4D2D]">${code}</span> belum terdaftar pada produk manapun.</p>
-      <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">Tambahkan produk baru dengan barcode ini,<br/>atau edit produk yang sudah ada.</p>
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl shadow-inner">🔍</div>
+      <h4 class="font-display font-bold text-lg text-caramel-900 mt-3">Produk Tidak Ditemukan</h4>
+      <p class="text-xs text-caramel-500 font-semibold mt-1">Barcode <span class="font-mono font-bold text-coral-600">${code}</span> belum terdaftar pada produk manapun.</p>
+      <p class="text-[10px] text-caramel-500 font-medium mt-3 leading-relaxed">Tambahkan produk baru dengan barcode ini,<br/>atau edit produk yang sudah ada.</p>
     </div>
     <div class="flex flex-col gap-2 mt-5">
       <button onclick="closeScanResultModal(); openAddProductModal('${code}');"
-        class="w-full py-2.5 rounded-lg bg-[#EE4D2D] hover:bg-[#d9471e] text-white font-bold text-xs transition-colors cursor-pointer shadow-md">
+        class="btn-cute w-full py-3 text-xs">
         ➕ Tambah Produk Baru dengan Barcode Ini
       </button>
       <button onclick="closeScanResultModal(); switchView('inventory');"
-        class="w-full py-2.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold text-xs transition-colors cursor-pointer">
-        ✏️ Edit Produk di Dashboard
+        class="btn-cream w-full py-3 text-xs">
+        📦 Lihat Dashboard Produk
       </button>
       <button onclick="closeScanResultModal()"
-        class="w-full py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold text-xs transition-colors cursor-pointer">
+        class="w-full py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-caramel-700 font-extrabold text-xs transition-colors cursor-pointer">
         Tutup
       </button>
     </div>
@@ -1555,9 +1701,9 @@ function openCheckoutModal() {
 
   if (checkoutSummary) {
     checkoutSummary.innerHTML = store.cart.map(item => `
-      <div class="flex justify-between items-center text-xs py-1.5 border-b border-slate-100">
-        <span class="font-medium text-slate-700 truncate max-w-[200px]">${item.name} (${item.quantity}x)</span>
-        <span class="font-bold text-slate-900">${formatIDR(item.price * item.quantity)}</span>
+      <div class="flex justify-between items-center text-xs py-2 border-b-2 border-dashed border-cream-200">
+        <span class="font-bold text-caramel-800 truncate max-w-[200px]">${item.name} (${item.quantity}x)</span>
+        <span class="font-black text-coral-600 font-display">${formatIDR(item.price * item.quantity)}</span>
       </div>
     `).join('');
   }
@@ -1746,8 +1892,8 @@ function generateReceiptContent(transaction) {
   </div>
 
   <div class="no-print" style="text-align:center;margin-top:16px;">
-    <button onclick="window.print()" style="padding:10px 20px;background:#0284c7;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">
-      Cetak Ulang Struk
+    <button onclick="window.print()" style="padding:10px 24px;background:#F26B57;color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px -6px rgba(242,107,87,0.5);">
+      🖨️ Cetak Ulang Struk
     </button>
   </div>
   `;
@@ -1781,7 +1927,7 @@ function generateReceiptHTML(transaction) {
       overflow: hidden;
     }
     .receipt-header {
-      background: linear-gradient(135deg, #EE4D2D 0%, #ff6a52 100%);
+      background: linear-gradient(135deg, #F26B57 0%, #FF9B85 100%);
       color: #fff;
       padding: 14px 16px;
       text-align: center;
@@ -1845,12 +1991,12 @@ function generateReceiptHTML(transaction) {
       border-bottom: 0.5px solid #f1f5f9;
     }
     .receipt-summary .summary-row:last-child {
-      border-bottom: 2px solid #0284c7;
+      border-bottom: 2px solid #F26B57;
     }
     .receipt-summary .summary-row.final {
       font-weight: 800;
       font-size: 11px;
-      color: #0284c7;
+      color: #E14E3B;
     }
     .receipt-summary .label {
       color: #64748b;
@@ -1864,7 +2010,7 @@ function generateReceiptHTML(transaction) {
     }
     .receipt-footer .thank-you {
       font-weight: 700;
-      color: #0284c7;
+      color: #F26B57;
       margin-bottom: 4px;
       font-size: 11px;
     }
@@ -2093,58 +2239,58 @@ function renderInventoryTable() {
 
   tbody.innerHTML = pageItems.map(product => {
     const stockStatus = product.stock === 0 
-      ? '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-100 text-rose-700 border border-rose-200">Habis</span>'
+      ? '<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-rose-100 text-rose-600 border border-rose-200">Habis</span>'
       : product.stock <= 10 
-        ? '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-700 border border-amber-200">Menipis</span>'
-        : '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">Tersedia</span>';
+        ? '<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-amber-100 text-amber-700 border border-amber-200">Menipis</span>'
+        : '<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-sage-500/20 text-sage-600 border border-sage-500/30">Tersedia</span>';
 
     const bestSellerBadge = product.isBestSeller 
       ? '<span class="ml-1 text-[10px]">🔥</span>' 
       : '';
 
     return `
-      <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 text-xs sm:text-sm">
-        <td class="px-4 py-3">
-          <input type="checkbox" class="product-checkbox accent-sky-500 cursor-pointer" value="${product.id}" />
+      <tr class="hover:bg-cream-100 transition-colors border-b border-cream-200 text-xs sm:text-sm">
+        <td class="px-4 py-3.5">
+          <input type="checkbox" class="product-checkbox accent-coral-500 w-4 h-4 cursor-pointer" value="${product.id}" />
         </td>
-        <td class="px-4 py-3">
+        <td class="px-4 py-3.5">
           <div class="flex items-center gap-3">
-            <img src="${product.image}" alt="${product.name}" class="w-12 h-12 rounded-xl object-cover bg-slate-100 flex-shrink-0 border border-slate-200" 
-              onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23e2e8f0%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 font-size=%2240%22>📦</text></svg>';"
+            <img src="${product.image}" alt="${product.name}" class="w-12 h-12 rounded-2xl object-cover bg-cream-100 flex-shrink-0 border border-cream-200 shadow-inner" 
+              onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23FFF1CE%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 font-size=%2240%22>📦</text></svg>';"
             />
             <div class="min-w-0">
-              <p class="font-bold text-slate-800 truncate max-w-[200px]">${product.name}${bestSellerBadge}</p>
-              <p class="text-[10px] text-slate-400 font-mono">${product.id}</p>
+              <p class="font-bold text-caramel-900 truncate max-w-[200px]">${product.name}${bestSellerBadge}</p>
+              <p class="text-[10px] text-caramel-500 font-mono">${product.id}</p>
             </div>
           </div>
         </td>
-        <td class="px-4 py-3 text-center">
+        <td class="px-4 py-3.5 text-center">
           <svg class="product-barcode inline-block" data-barcode="${product.barcode || ''}" data-bwidth="1" data-bheight="22" width="96" height="22"></svg>
-          <p class="text-[9px] font-mono text-slate-400 mt-0.5">${product.barcode || '-'}</p>
+          <p class="text-[9px] font-mono text-caramel-500 font-bold mt-0.5">${product.barcode || '-'}</p>
         </td>
-        <td class="px-4 py-3">
-          <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200">${product.category}</span>
+        <td class="px-4 py-3.5">
+          <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-full bg-cream-200 text-caramel-700">${product.category}</span>
         </td>
-        <td class="px-4 py-3 text-right font-extrabold text-slate-900 whitespace-nowrap">${formatIDR(product.price)}</td>
-        <td class="px-4 py-3 text-center">
-          <span class="font-bold ${product.stock === 0 ? 'text-rose-600' : product.stock <= 10 ? 'text-amber-600' : 'text-slate-800'}">${product.stock}</span>
+        <td class="px-4 py-3.5 text-right font-black text-caramel-900 font-display whitespace-nowrap">${formatIDR(product.price)}</td>
+        <td class="px-4 py-3.5 text-center">
+          <span class="font-black ${product.stock === 0 ? 'text-rose-500' : product.stock <= 10 ? 'text-amber-500' : 'text-caramel-800'}">${product.stock}</span>
         </td>
-        <td class="px-4 py-3 text-center">
-          <span class="text-amber-500 font-bold">⭐ ${product.rating || '-'}</span>
+        <td class="px-4 py-3.5 text-center">
+          <span class="text-amber-500 font-black">⭐ ${product.rating || '-'}</span>
         </td>
-        <td class="px-4 py-3 text-center">${stockStatus}</td>
-        <td class="px-4 py-3 text-center whitespace-nowrap">
-          <div class="flex items-center justify-center gap-1">
+        <td class="px-4 py-3.5 text-center">${stockStatus}</td>
+        <td class="px-4 py-3.5 text-center whitespace-nowrap">
+          <div class="flex items-center justify-center gap-1.5">
             <button 
               onclick="openEditProductModal('${product.id}')"
-              class="px-2 py-1.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 text-[10px] font-bold transition-colors cursor-pointer"
+              class="px-3 py-1.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-caramel-800 text-[10px] font-extrabold transition-colors cursor-pointer border border-amber-200/60"
               title="Edit Produk"
             >
               ✏️ Edit
             </button>
             <button 
               onclick="openDeleteModal('${product.id}')"
-              class="px-2 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 text-[10px] font-bold transition-colors cursor-pointer"
+              class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-extrabold transition-colors cursor-pointer border border-rose-200/60"
               title="Hapus Produk"
             >
               🗑️
@@ -2184,9 +2330,9 @@ function renderPagination(total, from, to) {
       }
     }
     numbersEl.innerHTML = pages.map(p => {
-      if (p === '...') return '<span class="px-1 text-xs text-slate-400">...</span>';
+      if (p === '...') return '<span class="px-1 text-xs text-caramel-500 font-bold">...</span>';
       const isActive = p === inventoryPage;
-      return `<button onclick="goToInventoryPage(${p})" class="w-7 h-7 rounded-lg text-xs font-bold transition-colors cursor-pointer ${isActive ? 'bg-sky-500 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}">${p}</button>`;
+      return `<button onclick="goToInventoryPage(${p})" class="w-8 h-8 rounded-2xl text-xs font-black transition-all cursor-pointer ${isActive ? 'bg-coral-500 text-white shadow-btn' : 'bg-white border-2 border-cream-200 text-caramel-700 hover:bg-cream-100'}">${p}</button>`;
     }).join('');
   }
 }
@@ -2367,6 +2513,337 @@ function confirmDeleteProduct() {
 }
 
 // ==========================================
+// 8d. AKUN MANAGEMENT
+// ==========================================
+
+// Format Firestore Timestamp / ISO string menjadi tanggal Indonesia
+function formatAccountDate(value) {
+  if (!value) return '-';
+  try {
+    const d = value.toDate ? value.toDate() : new Date(value);
+    if (isNaN(d)) return '-';
+    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch (e) {
+    return '-';
+  }
+}
+
+// Muat akun dari Firestore 'users' collection (atau localStorage saat Mode Demo)
+async function loadAccounts() {
+  if (demoMode) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
+      if (saved && Array.isArray(saved)) {
+        store.accounts = saved;
+      } else {
+        store.accounts = [{
+          id: 'demo-admin',
+          uid: 'demo-admin',
+          email: 'admin@daisyfumarket.com',
+          displayName: 'Admin Daisyfu',
+          role: 'admin',
+          isActive: true,
+          createdAt: new Date().toISOString()
+        }];
+        localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+      }
+    } catch (e) {
+      store.accounts = [];
+    }
+    renderAccountsTable();
+    return;
+  }
+
+  if (!store.uid) { store.accounts = []; renderAccountsTable(); return; }
+
+  try {
+    const snap = await db.collection('users').get();
+    if (snap.empty && auth.currentUser) {
+      // Seed user yang sedang login sebagai admin pertama
+      const u = auth.currentUser;
+      await db.collection('users').doc(u.uid).set({
+        uid: u.uid,
+        email: u.email || '',
+        displayName: u.displayName || u.email || 'Admin',
+        role: 'admin',
+        isActive: true,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      const snap2 = await db.collection('users').get();
+      store.accounts = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+    } else {
+      store.accounts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    }
+  } catch (e) {
+    store.accounts = [];
+    showToast('Gagal memuat daftar akun: ' + e.message, 'error');
+  }
+  renderAccountsTable();
+}
+
+// Ambil daftar akun sesuai filter pencarian/peran/status
+function getFilteredAccounts() {
+  const searchVal = (document.getElementById('akun-search')?.value || '').toLowerCase().trim();
+  const roleFilter = document.getElementById('akun-role-filter')?.value || 'Semua';
+  const statusFilter = document.getElementById('akun-status-filter')?.value || 'Semua';
+
+  return store.accounts.filter(acc => {
+    const matchSearch = !searchVal ||
+      (acc.displayName && String(acc.displayName).toLowerCase().includes(searchVal)) ||
+      (acc.email && String(acc.email).toLowerCase().includes(searchVal));
+    const matchRole = roleFilter === 'Semua' || acc.role === roleFilter;
+    const isActive = acc.isActive !== false;
+    const matchStatus = statusFilter === 'Semua' || (statusFilter === 'Aktif' ? isActive : !isActive);
+    return matchSearch && matchRole && matchStatus;
+  });
+}
+
+// Render statistik + tabel akun
+function renderAccountsTable() {
+  const tbody = document.getElementById('akun-table-body');
+  const emptyState = document.getElementById('akun-empty');
+  const countEl = document.getElementById('akun-count');
+
+  const total = store.accounts.length;
+  const totalActive = store.accounts.filter(a => a.isActive !== false).length;
+  const totalAdmin = store.accounts.filter(a => a.role === 'admin').length;
+  const totalInactive = total - totalActive;
+
+  const totalEl = document.getElementById('akun-total');
+  const activeEl = document.getElementById('akun-active');
+  const adminEl = document.getElementById('akun-admin');
+  const inactiveEl = document.getElementById('akun-inactive');
+  if (totalEl) totalEl.textContent = total;
+  if (activeEl) activeEl.textContent = totalActive;
+  if (adminEl) adminEl.textContent = totalAdmin;
+  if (inactiveEl) inactiveEl.textContent = totalInactive;
+
+  const filtered = getFilteredAccounts();
+  if (countEl) countEl.textContent = `${filtered.length} akun`;
+
+  if (!tbody) return;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+
+  tbody.innerHTML = filtered.map(acc => {
+    const isActive = acc.isActive !== false;
+    const roleLabel = acc.role === 'admin' ? 'Admin' : 'Staff';
+    const roleColor = acc.role === 'admin'
+      ? 'text-coral-600 bg-coral-400/20 border-coral-400/40'
+      : 'text-sage-600 bg-sage-500/20 border-sage-500/30';
+    const statusLabel = isActive ? 'Aktif' : 'Nonaktif';
+    const statusColor = isActive
+      ? 'text-sage-600 bg-sage-500/20 border-sage-500/30'
+      : 'text-rose-600 bg-rose-100 border-rose-200';
+
+    return `
+      <tr class="hover:bg-cream-100 transition-colors border-b border-cream-200 text-xs sm:text-sm">
+        <td class="px-4 py-3.5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white text-xs font-black shadow-btn flex-shrink-0">${(acc.displayName || acc.email || '?').trim().charAt(0).toUpperCase()}</div>
+            <div class="min-w-0">
+              <p class="font-bold text-caramel-900 truncate max-w-[160px]">${acc.displayName || '-'}</p>
+              <p class="text-[9px] text-caramel-500 font-mono truncate max-w-[160px]">${acc.uid || acc.id || '-'}</p>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3.5 font-mono text-caramel-700 font-medium truncate max-w-[200px]">${acc.email || '-'}</td>
+        <td class="px-4 py-3.5"><span class="px-2.5 py-1 text-[10px] font-black rounded-full border ${roleColor}">${roleLabel}</span></td>
+        <td class="px-4 py-3.5 text-center"><span class="px-2.5 py-1 text-[10px] font-black rounded-full border ${statusColor}">${statusLabel}</span></td>
+        <td class="px-4 py-3.5 text-caramel-500 text-xs whitespace-nowrap font-medium">${formatAccountDate(acc.createdAt)}</td>
+        <td class="px-4 py-3.5 text-center whitespace-nowrap">
+          <div class="flex items-center justify-center gap-1.5">
+            <button
+              onclick="openEditAccountModal('${acc.id}')"
+              class="px-3 py-1.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-caramel-800 text-[10px] font-extrabold transition-colors cursor-pointer border border-amber-200/60"
+              title="Edit Akun"
+            >✏️ Edit</button>
+            <button
+              onclick="toggleAccountStatus('${acc.id}', ${isActive})"
+              class="px-3 py-1.5 rounded-xl ${isActive ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60' : 'bg-sage-50 hover:bg-sage-100 text-sage-600 border border-sage-500/30'} text-[10px] font-extrabold transition-colors cursor-pointer"
+              title="${isActive ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}"
+            >${isActive ? '🚫 Nonaktif' : '✅ Aktifkan'}</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Buka modal tambah akun
+function openAddAccountModal() {
+  document.getElementById('account-modal-title').textContent = 'Tambah Akun Baru';
+  document.getElementById('account-submit-btn').innerHTML = '<span>💾</span> Simpan Akun';
+  document.getElementById('account-form').reset();
+  document.getElementById('account-edit-id').value = '';
+  document.getElementById('account-email').disabled = false;
+  document.getElementById('account-password').required = true;
+  document.getElementById('account-password').placeholder = 'Min. 6 karakter';
+
+  const modal = document.getElementById('account-modal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+// Buka modal edit akun
+function openEditAccountModal(accountId) {
+  const acc = store.accounts.find(a => a.id === accountId);
+  if (!acc) return;
+
+  document.getElementById('account-modal-title').textContent = 'Edit Akun';
+  document.getElementById('account-submit-btn').innerHTML = '<span>💾</span> Perbarui Akun';
+  document.getElementById('account-edit-id').value = acc.id;
+  document.getElementById('account-name').value = acc.displayName || '';
+  document.getElementById('account-email').value = acc.email || '';
+  document.getElementById('account-email').disabled = true;
+  document.getElementById('account-password').value = '';
+  document.getElementById('account-password').required = false;
+  document.getElementById('account-password').placeholder = 'Kosongkan jika tidak diubah';
+  document.getElementById('account-role').value = acc.role || 'staff';
+  document.getElementById('account-status').value = acc.isActive !== false ? 'true' : 'false';
+
+  const modal = document.getElementById('account-modal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeAccountModal() {
+  const modal = document.getElementById('account-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  const emailInput = document.getElementById('account-email');
+  if (emailInput) emailInput.disabled = false;
+}
+
+// Buat user Firebase Auth lewat app kedua agar sesi admin tidak ter-logout
+async function createAuthAccount(email, password, name) {
+  let secondary = firebase.apps.find(a => a.name === 'accountCreator');
+  if (!secondary) secondary = firebase.initializeApp(firebaseConfig, 'accountCreator');
+  const secondaryAuth = secondary.auth();
+  const cred = await secondaryAuth.createUserWithEmailAndPassword(email, password);
+  await cred.user.updateProfile({ displayName: name });
+  const uid = cred.user.uid;
+  await secondaryAuth.signOut();
+  return uid;
+}
+
+// Simpan akun (tambah baru / perbarui) dari form modal
+async function processAccountSubmit(e) {
+  e.preventDefault();
+
+  const editId = document.getElementById('account-edit-id').value;
+  const name = document.getElementById('account-name').value.trim();
+  const email = document.getElementById('account-email').value.trim();
+  const password = document.getElementById('account-password').value;
+  const role = document.getElementById('account-role').value;
+  const isActive = document.getElementById('account-status').value === 'true';
+
+  if (!name || !email) {
+    showToast('Nama dan email wajib diisi.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('account-submit-btn');
+  btn.disabled = true;
+
+  try {
+    if (editId) {
+      // Perbarui data akun yang sudah ada
+      const updates = {
+        displayName: name,
+        role: role,
+        isActive: isActive,
+        updatedAt: demoMode ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if (demoMode) {
+        const idx = store.accounts.findIndex(a => a.id === editId);
+        if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], ...updates };
+        localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+      } else {
+        await db.collection('users').doc(editId).update(updates);
+      }
+      showToast(`Akun "${name}" berhasil diperbarui!`, 'success');
+    } else {
+      // Tambah akun baru
+      if (!password || password.length < 6) {
+        showToast('Password minimal 6 karakter.', 'error');
+        btn.disabled = false;
+        return;
+      }
+      const duplicate = store.accounts.find(a => String(a.email).toLowerCase() === email.toLowerCase());
+      if (duplicate) {
+        showToast('Email sudah terdaftar.', 'error');
+        btn.disabled = false;
+        return;
+      }
+      if (demoMode) {
+        const uid = 'demo-' + Date.now();
+        store.accounts.unshift({
+          id: uid,
+          uid: uid,
+          email: email,
+          displayName: name,
+          role: role,
+          isActive: isActive,
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+      } else {
+        const uid = await createAuthAccount(email, password, name);
+        await db.collection('users').doc(uid).set({
+          uid: uid,
+          email: email,
+          displayName: name,
+          role: role,
+          isActive: isActive,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      showToast(`Akun "${name}" berhasil ditambahkan!`, 'success');
+    }
+
+    closeAccountModal();
+    await loadAccounts();
+  } catch (err) {
+    showToast('Gagal menyimpan akun: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// Aktif / nonaktifkan akun
+async function toggleAccountStatus(accountId, currentlyActive) {
+  const acc = store.accounts.find(a => a.id === accountId);
+  if (!acc) return;
+  const newStatus = !currentlyActive;
+
+  try {
+    if (demoMode) {
+      const idx = store.accounts.findIndex(a => a.id === accountId);
+      if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], isActive: newStatus };
+      localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+    } else {
+      await db.collection('users').doc(accountId).update({
+        isActive: newStatus,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    showToast(`Akun "${acc.displayName || acc.email}" ${newStatus ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
+    await loadAccounts();
+  } catch (err) {
+    showToast('Gagal mengubah status akun: ' + err.message, 'error');
+  }
+}
+
+// ==========================================
 // 5. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -2403,5 +2880,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const productForm = document.getElementById('product-form');
   if (productForm) {
     productForm.addEventListener('submit', processProductSubmit);
+  }
+
+  // Account Form Submission
+  const accountForm = document.getElementById('account-form');
+  if (accountForm) {
+    accountForm.addEventListener('submit', processAccountSubmit);
   }
 });

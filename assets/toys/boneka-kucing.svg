@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E0F2F1"/><stop offset="100%" stop-color="#FFF9C4"/></linearGradient>
+           <linearGradient id="cat" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#FFF0F5"/></linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#583C32" flood-opacity="0.18"/>
+    </filter>
+    <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.4 0"/>
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <!-- Decorative background floaties -->
+  <circle cx="60" cy="70" r="14" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="340" cy="80" r="18" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="350" cy="320" r="12" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="50" cy="330" r="16" fill="#FFFFFF" opacity="0.3"/>
+  <g filter="url(#soft-shadow)">
+    
+      <!-- Cat Ears -->
+      <polygon points="120,150 145,85 180,135" fill="url(#cat)"/>
+      <polygon points="128,145 147,100 172,135" fill="#FFB6C1"/>
+      <polygon points="280,150 255,85 220,135" fill="url(#cat)"/>
+      <polygon points="272,145 253,100 228,135" fill="#FFB6C1"/>
+      <!-- Chubby Body -->
+      <ellipse cx="200" cy="225" rx="105" ry="95" fill="url(#cat)"/>
+      <!-- Tail -->
+      <path d="M300 250 Q350 240 345 200 Q340 170 315 190" stroke="#FFD1DC" stroke-width="22" stroke-linecap="round" fill="none"/>
+      <!-- Cute Eyes -->
+      <path d="M150 195 Q165 180 180 195" stroke="#3E2C26" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M220 195 Q235 180 250 195" stroke="#3E2C26" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <!-- Nose & Mouth -->
+      <circle cx="200" cy="205" r="5" fill="#FF69B4"/>
+      <path d="M192 212 Q200 218 200 212 Q200 218 208 212" stroke="#3E2C26" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- Whiskers -->
+      <line x1="120" y1="200" x2="145" y2="204" stroke="#D7CCC8" stroke-width="3" stroke-linecap="round"/>
+      <line x1="118" y1="214" x2="144" y2="212" stroke="#D7CCC8" stroke-width="3" stroke-linecap="round"/>
+      <line x1="280" y1="200" x2="255" y2="204" stroke="#D7CCC8" stroke-width="3" stroke-linecap="round"/>
+      <line x1="282" y1="214" x2="256" y2="212" stroke="#D7CCC8" stroke-width="3" stroke-linecap="round"/>
+      <!-- Cheeks -->
+      <circle cx="140" cy="210" r="15" fill="#FF80AB" opacity="0.6"/>
+      <circle cx="260" cy="210" r="15" fill="#FF80AB" opacity="0.6"/>
+      <!-- Boba cup in paws -->
+      <rect x="175" y="240" width="50" height="65" rx="8" fill="#F8BBD0"/>
+      <rect x="180" y="250" width="40" height="48" rx="4" fill="#8D6E63"/>
+      <!-- Boba pearls -->
+      <circle cx="190" cy="285" r="4.5" fill="#3E2C26"/>
+      <circle cx="202" cy="288" r="4.5" fill="#3E2C26"/>
+      <circle cx="212" cy="284" r="4.5" fill="#3E2C26"/>
+      <circle cx="196" cy="276" r="4" fill="#3E2C26"/>
+      <circle cx="208" cy="277" r="4" fill="#3E2C26"/>
+      <!-- Straw -->
+      <rect x="195" y="220" width="10" height="30" rx="3" fill="#AB47BC"/>
+      <!-- Little Paws -->
+      <circle cx="165" cy="270" r="16" fill="url(#cat)"/>
+      <circle cx="235" cy="270" r="16" fill="url(#cat)"/>
+    
+  </g>
+</svg>
