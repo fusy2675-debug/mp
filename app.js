@@ -508,16 +508,61 @@ class StoreState {
     this.transactions = [];
     this.accounts = [];
     this.uid = null;
+    this.currentUserRole = 'admin'; // 'admin' | 'kasir'
+    this.currentUser = null;
     this.activeCategory = 'Semua';
     this.searchQuery = '';
     this.bestSellerOnly = false;
     this.currentView = 'catalog';
 
     if (!auth || !auth.onAuthStateChanged) return;
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (demoMode) return;
       if (user) {
         this.uid = user.uid;
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          if (doc.exists) {
+            const data = doc.data();
+            if (data.isActive === false) {
+              await auth.signOut();
+              showToast('Akun Anda telah dinonaktifkan. Hubungi admin toko.', 'error');
+              return;
+            }
+            this.currentUserRole = (data.role === 'staff' ? 'kasir' : data.role) || 'kasir';
+            this.currentUser = {
+              uid: user.uid,
+              id: user.uid,
+              email: user.email,
+              displayName: data.displayName || user.displayName || user.email,
+              role: this.currentUserRole
+            };
+          } else {
+            this.currentUserRole = 'admin';
+            this.currentUser = {
+              uid: user.uid,
+              id: user.uid,
+              email: user.email,
+              displayName: user.displayName || user.email || 'Admin',
+              role: 'admin'
+            };
+            await db.collection('users').doc(user.uid).set({
+              uid: user.uid,
+              email: user.email || '',
+              displayName: this.currentUser.displayName,
+              role: 'admin',
+              isActive: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(() => {});
+          }
+        } catch (e) {
+          this.currentUserRole = 'admin';
+          this.currentUser = { uid: user.uid, id: user.uid, email: user.email, displayName: user.displayName || 'Admin', role: 'admin' };
+        }
+
+        updateRoleUI();
+
         Promise.all([this.loadProducts(), this.loadCart(), this.loadTransactions()]).then(() => {
           updateFilterUI();
           renderProductGrid();
@@ -527,10 +572,13 @@ class StoreState {
         }).catch(() => {});
       } else {
         this.uid = null;
+        this.currentUserRole = null;
+        this.currentUser = null;
         this.products = [];
         this.cart = [];
         this.transactions = [];
         this.accounts = [];
+        updateRoleUI();
         updateFilterUI();
         renderProductGrid();
         renderInventoryTable();
@@ -725,9 +773,17 @@ const store = new StoreState();
 // Auth helpers
 let authMode = 'login';
 
-function enterDemoMode() {
+function enterDemoMode(role = 'admin') {
   demoMode = true;
-  store.uid = 'demo';
+  store.uid = 'demo-' + role;
+  store.currentUserRole = role; // 'admin' or 'kasir'
+  store.currentUser = {
+    id: 'demo-' + role,
+    uid: 'demo-' + role,
+    email: role === 'admin' ? 'admin@daisyfumarket.com' : 'kasir@daisyfumarket.com',
+    displayName: role === 'admin' ? 'Admin Daisyfu' : 'Kasir Daisyfu',
+    role: role
+  };
   try {
     const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
     const isOldCatalog = Array.isArray(saved) && saved.length > 0 && (!saved[0].image || !saved[0].image.includes('assets/toys/'));
@@ -748,13 +804,71 @@ function enterDemoMode() {
   const logoutBtn = document.getElementById('btn-logout');
   if (overlay) overlay.classList.add('hidden');
   if (logoutBtn) logoutBtn.classList.remove('hidden');
+  updateRoleUI();
   updateFilterUI();
   renderProductGrid();
   renderInventoryTable();
   renderDashboardStats();
   renderReportsView();
   updateCartBadge();
-  showToast('Mode Demo aktif — data hanya tersimpan di browser ini.', 'success');
+  showToast(`Mode Uji Coba aktif sebagai ${role === 'admin' ? '👑 Admin (Akses Penuh)' : '💼 Kasir (Produk & Transaksi)'}.`, 'success');
+}
+
+function toggleDemoRole() {
+  if (!demoMode) return;
+  const targetRole = store.currentUserRole === 'admin' ? 'kasir' : 'admin';
+  enterDemoMode(targetRole);
+}
+
+function updateRoleUI() {
+  const navAkunBtn = document.getElementById('nav-btn-akun');
+  const topbarNavAkun = document.getElementById('topbar-nav-akun');
+  const userInfoPill = document.getElementById('user-info-pill');
+  const userRoleLabel = document.getElementById('user-role-label');
+  const demoRoleSwitchBtn = document.getElementById('demo-role-switch-btn');
+
+  const isKasir = store.currentUserRole === 'kasir';
+  const isAdmin = store.currentUserRole === 'admin';
+
+  // Toggle visibilitas navigasi Manajemen Akun
+  if (navAkunBtn) {
+    if (isKasir) navAkunBtn.classList.add('hidden');
+    else navAkunBtn.classList.remove('hidden');
+  }
+  if (topbarNavAkun) {
+    if (isKasir) topbarNavAkun.classList.add('hidden');
+    else topbarNavAkun.classList.remove('hidden');
+  }
+
+  // Jika pengguna adalah Kasir dan saat ini sedang membuka halaman Akun, kembalikan ke Katalog
+  if (isKasir && store.currentView === 'akun') {
+    switchView('catalog');
+    showToast('Akses ditolak: Hanya Admin yang dapat mengakses Manajemen Akun.', 'error');
+  }
+
+  // Tampilkan badge peran pengguna yang sedang aktif
+  if (userInfoPill && (isAdmin || isKasir)) {
+    userInfoPill.classList.remove('hidden');
+    userInfoPill.classList.add('flex');
+    if (userRoleLabel) {
+      userRoleLabel.innerHTML = isAdmin ? '👑 Admin' : '💼 Kasir';
+      userRoleLabel.className = isAdmin ? 'font-extrabold text-coral-600 flex items-center gap-1' : 'font-extrabold text-amber-700 flex items-center gap-1';
+    }
+    if (demoRoleSwitchBtn) {
+      if (demoMode) {
+        demoRoleSwitchBtn.classList.remove('hidden');
+        demoRoleSwitchBtn.textContent = isAdmin ? 'Ganti ke Kasir' : 'Ganti ke Admin';
+        demoRoleSwitchBtn.className = isAdmin
+          ? 'text-[10px] font-black px-2.5 py-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-colors cursor-pointer shadow-btn'
+          : 'text-[10px] font-black px-2.5 py-1 rounded-xl bg-coral-500 hover:bg-coral-600 text-white transition-colors cursor-pointer shadow-btn';
+      } else {
+        demoRoleSwitchBtn.classList.add('hidden');
+      }
+    }
+  } else if (userInfoPill) {
+    userInfoPill.classList.add('hidden');
+    userInfoPill.classList.remove('flex');
+  }
 }
 
 function toggleAuthMode() {
@@ -777,6 +891,16 @@ function toggleAuthMode() {
     if (submitBtn) submitBtn.textContent = 'Masuk';
     if (switchLink) switchLink.textContent = 'Belum punya akun? Daftar';
   }
+}
+
+// Toggle tampil/sembunyi kata sandi pada input tertentu
+function togglePasswordVisibility(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn = btnId ? document.getElementById(btnId) : null;
+  if (!input) return;
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  if (btn) btn.textContent = showing ? '👁️' : '🙈';
 }
 
 async function handleAuthSubmit(e) {
@@ -816,7 +940,7 @@ async function handleAuthSubmit(e) {
           uid: cred.user.uid,
           email: email,
           displayName: name,
-          role: 'staff',
+          role: 'kasir',
           isActive: true,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -838,6 +962,8 @@ function handleLogout() {
   if (demoMode) {
     demoMode = false;
     store.uid = null;
+    store.currentUserRole = null;
+    store.currentUser = null;
     store.products = [];
     store.cart = [];
     store.transactions = [];
@@ -846,12 +972,16 @@ function handleLogout() {
     const logoutBtn = document.getElementById('btn-logout');
     if (overlay) overlay.classList.remove('hidden');
     if (logoutBtn) logoutBtn.classList.add('hidden');
+    updateRoleUI();
     updateCartBadge();
     renderProductGrid();
     renderInventoryTable();
     renderReportsView();
     return;
   }
+  store.currentUserRole = null;
+  store.currentUser = null;
+  updateRoleUI();
   auth.signOut();
 }
 
@@ -978,7 +1108,7 @@ function renderProductGrid() {
           onerror="this.onerror=null; this.src='${fallback}';"
         />
         <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-          ${product.isBestSeller ? `<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-gradient-to-r from-coral-500 to-amber-400 text-white shadow-md flex items-center gap-1">🔥 Best</span>` : ''}
+          ${product.isBestSeller ? `<span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-gradient-to-r from-coral-500 to-amber-400 text-white shadow-md flex items-center gap-1">🔥 Terlaris</span>` : ''}
           <span class="px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-white/95 text-caramel-700 shadow-sm backdrop-blur">${product.category}</span>
         </div>
         <button 
@@ -1324,6 +1454,12 @@ function updateFilterUI() {
 
 // Switch Views
 function switchView(viewName) {
+  // Pembatasan hak akses: Kasir tidak dapat membuka halaman akun
+  if (viewName === 'akun' && store.currentUserRole === 'kasir') {
+    showToast('Akses ditolak: Hanya Admin yang dapat mengakses Manajemen Akun.', 'error');
+    return;
+  }
+
   store.currentView = viewName;
   const catalogSection = document.getElementById('catalog-section');
   const reportsSection = document.getElementById('reports-section');
@@ -2164,9 +2300,9 @@ async function syncToFirebase() {
       await db.collection('transactions').doc(tid).set({ ...t, id: tid });
       trxOk++;
     }
-    showToast(`Sinkron selesai: ${prodOk} produk + ${trxOk} transaksi di-Firestore-kan.`, 'success');
+    showToast(`Sinkronisasi selesai: ${prodOk} produk + ${trxOk} transaksi di-Firestore-kan.`, 'success');
   } catch (e) {
-    showToast('Gagal sync ke Firebase: ' + e.message, 'error');
+    showToast('Gagal menyinkronkan ke Firebase: ' + e.message, 'error');
   }
   if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
 }
@@ -2481,6 +2617,10 @@ function processProductSubmit(e) {
 // ==========================================
 
 function openDeleteModal(productId) {
+  if (store.currentUserRole === 'kasir') {
+    showToast('Akses ditolak: Hanya Admin yang dapat menghapus produk secara permanen. Kasir dapat mengubah stok atau status produk.', 'error');
+    return;
+  }
   deleteProductId = productId;
   const product = store.getProductById(productId);
   if (!product) return;
@@ -2532,21 +2672,59 @@ function formatAccountDate(value) {
 async function loadAccounts() {
   if (demoMode) {
     try {
-      const saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
-      if (saved && Array.isArray(saved)) {
+      let saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
+      if (saved && Array.isArray(saved) && saved.length > 0) {
+        // Migrasi akun lama yang masih memiliki role 'staff' -> 'kasir'
+        saved = saved.map(acc => ({
+          ...acc,
+          role: acc.role === 'staff' ? 'kasir' : (acc.role || 'kasir')
+        }));
+        if (!saved.some(a => a.role === 'admin')) {
+          saved.unshift({
+            id: 'demo-admin',
+            uid: 'demo-admin',
+            email: 'admin@daisyfumarket.com',
+            displayName: 'Admin Daisyfu',
+            role: 'admin',
+            isActive: true,
+            createdAt: new Date().toISOString()
+          });
+        }
+        if (!saved.some(a => a.role === 'kasir')) {
+          saved.push({
+            id: 'demo-kasir',
+            uid: 'demo-kasir',
+            email: 'kasir@daisyfumarket.com',
+            displayName: 'Kasir Daisyfu',
+            role: 'kasir',
+            isActive: true,
+            createdAt: new Date().toISOString()
+          });
+        }
         store.accounts = saved;
       } else {
-        store.accounts = [{
-          id: 'demo-admin',
-          uid: 'demo-admin',
-          email: 'admin@daisyfumarket.com',
-          displayName: 'Admin Daisyfu',
-          role: 'admin',
-          isActive: true,
-          createdAt: new Date().toISOString()
-        }];
-        localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+        store.accounts = [
+          {
+            id: 'demo-admin',
+            uid: 'demo-admin',
+            email: 'admin@daisyfumarket.com',
+            displayName: 'Admin Daisyfu',
+            role: 'admin',
+            isActive: true,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'demo-kasir',
+            uid: 'demo-kasir',
+            email: 'kasir@daisyfumarket.com',
+            displayName: 'Kasir Daisyfu',
+            role: 'kasir',
+            isActive: true,
+            createdAt: new Date().toISOString()
+          }
+        ];
       }
+      localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
     } catch (e) {
       store.accounts = [];
     }
@@ -2571,9 +2749,15 @@ async function loadAccounts() {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       const snap2 = await db.collection('users').get();
-      store.accounts = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+      store.accounts = snap2.docs.map(d => {
+        const data = d.data();
+        return { id: d.id, ...data, role: data.role === 'staff' ? 'kasir' : (data.role || 'kasir') };
+      });
     } else {
-      store.accounts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      store.accounts = snap.docs.map(d => {
+        const data = d.data();
+        return { id: d.id, ...data, role: data.role === 'staff' ? 'kasir' : (data.role || 'kasir') };
+      });
     }
   } catch (e) {
     store.accounts = [];
@@ -2592,7 +2776,8 @@ function getFilteredAccounts() {
     const matchSearch = !searchVal ||
       (acc.displayName && String(acc.displayName).toLowerCase().includes(searchVal)) ||
       (acc.email && String(acc.email).toLowerCase().includes(searchVal));
-    const matchRole = roleFilter === 'Semua' || acc.role === roleFilter;
+    const currentRole = acc.role === 'staff' ? 'kasir' : (acc.role || 'kasir');
+    const matchRole = roleFilter === 'Semua' || currentRole === roleFilter;
     const isActive = acc.isActive !== false;
     const matchStatus = statusFilter === 'Semua' || (statusFilter === 'Aktif' ? isActive : !isActive);
     return matchSearch && matchRole && matchStatus;
@@ -2632,12 +2817,18 @@ function renderAccountsTable() {
 
   if (emptyState) emptyState.classList.add('hidden');
 
+  const currentUid = store.uid || (auth.currentUser ? auth.currentUser.uid : null);
+  const currentAccount = store.currentUser;
+
   tbody.innerHTML = filtered.map(acc => {
     const isActive = acc.isActive !== false;
-    const roleLabel = acc.role === 'admin' ? 'Admin' : 'Staff';
-    const roleColor = acc.role === 'admin'
-      ? 'text-coral-600 bg-coral-400/20 border-coral-400/40'
-      : 'text-sage-600 bg-sage-500/20 border-sage-500/30';
+    const isCurrentUser = (currentUid && (acc.id === currentUid || acc.uid === currentUid)) ||
+                          (currentAccount && (acc.id === currentAccount.id || acc.uid === currentAccount.uid || acc.email === currentAccount.email));
+    const roleNormalized = acc.role === 'staff' ? 'kasir' : (acc.role || 'kasir');
+    const roleLabel = roleNormalized === 'admin' ? '👑 Admin' : '💼 Kasir';
+    const roleColor = roleNormalized === 'admin'
+      ? 'text-coral-700 bg-coral-400/20 border-coral-400/40'
+      : 'text-amber-800 bg-amber-400/20 border-amber-400/40';
     const statusLabel = isActive ? 'Aktif' : 'Nonaktif';
     const statusColor = isActive
       ? 'text-sage-600 bg-sage-500/20 border-sage-500/30'
@@ -2649,7 +2840,10 @@ function renderAccountsTable() {
           <div class="flex items-center gap-2.5">
             <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white text-xs font-black shadow-btn flex-shrink-0">${(acc.displayName || acc.email || '?').trim().charAt(0).toUpperCase()}</div>
             <div class="min-w-0">
-              <p class="font-bold text-caramel-900 truncate max-w-[160px]">${acc.displayName || '-'}</p>
+              <p class="font-bold text-caramel-900 truncate max-w-[160px] flex items-center gap-1.5">
+                <span>${acc.displayName || '-'}</span>
+                ${isCurrentUser ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cream-300 text-caramel-800 border border-amber-300">Anda</span>' : ''}
+              </p>
               <p class="text-[9px] text-caramel-500 font-mono truncate max-w-[160px]">${acc.uid || acc.id || '-'}</p>
             </div>
           </div>
@@ -2662,14 +2856,20 @@ function renderAccountsTable() {
           <div class="flex items-center justify-center gap-1.5">
             <button
               onclick="openEditAccountModal('${acc.id}')"
-              class="px-3 py-1.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-caramel-800 text-[10px] font-extrabold transition-colors cursor-pointer border border-amber-200/60"
-              title="Edit Akun"
+              class="px-2.5 py-1.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-caramel-800 text-[10px] font-extrabold transition-colors cursor-pointer border border-amber-200/60"
+              title="Edit Akun & Peran"
             >✏️ Edit</button>
             <button
               onclick="toggleAccountStatus('${acc.id}', ${isActive})"
-              class="px-3 py-1.5 rounded-xl ${isActive ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60' : 'bg-sage-50 hover:bg-sage-100 text-sage-600 border border-sage-500/30'} text-[10px] font-extrabold transition-colors cursor-pointer"
+              class="px-2.5 py-1.5 rounded-xl ${isActive ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300' : 'bg-sage-50 hover:bg-sage-100 text-sage-600 border border-sage-500/30'} text-[10px] font-extrabold transition-colors cursor-pointer"
               title="${isActive ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}"
-            >${isActive ? '🚫 Nonaktif' : '✅ Aktifkan'}</button>
+            >${isActive ? '🚫 Nonaktif' : '✅ Aktif'}</button>
+            <button
+              onclick="deleteAccount('${acc.id}')"
+              class="px-2.5 py-1.5 rounded-xl ${isCurrentUser ? 'opacity-40 cursor-not-allowed bg-cream-200 text-caramel-400' : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60 cursor-pointer'} text-[10px] font-extrabold transition-colors"
+              title="${isCurrentUser ? 'Tidak dapat menghapus akun Anda sendiri' : 'Hapus Akun Permanen'}"
+              ${isCurrentUser ? 'disabled' : ''}
+            >🗑️ Hapus</button>
           </div>
         </td>
       </tr>
@@ -2686,18 +2886,19 @@ function openAddAccountModal() {
   document.getElementById('account-email').disabled = false;
   document.getElementById('account-password').required = true;
   document.getElementById('account-password').placeholder = 'Min. 6 karakter';
+  document.getElementById('account-role').value = 'kasir';
 
   const modal = document.getElementById('account-modal');
   modal.classList.remove('hidden');
   modal.classList.add('flex');
 }
 
-// Buka modal edit akun
+// Buka modal edit akun (Admin dapat mengubah nama, password, peran, dan status)
 function openEditAccountModal(accountId) {
   const acc = store.accounts.find(a => a.id === accountId);
   if (!acc) return;
 
-  document.getElementById('account-modal-title').textContent = 'Edit Akun';
+  document.getElementById('account-modal-title').textContent = 'Edit Akun & Peran';
   document.getElementById('account-submit-btn').innerHTML = '<span>💾</span> Perbarui Akun';
   document.getElementById('account-edit-id').value = acc.id;
   document.getElementById('account-name').value = acc.displayName || '';
@@ -2706,7 +2907,7 @@ function openEditAccountModal(accountId) {
   document.getElementById('account-password').value = '';
   document.getElementById('account-password').required = false;
   document.getElementById('account-password').placeholder = 'Kosongkan jika tidak diubah';
-  document.getElementById('account-role').value = acc.role || 'staff';
+  document.getElementById('account-role').value = (acc.role === 'staff' ? 'kasir' : acc.role) || 'kasir';
   document.getElementById('account-status').value = acc.isActive !== false ? 'true' : 'false';
 
   const modal = document.getElementById('account-modal');
@@ -2734,7 +2935,7 @@ async function createAuthAccount(email, password, name) {
   return uid;
 }
 
-// Simpan akun (tambah baru / perbarui) dari form modal
+// Simpan akun (tambah baru / perbarui peran & status) dari form modal
 async function processAccountSubmit(e) {
   e.preventDefault();
 
@@ -2755,7 +2956,7 @@ async function processAccountSubmit(e) {
 
   try {
     if (editId) {
-      // Perbarui data akun yang sudah ada
+      // Perbarui data akun yang sudah ada (termasuk status dan peran)
       const updates = {
         displayName: name,
         role: role,
@@ -2769,7 +2970,7 @@ async function processAccountSubmit(e) {
       } else {
         await db.collection('users').doc(editId).update(updates);
       }
-      showToast(`Akun "${name}" berhasil diperbarui!`, 'success');
+      showToast(`Akun "${name}" berhasil diperbarui (Peran: ${role === 'admin' ? 'Admin' : 'Kasir'})!`, 'success');
     } else {
       // Tambah akun baru
       if (!password || password.length < 6) {
@@ -2807,7 +3008,7 @@ async function processAccountSubmit(e) {
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
-      showToast(`Akun "${name}" berhasil ditambahkan!`, 'success');
+      showToast(`Akun "${name}" berhasil ditambahkan sebagai ${role === 'admin' ? 'Admin' : 'Kasir'}!`, 'success');
     }
 
     closeAccountModal();
@@ -2821,6 +3022,11 @@ async function processAccountSubmit(e) {
 
 // Aktif / nonaktifkan akun
 async function toggleAccountStatus(accountId, currentlyActive) {
+  if (store.currentUserRole !== 'admin') {
+    showToast('Akses ditolak: Hanya Admin yang dapat mengubah status akun.', 'error');
+    return;
+  }
+
   const acc = store.accounts.find(a => a.id === accountId);
   if (!acc) return;
   const newStatus = !currentlyActive;
@@ -2840,6 +3046,45 @@ async function toggleAccountStatus(accountId, currentlyActive) {
     await loadAccounts();
   } catch (err) {
     showToast('Gagal mengubah status akun: ' + err.message, 'error');
+  }
+}
+
+// Hapus akun pengguna lain secara permanen (Hanya Admin)
+async function deleteAccount(accountId) {
+  if (store.currentUserRole !== 'admin') {
+    showToast('Akses ditolak: Hanya Admin yang dapat menghapus akun.', 'error');
+    return;
+  }
+
+  const acc = store.accounts.find(a => a.id === accountId);
+  if (!acc) return;
+
+  const currentUid = store.uid || (auth.currentUser ? auth.currentUser.uid : null);
+  const currentAccount = store.currentUser;
+  const isSelf = (currentUid && (acc.id === currentUid || acc.uid === currentUid)) ||
+                 (currentAccount && (acc.id === currentAccount.id || acc.uid === currentAccount.uid || acc.email === currentAccount.email));
+
+  if (isSelf) {
+    showToast('Anda tidak dapat menghapus akun Anda sendiri yang sedang digunakan!', 'error');
+    return;
+  }
+
+  const roleName = (acc.role === 'admin') ? 'Admin' : 'Kasir';
+  if (!confirm(`Hapus akun ${roleName} "${acc.displayName || acc.email}" secara permanen?\n\nPerhatian: Akun ini tidak akan dapat masuk kembali.`)) {
+    return;
+  }
+
+  try {
+    if (demoMode) {
+      store.accounts = store.accounts.filter(a => a.id !== accountId);
+      localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+    } else {
+      await db.collection('users').doc(accountId).delete();
+    }
+    showToast(`Akun "${acc.displayName || acc.email}" berhasil dihapus secara permanen.`, 'success');
+    await loadAccounts();
+  } catch (err) {
+    showToast('Gagal menghapus akun: ' + err.message, 'error');
   }
 }
 

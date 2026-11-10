@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
@@ -67,7 +67,10 @@
         </div>
         <div>
           <label class="block text-xs font-extrabold text-caramel-700 mb-1.5 ml-1">Password</label>
-          <input type="password" id="auth-password" required placeholder="Min. 6 karakter" class="input-cute px-4 py-3 text-sm">
+          <div class="relative">
+            <input type="password" id="auth-password" required placeholder="Min. 6 karakter" class="input-cute px-4 py-3 pr-12 text-sm">
+            <button type="button" id="auth-password-toggle" onclick="togglePasswordVisibility('auth-password','auth-password-toggle')" class="absolute right-3 top-1/2 -translate-y-1/2 text-caramel-500 hover:text-coral-600 transition-colors text-lg leading-none cursor-pointer" aria-label="Tampilkan kata sandi" title="Tampilkan/sembunyikan kata sandi">👁️</button>
+          </div>
         </div>
         <div id="auth-loading" class="hidden text-center text-sm text-caramel-500 py-2 font-semibold">â³ Memuat...</div>
         <button type="submit" id="auth-submit-btn" class="btn-cute w-full py-3.5 text-base">Masuk</button>
@@ -76,8 +79,13 @@
         </p>
       </form>
       <div id="auth-error" class="hidden mt-3 px-4 py-2.5 bg-rose-50 text-rose-600 text-xs rounded-2xl font-semibold"></div>
-      <div class="mt-4 pt-4 border-t-2 border-dashed border-cream-200 text-center">
-        <button onclick="enterDemoMode()" class="text-xs text-caramel-500 hover:text-coral-600 transition-colors cursor-pointer font-bold">Masuk tanpa akun (Mode Demo) âœ¨</button>
+      <div class="mt-4 pt-4 border-t-2 border-dashed border-cream-200 text-center flex flex-col gap-2">
+        <button type="button" onclick="enterDemoMode('admin')" class="text-xs text-coral-600 hover:text-coral-700 transition-colors cursor-pointer font-extrabold bg-coral-50 hover:bg-coral-100 px-4 py-2.5 rounded-2xl border border-coral-200/70 shadow-sm flex items-center justify-center gap-1.5">
+          <span>👑</span> Masuk Demo sebagai Admin (Akses Penuh)
+        </button>
+        <button type="button" onclick="enterDemoMode('kasir')" class="text-xs text-caramel-700 hover:text-caramel-900 transition-colors cursor-pointer font-bold bg-cream-100 hover:bg-cream-200 px-4 py-2 rounded-2xl border border-amber-200/60 flex items-center justify-center gap-1.5">
+          <span>💼</span> Masuk Demo sebagai Kasir (Produk &amp; Transaksi)
+        </button>
       </div>
     </div>
   </div>
@@ -102,8 +110,8 @@
         <a href="#" class="hover:text-coral-600 transition-colors flex items-center gap-1">â” Bantuan</a>
         <a href="#" onclick="switchView('catalog')" class="hover:text-coral-600 transition-colors flex items-center gap-1">ðŸ›ï¸ Katalog</a>
         <a href="#" onclick="switchView('inventory')" class="hover:text-coral-600 transition-colors flex items-center gap-1">ðŸ“¦ Kelola Produk</a>
-        <a href="#" onclick="switchView('reports')" class="hover:text-coral-600 transition-colors flex items-center gap-1">ðŸ“Š Laporan</a>
-        <a href="#" onclick="switchView('akun')" class="hover:text-coral-600 transition-colors flex items-center gap-1">ðŸ‘¤ Akun</a>
+        <a href="#" onclick="switchView('reports')" class="hover:text-coral-600 transition-colors flex items-center gap-1">📊 Laporan</a>
+        <a href="#" id="topbar-nav-akun" onclick="switchView('akun')" class="hover:text-coral-600 transition-colors flex items-center gap-1">👤 Akun</a>
       </div>
     </div>
   </div>
@@ -178,6 +186,12 @@
           <button onclick="switchView('akun')" id="nav-btn-akun" class="px-4 py-2 rounded-2xl text-xs font-extrabold transition-colors cursor-pointer text-caramel-500 hover:bg-cream-100 hover:text-coral-600">Akun</button>
         </div>
 
+        <!-- User Info Pill & Demo Switcher -->
+        <div id="user-info-pill" class="hidden items-center gap-2 px-3 py-1.5 rounded-2xl bg-cream-100 border border-amber-200/70 text-xs">
+          <span id="user-role-label" class="font-extrabold text-caramel-800 flex items-center gap-1">👑 Admin</span>
+          <button id="demo-role-switch-btn" onclick="toggleDemoRole()" class="hidden text-[10px] font-black px-2.5 py-1 rounded-xl bg-coral-500 hover:bg-coral-600 text-white transition-colors cursor-pointer shadow-btn" title="Ganti Peran Demo">Ganti ke Kasir</button>
+        </div>
+
         <!-- Logout -->
         <button onclick="handleLogout()" id="btn-logout" class="px-4 py-2 rounded-2xl text-[11px] font-extrabold bg-cream-100 text-caramel-800 hover:bg-cream-200 hover:text-coral-700 transition-colors cursor-pointer hidden border border-amber-200/70">Keluar</button>
       </div>
@@ -197,7 +211,7 @@
         <button onclick="handleCategoryChange('Rumah-rumahan & Miniatur')" class="chip px-4 py-2 text-[13px]">ðŸ° Rumah & Miniatur</button>
         <button onclick="handleCategoryChange('Balok Susun & Edukasi')" class="chip px-4 py-2 text-[13px]">ðŸ§© Balok Edukasi</button>
         <button onclick="handleCategoryChange('Pesta Teh & Aksesori')" class="chip px-4 py-2 text-[13px]">ðŸ«– Pesta Teh & Aksesori</button>
-        <button onclick="toggleBestSellerFilter()" id="cat-bestseller-btn" class="chip px-4 py-2 text-[13px] text-amber-700 bg-amber-100">ðŸ”¥ Best Seller</button>
+        <button onclick="toggleBestSellerFilter()" id="cat-bestseller-btn" class="chip px-4 py-2 text-[13px] text-amber-700 bg-amber-100">ðŸ”¥ Terlaris</button>
       </div>
     </div>
   </div>
@@ -287,7 +301,7 @@
         </button>
         <button onclick="toggleBestSellerFilter()" class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-amber-50 transition-colors cursor-pointer wobble-hover">
           <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shadow-inner">ðŸ”¥</div>
-          <span class="text-[10px] sm:text-[11px] font-bold text-amber-700">Best Seller</span>
+          <span class="text-[10px] sm:text-[11px] font-bold text-amber-700">Terlaris</span>
         </button>
         <button onclick="handleCategoryChange('Semua')" class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-cream-100 transition-colors cursor-pointer wobble-hover">
           <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-cream-200 flex items-center justify-center text-2xl shadow-inner">ðŸŽ</div>
@@ -313,7 +327,7 @@
       <div class="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-cream-100 via-cream-50 to-cream-100 border-b-2 border-dashed border-cream-200">
         <div class="flex items-center gap-2">
           <span class="font-display text-xl sm:text-2xl font-bold text-coral-600">âš¡ FLASH SALE</span>
-          <span class="text-[9px] sm:text-[10px] px-2.5 py-1 bg-sage-500/15 text-sage-600 rounded-full font-black uppercase tracking-wider">On Going</span>
+          <span class="text-[9px] sm:text-[10px] px-2.5 py-1 bg-sage-500/15 text-sage-600 rounded-full font-black uppercase tracking-wider">Sedang Berlangsung</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="text-[10px] sm:text-[11px] text-caramel-500 font-bold">Berakhir dalam</span>
@@ -464,7 +478,7 @@
         <div id="category-pills" class="flex items-center gap-2 overflow-x-auto flex-1"></div>
         <div class="flex items-center gap-2 ml-auto">
           <button id="btn-filter-bestseller" onclick="toggleBestSellerFilter()" class="px-4 py-2 rounded-2xl text-[11px] font-extrabold transition-colors cursor-pointer border-2 border-coral-400/40 bg-white text-coral-600 hover:bg-cream-100">
-            ðŸ”¥ Best Seller
+            ðŸ”¥ Terlaris
           </button>
         </div>
       </div>
@@ -479,7 +493,7 @@
     <div id="product-empty" class="hidden text-center py-16 px-4 card-cute space-y-4">
       <div class="w-20 h-20 mx-auto bg-cream-100 rounded-full flex items-center justify-center text-4xl">ðŸ”</div>
       <h3 class="font-display text-xl font-bold text-caramel-900">Produk Tidak Ditemukan</h3>
-      <p class="text-sm text-caramel-500 max-w-md mx-auto font-semibold">Coba gunakan kata kunci pencarian lain atau matikan filter Best Seller.</p>
+      <p class="text-sm text-caramel-500 max-w-md mx-auto font-semibold">Coba gunakan kata kunci pencarian lain atau matikan filter Terlaris.</p>
       <button onclick="store.searchQuery = ''; store.activeCategory = 'Semua'; store.bestSellerOnly = false; updateFilterUI();" class="btn-cute px-6 py-3 text-xs">
         Reset Semua Filter
       </button>
@@ -514,7 +528,7 @@
       </div>
       <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
         <button onclick="syncToFirebase()" class="btn-cream px-4 py-2.5 text-xs sm:text-sm">
-          <span>â˜ï¸</span> Sync ke Firebase
+          <span>â˜ï¸</span> Sinkronkan ke Firebase
         </button>
         <button onclick="openAddProductModal()" class="btn-cute px-4 py-2.5 text-xs sm:text-sm">
           <span>âž•</span> Tambah Produk Baru
@@ -578,7 +592,7 @@
       </div>
       <div class="card-soft p-4 space-y-1">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Best Seller</span>
+          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Terlaris</span>
           <span class="text-xl">ðŸ”¥</span>
         </div>
         <div id="dash-bestseller" class="text-2xl sm:text-3xl font-black text-amber-500 font-display">0</div>
@@ -645,9 +659,9 @@
       <div id="inventory-pagination" class="p-4 border-t-2 border-dashed border-cream-200 flex items-center justify-between bg-cream-50 gap-2 flex-wrap">
         <span class="text-xs text-caramel-500 font-bold">Menampilkan <span id="pagination-info">1-10</span> dari <span id="pagination-total">0</span> produk</span>
         <div class="flex items-center gap-1.5">
-          <button onclick="prevInventoryPage()" id="btn-prev-page" class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-white shadow-sm hover:bg-cream-100 text-caramel-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">â† Prev</button>
+          <button onclick="prevInventoryPage()" id="btn-prev-page" class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-white shadow-sm hover:bg-cream-100 text-caramel-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">â† Sebelumnya</button>
           <div id="pagination-numbers" class="flex items-center gap-1"></div>
-          <button onclick="nextInventoryPage()" id="btn-next-page" class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-white shadow-sm hover:bg-cream-100 text-caramel-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">Next â†’</button>
+          <button onclick="nextInventoryPage()" id="btn-next-page" class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-white shadow-sm hover:bg-cream-100 text-caramel-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">Selanjutnya â†’</button>
         </div>
       </div>
     </div>
@@ -669,7 +683,7 @@
         </div>
       </div>
       <button onclick="resetDemoData()" class="btn-cream px-4 py-2.5 text-xs self-start sm:self-auto">
-        <span>ðŸ”„</span> Reset Data Demo
+        <span>ðŸ”„</span> Reset Data Uji Coba
       </button>
     </div>
 
@@ -771,8 +785,8 @@
         </div>
         <select id="akun-role-filter" onchange="renderAccountsTable()" class="select-cute px-4 py-3 text-sm font-semibold">
           <option value="Semua">Semua Peran</option>
-          <option value="admin">Admin</option>
-          <option value="staff">Staff</option>
+          <option value="admin">👑 Admin</option>
+          <option value="kasir">💼 Kasir</option>
         </select>
         <select id="akun-status-filter" onchange="renderAccountsTable()" class="select-cute px-4 py-3 text-sm font-semibold">
           <option value="Semua">Semua Status</option>
@@ -836,7 +850,7 @@
           <div class="flex items-center gap-2">
             <input type="file" id="product-image-file" accept="image/*" onchange="handleProductFileSelect(this)" class="w-full px-4 py-3 rounded-2xl bg-cream-100 text-sm text-caramel-800 focus:outline-none file:mr-3 file:py-1.5 file:px-4 file:rounded-2xl file:border-0 file:bg-coral-400/20 file:text-coral-600 file:font-extrabold file:cursor-pointer" />
           </div>
-          <div id="product-image-preview" class="mt-2 hidden"><img src="" alt="Preview" class="w-20 h-20 object-cover rounded-2xl shadow-card bg-cream-100" /></div>
+          <div id="product-image-preview" class="mt-2 hidden"><img src="" alt="Pratinjau" class="w-20 h-20 object-cover rounded-2xl shadow-card bg-cream-100" /></div>
           <p class="text-[10px] text-caramel-500 font-semibold mt-1 ml-1">Pilih foto dari komputer (otomatis terpasang & terkompresi)</p>
         </div>
 
@@ -844,8 +858,8 @@
           <label class="block text-xs font-extrabold text-caramel-700 mb-1.5 ml-1">Barcode (EAN-13 / 13 digit) *</label>
           <div class="flex gap-2">
             <input type="text" id="product-barcode" required placeholder="899XXXXXXXXXXX" class="input-cute px-4 py-3 font-mono text-sm" oninput="previewProductBarcode()" />
-            <button type="button" onclick="generateProductBarcode()" class="shrink-0 px-4 py-3 rounded-2xl bg-cream-100 hover:bg-cream-200 text-xs font-extrabold text-caramel-800 transition-colors flex items-center gap-1.5 cursor-pointer" title="Generate barcode otomatis">
-              ðŸŽ² Generate
+            <button type="button" onclick="generateProductBarcode()" class="shrink-0 px-4 py-3 rounded-2xl bg-cream-100 hover:bg-cream-200 text-xs font-extrabold text-caramel-800 transition-colors flex items-center gap-1.5 cursor-pointer" title="Buat barcode otomatis">
+              ðŸŽ² Buat Otomatis
             </button>
           </div>
           <div id="product-barcode-preview" class="mt-2 hidden"></div>
@@ -893,8 +907,8 @@
         <label class="flex items-center gap-3 p-4 rounded-2xl bg-cream-100 cursor-pointer hover:bg-cream-200 transition-colors">
           <input type="checkbox" id="product-bestseller" class="accent-coral-500 w-5 h-5 cursor-pointer" />
           <div>
-            <span class="text-xs font-extrabold text-caramel-800">ðŸ”¥ Tandai sebagai Best Seller</span>
-            <p class="text-[10px] text-caramel-500 font-semibold">Produk akan ditampilkan dengan badge best seller</p>
+            <span class="text-xs font-extrabold text-caramel-800">ðŸ”¥ Tandai sebagai Terlaris</span>
+            <p class="text-[10px] text-caramel-500 font-semibold">Produk akan ditampilkan dengan badge terlaris</p>
           </div>
         </label>
 
@@ -929,12 +943,15 @@
 
         <div>
           <label class="block text-xs font-extrabold text-caramel-700 mb-1.5 ml-1">Email *</label>
-          <input type="email" id="account-email" required placeholder="Contoh: staff@daisyfumarket.com" class="input-cute px-4 py-3 text-sm" />
+          <input type="email" id="account-email" required placeholder="Contoh: kasir@daisyfumarket.com" class="input-cute px-4 py-3 text-sm" />
         </div>
 
         <div>
           <label class="block text-xs font-extrabold text-caramel-700 mb-1.5 ml-1">Password</label>
-          <input type="password" id="account-password" placeholder="Min. 6 karakter" class="input-cute px-4 py-3 text-sm" />
+          <div class="relative">
+            <input type="password" id="account-password" placeholder="Min. 6 karakter" class="input-cute px-4 py-3 pr-12 text-sm" />
+            <button type="button" id="account-password-toggle" onclick="togglePasswordVisibility('account-password','account-password-toggle')" class="absolute right-3 top-1/2 -translate-y-1/2 text-caramel-500 hover:text-coral-600 transition-colors text-lg leading-none cursor-pointer" aria-label="Tampilkan kata sandi" title="Tampilkan/sembunyikan kata sandi">👁️</button>
+          </div>
           <p class="text-[10px] text-caramel-500 font-semibold mt-1 ml-1">Kosongkan saat mengedit akun jika tidak ingin mengubah password.</p>
         </div>
 
@@ -942,8 +959,8 @@
           <div>
             <label class="block text-xs font-extrabold text-caramel-700 mb-1.5 ml-1">Peran *</label>
             <select id="account-role" required class="select-cute px-4 py-3 text-sm font-semibold">
-              <option value="staff">Staff (Kelola produk & transaksi)</option>
-              <option value="admin">Admin (Akses penuh termasuk akun)</option>
+              <option value="kasir">💼 Kasir (Kelola produk & transaksi)</option>
+              <option value="admin">👑 Admin (Akses penuh termasuk akun)</option>
             </select>
           </div>
           <div>
