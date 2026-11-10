@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF9E6"/><stop offset="100%" stop-color="#FFE0B2"/></linearGradient>
+    <radialGradient id="plate" cx="50%" cy="60%" r="45%"><stop offset="0%" stop-color="#FAFAFA"/><stop offset="100%" stop-color="#E0E0E0"/></radialGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#6D4C41" flood-opacity="0.2"/></filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <circle cx="60" cy="65" r="12" fill="#fff" opacity="0.3"/>
+  <circle cx="340" cy="75" r="16" fill="#fff" opacity="0.25"/>
+  <!-- plate -->
+  <ellipse cx="200" cy="240" rx="145" ry="30" fill="#ccc" opacity="0.3"/>
+  <ellipse cx="200" cy="225" rx="150" ry="80" fill="url(#plate)" filter="url(#shadow)"/>
+  <ellipse cx="200" cy="225" rx="130" ry="65" fill="#FFF3E0"/>
+  <!-- nasi -->
+  <ellipse cx="200" cy="215" rx="110" ry="50" fill="#FFF8E1"/>
+  <ellipse cx="175" cy="210" rx="30" ry="18" fill="#FFFDE7" opacity="0.9"/>
+  <ellipse cx="220" cy="205" rx="25" ry="15" fill="#FFFDE7" opacity="0.8"/>
+  <!-- butiran nasi -->
+  <ellipse cx="165" cy="207" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="180" cy="203" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="195" cy="200" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="210" cy="203" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="225" cy="207" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="175" cy="215" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="200" cy="213" rx="5" ry="3" fill="#FFF9C4"/>
+  <ellipse cx="220" cy="216" rx="5" ry="3" fill="#FFF9C4"/>
+  <!-- ayam/topping merah -->
+  <ellipse cx="185" cy="202" rx="22" ry="12" fill="#EF5350" opacity="0.85"/>
+  <ellipse cx="215" cy="204" rx="18" ry="10" fill="#EF9A9A" opacity="0.8"/>
+  <!-- telur ceplok -->
+  <circle cx="230" cy="195" r="18" fill="#FFF9C4"/>
+  <circle cx="230" cy="195" r="11" fill="#FFA726"/>
+  <!-- daun bawang -->
+  <ellipse cx="162" cy="210" rx="6" ry="3" fill="#66BB6A" transform="rotate(-20 162 210)"/>
+  <ellipse cx="175" cy="223" rx="6" ry="3" fill="#66BB6A" transform="rotate(10 175 223)"/>
+  <!-- senyum lucu -->
+  <circle cx="145" cy="175" r="10" fill="#FF8A65"/>
+  <circle cx="140" cy="172" r="3" fill="#fff"/>
+  <circle cx="150" cy="172" r="3" fill="#fff"/>
+  <path d="M142 178 Q145 182 148 178" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- sendok -->
+  <rect x="285" y="150" width="10" height="80" rx="5" fill="#BDBDBD" transform="rotate(30 290 190)"/>
+  <ellipse cx="299" cy="155" rx="10" ry="6" fill="#E0E0E0" transform="rotate(30 299 155)"/>
+  <!-- label -->
+  <text x="200" y="315" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="22" font-weight="900" fill="#6D4C41">🍳 Nasi Goreng</text>
+  <text x="200" y="338" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="13" fill="#A1887F">Spesial Rempah</text>
+</svg>

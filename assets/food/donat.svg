@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF9E6"/><stop offset="100%" stop-color="#FFE0B2"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#6D4C41" flood-opacity="0.2"/></filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <circle cx="58" cy="62" r="12" fill="#fff" opacity="0.3"/>
+  <circle cx="342" cy="75" r="16" fill="#fff" opacity="0.25"/>
+  <g filter="url(#shadow)">
+    <!-- donat body -->
+    <circle cx="200" cy="210" r="130" fill="#F9A825"/>
+    <circle cx="200" cy="210" r="55" fill="url(#bg)"/>
+    <!-- glaze pink -->
+    <path d="M80 185 Q90 115 200 100 Q310 115 320 185 Q310 155 200 148 Q90 155 80 185 Z" fill="#F48FB1" opacity="0.9"/>
+    <!-- sprinkles -->
+    <rect x="135" y="120" width="18" height="6" rx="3" fill="#E53935" transform="rotate(-30 135 120)"/>
+    <rect x="175" y="108" width="18" height="6" rx="3" fill="#1565C0" transform="rotate(15 175 108)"/>
+    <rect x="215" y="110" width="18" height="6" rx="3" fill="#2E7D32" transform="rotate(-10 215 110)"/>
+    <rect x="252" y="125" width="18" height="6" rx="3" fill="#E65100" transform="rotate(35 252 125)"/>
+    <rect x="155" y="135" width="14" height="5" rx="2.5" fill="#6A1B9A" transform="rotate(20 155 135)"/>
+    <rect x="232" y="135" width="14" height="5" rx="2.5" fill="#F57F17" transform="rotate(-25 232 135)"/>
+    <rect x="195" y="118" width="14" height="5" rx="2.5" fill="#AD1457" transform="rotate(5 195 118)"/>
+    <!-- wajah lucu -->
+    <circle cx="183" cy="195" r="8" fill="#5D4037"/>
+    <circle cx="217" cy="195" r="8" fill="#5D4037"/>
+    <circle cx="184" cy="193" r="3" fill="#fff"/>
+    <circle cx="218" cy="193" r="3" fill="#fff"/>
+    <path d="M182 208 Q200 222 218 208" stroke="#5D4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="167" cy="202" rx="10" ry="6" fill="#FF8A65" opacity="0.5"/>
+    <ellipse cx="233" cy="202" rx="10" ry="6" fill="#FF8A65" opacity="0.5"/>
+  </g>
+  <text x="200" y="370" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="22" font-weight="900" fill="#6D4C41">🍩 Donat Sprinkle</text>
+  <text x="200" y="392" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="13" fill="#A1887F">Glazed Pink</text>
+</svg>

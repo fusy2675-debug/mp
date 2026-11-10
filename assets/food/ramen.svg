@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF9E6"/><stop offset="100%" stop-color="#FFE0B2"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#6D4C41" flood-opacity="0.2"/></filter>
+  </defs>
+  <rect width="400" height="400" rx="36" fill="url(#bg)"/>
+  <circle cx="60" cy="65" r="12" fill="#fff" opacity="0.3"/>
+  <circle cx="340" cy="78" r="16" fill="#fff" opacity="0.25"/>
+  <g filter="url(#shadow)">
+    <!-- mangkuk -->
+    <ellipse cx="200" cy="265" rx="140" ry="35" fill="#E0E0E0" opacity="0.5"/>
+    <path d="M70 200 Q70 300 200 300 Q330 300 330 200 Z" fill="#FAFAFA"/>
+    <path d="M70 200 Q70 220 200 220 Q330 220 330 200 Z" fill="#fff"/>
+    <!-- sup/kuah -->
+    <path d="M80 205 Q80 290 200 290 Q320 290 320 205" fill="#FF8F00" opacity="0.85"/>
+    <!-- mie -->
+    <path d="M110 220 Q150 200 190 220 Q230 240 270 220 Q300 205 310 215" stroke="#FFF9C4" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M105 232 Q140 212 180 235 Q220 258 265 235 Q300 215 315 225" stroke="#FFF176" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M110 248 Q155 228 200 250 Q245 272 285 248" stroke="#FFF9C4" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- topping: telur -->
+    <circle cx="175" cy="225" r="20" fill="#FFF9C4"/>
+    <circle cx="175" cy="225" r="12" fill="#FFA726"/>
+    <!-- topping: daging -->
+    <ellipse cx="230" cy="230" rx="22" ry="12" fill="#D32F2F" opacity="0.9"/>
+    <!-- topping: daun bawang -->
+    <ellipse cx="155" cy="240" rx="8" ry="3" fill="#66BB6A" transform="rotate(-30 155 240)"/>
+    <ellipse cx="250" cy="245" rx="8" ry="3" fill="#66BB6A" transform="rotate(20 250 245)"/>
+    <!-- uap -->
+    <path d="M165 155 Q160 140 165 125 Q170 110 165 95" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M200 148 Q195 133 200 118 Q205 103 200 88" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M235 155 Q230 140 235 125 Q240 110 235 95" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- rim mangkuk -->
+    <ellipse cx="200" cy="200" rx="135" ry="22" fill="#EF6C00" opacity="0.9"/>
+    <ellipse cx="200" cy="200" rx="125" ry="16" fill="#FB8C00"/>
+  </g>
+  <!-- wajah -->
+  <ellipse cx="183" cy="198" rx="5" ry="6" fill="#5D4037"/>
+  <ellipse cx="217" cy="198" rx="5" ry="6" fill="#5D4037"/>
+  <path d="M185 206 Q200 215 215 206" stroke="#5D4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="168" cy="202" rx="8" ry="5" fill="#FF8A65" opacity="0.5"/>
+  <ellipse cx="232" cy="202" rx="8" ry="5" fill="#FF8A65" opacity="0.5"/>
+  <text x="200" y="345" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="22" font-weight="900" fill="#6D4C41">🍜 Ramen Spesial</text>
+  <text x="200" y="368" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="13" fill="#A1887F">Hot &amp; Juicy</text>
+</svg>
