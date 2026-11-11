@@ -1713,11 +1713,11 @@ function setWaveChartMode(mode) {
   const cntBtn = document.getElementById('wave-mode-count');
   if (revBtn && cntBtn) {
     if (mode === 'revenue') {
-      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-white text-coral-600 shadow-sm';
-      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600';
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm';
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-700 hover:text-coral-600';
     } else {
-      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-white text-coral-600 shadow-sm';
-      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600';
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm';
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-700 hover:text-coral-600';
     }
   }
   renderTransactionWaveChart();
@@ -1887,15 +1887,15 @@ function renderTransactionWaveChart() {
       label = `${Math.round(val)}`;
     }
     return `
-      <line x1="${padL}" y1="${y.toFixed(1)}" x2="${svgW - padR}" y2="${y.toFixed(1)}" stroke="#EEDCC9" stroke-dasharray="4,4" stroke-width="1.2" />
-      <text x="${padL - 10}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" font-weight="700" fill="#A88B7D">${label}</text>
+      <line x1="${padL}" y1="${y.toFixed(1)}" x2="${svgW - padR}" y2="${y.toFixed(1)}" stroke="#EFE2D3" stroke-dasharray="4,4" stroke-width="1.2" />
+      <text x="${padL - 10}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" font-weight="700" fill="#8D6E63">${label}</text>
     `;
   }).join('');
 
   const xLabelsSvg = points.map(p => {
     const dateStr = p.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     return `
-      <text x="${p.x.toFixed(1)}" y="${svgH - 14}" text-anchor="middle" font-size="10" font-weight="700" fill="#8C6E63">${dateStr}</text>
+      <text x="${p.x.toFixed(1)}" y="${svgH - 14}" text-anchor="middle" font-size="10" font-weight="700" fill="#6D4C41">${dateStr}</text>
     `;
   }).join('');
 
@@ -1910,8 +1910,8 @@ function renderTransactionWaveChart() {
          data-count="${p.count} pesanan"
          onmouseenter="showWaveTooltip(event, this)"
          onmouseleave="hideWaveTooltip()">
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#FF9B85" opacity="0.18" class="hover:opacity-40 transition-opacity" />
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#F26B57" stroke-width="3" class="hover:scale-125 transition-transform origin-center" />
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#FF8A7A" opacity="0.22" class="hover:opacity-40 transition-opacity" />
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#E14E3B" stroke-width="3" class="hover:scale-125 transition-transform origin-center" />
       </g>
     `;
   }).join('');
@@ -1920,19 +1920,19 @@ function renderTransactionWaveChart() {
     <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto overflow-visible select-none">
       <defs>
         <linearGradient id="wavePrimaryGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#F26B57" stop-opacity="0.45" />
-          <stop offset="50%" stop-color="#FF9B85" stop-opacity="0.22" />
-          <stop offset="95%" stop-color="#FF9B85" stop-opacity="0.02" />
-          <stop offset="100%" stop-color="#FF9B85" stop-opacity="0.00" />
+          <stop offset="0%" stop-color="#E14E3B" stop-opacity="0.36" />
+          <stop offset="35%" stop-color="#FF8A7A" stop-opacity="0.22" />
+          <stop offset="75%" stop-color="#F4A261" stop-opacity="0.09" />
+          <stop offset="100%" stop-color="#FFFDF7" stop-opacity="0.00" />
         </linearGradient>
 
         <linearGradient id="waveSecondaryGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FFAA5B" stop-opacity="0.25" />
-          <stop offset="100%" stop-color="#FFAA5B" stop-opacity="0.00" />
+          <stop offset="0%" stop-color="#F4A261" stop-opacity="0.22" />
+          <stop offset="100%" stop-color="#F4A261" stop-opacity="0.00" />
         </linearGradient>
 
         <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#F26B57" flood-opacity="0.35" />
+          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#E14E3B" flood-opacity="0.28" />
         </filter>
       </defs>
 
@@ -1944,9 +1944,9 @@ function renderTransactionWaveChart() {
 
       <path d="${areaPath}" fill="url(#wavePrimaryGrad)" />
 
-      <path d="${linePath}" fill="none" stroke="#F26B57" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#waveGlow)" />
+      <path d="${linePath}" fill="none" stroke="#E14E3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#waveGlow)" />
 
-      <path d="${bgWavePath}" fill="none" stroke="#FFB085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" stroke-dasharray="6,4" />
+      <path d="${bgWavePath}" fill="none" stroke="#F4A261" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" stroke-dasharray="6,4" />
 
       ${xLabelsSvg}
 

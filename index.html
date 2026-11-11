@@ -207,7 +207,7 @@
   <main id="dashboard-section" class="hidden flex-1 max-w-[1200px] w-full mx-auto px-4 py-5 space-y-6">
 
     <!-- Admin Welcome Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-coral-500 via-coral-400 to-amber-400 p-6 sm:p-8 rounded-[2rem] text-white shadow-soft relative overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-[2rem] text-white shadow-soft relative overflow-hidden border border-amber-900/10" style="background: linear-gradient(130deg, #422D27 0%, #664339 30%, #A85A4E 65%, #E16854 85%, #F4A261 100%);">
       <div class="relative z-10 space-y-1">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-black tracking-wide uppercase">
           <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
@@ -219,10 +219,10 @@
         </p>
       </div>
       <div class="flex items-center gap-2 relative z-10 self-start sm:self-auto flex-wrap">
-        <button onclick="switchView('catalog')" class="px-5 py-2.5 rounded-2xl bg-white text-coral-600 font-black text-xs hover:bg-cream-100 hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+        <button onclick="switchView('catalog')" class="px-5 py-2.5 rounded-2xl bg-white text-caramel-900 hover:text-coral-600 font-black text-xs hover:bg-cream-100 hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
           <span>🛍️</span> Buka Katalog
         </button>
-        <button onclick="openAddProductModal()" class="px-5 py-2.5 rounded-2xl bg-caramel-900/80 hover:bg-caramel-900 text-white font-black text-xs hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+        <button onclick="openAddProductModal()" class="px-5 py-2.5 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-black text-xs hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
           <span>➕</span> Tambah Produk
         </button>
       </div>
@@ -284,7 +284,7 @@
 
         <!-- Mode Toggle -->
         <div class="flex items-center gap-1.5 self-start sm:self-auto bg-cream-100 p-1.5 rounded-2xl border border-cream-200">
-          <button id="wave-mode-revenue" onclick="setWaveChartMode('revenue')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-white text-coral-600 shadow-sm">
+          <button id="wave-mode-revenue" onclick="setWaveChartMode('revenue')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm">
             💰 Omset (Rp)
           </button>
           <button id="wave-mode-count" onclick="setWaveChartMode('count')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600">
