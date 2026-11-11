@@ -1705,6 +1705,256 @@ function updateNavDrawerAccess() {
   }
 }
 
+let currentWaveMode = 'revenue';
+
+function setWaveChartMode(mode) {
+  currentWaveMode = mode;
+  const revBtn = document.getElementById('wave-mode-revenue');
+  const cntBtn = document.getElementById('wave-mode-count');
+  if (revBtn && cntBtn) {
+    if (mode === 'revenue') {
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-white text-coral-600 shadow-sm';
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600';
+    } else {
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-white text-coral-600 shadow-sm';
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600';
+    }
+  }
+  renderTransactionWaveChart();
+}
+
+function showWaveTooltip(event, element) {
+  const tooltip = document.getElementById('wave-tooltip');
+  const dateEl = document.getElementById('wave-tooltip-date');
+  const valEl = document.getElementById('wave-tooltip-val');
+  if (!tooltip || !dateEl || !valEl) return;
+
+  const date = element.getAttribute('data-date');
+  const val = element.getAttribute('data-val');
+  const rev = element.getAttribute('data-revenue');
+  const count = element.getAttribute('data-count');
+
+  dateEl.textContent = date;
+  valEl.innerHTML = `${val} <span class="text-[9px] text-white/80 font-normal">(${count})</span>`;
+
+  const rect = element.getBoundingClientRect();
+  const parentRect = tooltip.parentElement.getBoundingClientRect();
+  const x = rect.left + rect.width / 2 - parentRect.left;
+  const y = rect.top - parentRect.top - 8;
+
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y}px`;
+  tooltip.classList.remove('hidden');
+}
+
+function hideWaveTooltip() {
+  const tooltip = document.getElementById('wave-tooltip');
+  if (tooltip) tooltip.classList.add('hidden');
+}
+
+function renderTransactionWaveChart() {
+  const container = document.getElementById('wave-chart-container');
+  const peakEl = document.getElementById('wave-peak-val');
+  const avgEl = document.getElementById('wave-avg-val');
+  const lowEl = document.getElementById('wave-low-val');
+  const trendEl = document.getElementById('wave-trend-status');
+  if (!container) return;
+
+  const txList = store.transactions || [];
+
+  // Group transactions by date (YYYY-MM-DD)
+  const groupsMap = new Map();
+  txList.forEach(t => {
+    const d = new Date(t.date || Date.now());
+    if (isNaN(d.getTime())) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!groupsMap.has(key)) {
+      groupsMap.set(key, { key, date: d, count: 0, revenue: 0 });
+    }
+    const g = groupsMap.get(key);
+    g.count += 1;
+    g.revenue += (Number(t.totalAmount) || Number(t.total) || 0);
+  });
+
+  let rawPoints = [...groupsMap.values()].sort((a, b) => a.date - b.date);
+
+  if (rawPoints.length === 0) {
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      rawPoints.push({ key, date: d, count: 0, revenue: 0 });
+    }
+  } else if (rawPoints.length < 5) {
+    const firstDate = new Date(rawPoints[0].date);
+    const lastDate = new Date(rawPoints[rawPoints.length - 1].date);
+    const padded = [];
+    for (let i = 2; i >= 1; i--) {
+      const d = new Date(firstDate);
+      d.setDate(d.getDate() - i);
+      padded.push({ key: d.toISOString().slice(0, 10), date: d, count: 0, revenue: 0 });
+    }
+    padded.push(...rawPoints);
+    for (let i = 1; i <= 2; i++) {
+      const d = new Date(lastDate);
+      d.setDate(d.getDate() + i);
+      padded.push({ key: d.toISOString().slice(0, 10), date: d, count: 0, revenue: 0 });
+    }
+    rawPoints = padded;
+  }
+
+  const isRev = currentWaveMode === 'revenue';
+  const values = rawPoints.map(p => isRev ? p.revenue : p.count);
+  const maxVal = Math.max(...values, isRev ? 100000 : 5);
+  const minVal = 0;
+  const peak = Math.max(...values);
+  const low = Math.min(...values);
+  const sum = values.reduce((a, b) => a + b, 0);
+  const avg = values.length ? Math.round(sum / values.length) : 0;
+
+  if (peakEl) peakEl.textContent = isRev ? formatIDR(peak) : `${peak} pesanan`;
+  if (avgEl) avgEl.textContent = isRev ? formatIDR(avg) : `${avg} pesanan/hari`;
+  if (lowEl) lowEl.textContent = isRev ? formatIDR(low) : `${low} pesanan`;
+  if (trendEl) {
+    const lastTwo = values.slice(-2);
+    if (lastTwo.length === 2 && lastTwo[1] >= lastTwo[0]) {
+      trendEl.textContent = '↗ Meningkat';
+      trendEl.className = 'font-display font-black text-emerald-600 text-base sm:text-lg';
+    } else {
+      trendEl.textContent = '↘ Stabil';
+      trendEl.className = 'font-display font-black text-amber-600 text-base sm:text-lg';
+    }
+  }
+
+  const svgW = 860;
+  const svgH = 220;
+  const padL = 65;
+  const padR = 30;
+  const padT = 25;
+  const padB = 40;
+  const plotW = svgW - padL - padR;
+  const plotH = svgH - padT - padB;
+
+  const points = rawPoints.map((p, i) => {
+    const x = padL + (i / (rawPoints.length - 1)) * plotW;
+    const val = isRev ? p.revenue : p.count;
+    const norm = (val - minVal) / (maxVal - minVal || 1);
+    const y = padT + (1 - norm) * plotH;
+    return { x, y, val, date: p.date, count: p.count, revenue: p.revenue };
+  });
+
+  function getWavePath(pts) {
+    if (pts.length < 2) return '';
+    let path = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = i > 0 ? pts[i - 1] : pts[i];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = i < pts.length - 2 ? pts[i + 2] : p2;
+
+      const cp1x = p1.x + (p2.x - p0.x) / 5.5;
+      const cp1y = p1.y + (p2.y - p0.y) / 5.5;
+      const cp2x = p2.x - (p3.x - p1.x) / 5.5;
+      const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+
+      path += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+    }
+    return path;
+  }
+
+  const linePath = getWavePath(points);
+  const bottomY = svgH - padB;
+  const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${bottomY} L ${points[0].x.toFixed(1)} ${bottomY} Z`;
+
+  const bgWavePoints = points.map(p => ({
+    x: p.x,
+    y: Math.min(bottomY, p.y + 14)
+  }));
+  const bgWavePath = getWavePath(bgWavePoints);
+  const bgAreaPath = `${bgWavePath} L ${points[points.length - 1].x.toFixed(1)} ${bottomY} L ${points[0].x.toFixed(1)} ${bottomY} Z`;
+
+  const gridSteps = [0, 0.33, 0.66, 1];
+  const gridSvg = gridSteps.map(step => {
+    const y = padT + (1 - step) * plotH;
+    const val = minVal + step * (maxVal - minVal);
+    let label = '';
+    if (isRev) {
+      if (val >= 1000000) label = `Rp ${(val / 1000000).toFixed(1)}M`;
+      else if (val >= 1000) label = `Rp ${Math.round(val / 1000)}k`;
+      else label = `Rp ${Math.round(val)}`;
+    } else {
+      label = `${Math.round(val)}`;
+    }
+    return `
+      <line x1="${padL}" y1="${y.toFixed(1)}" x2="${svgW - padR}" y2="${y.toFixed(1)}" stroke="#EEDCC9" stroke-dasharray="4,4" stroke-width="1.2" />
+      <text x="${padL - 10}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" font-weight="700" fill="#A88B7D">${label}</text>
+    `;
+  }).join('');
+
+  const xLabelsSvg = points.map(p => {
+    const dateStr = p.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    return `
+      <text x="${p.x.toFixed(1)}" y="${svgH - 14}" text-anchor="middle" font-size="10" font-weight="700" fill="#8C6E63">${dateStr}</text>
+    `;
+  }).join('');
+
+  const dotsSvg = points.map(p => {
+    const valStr = isRev ? formatIDR(p.revenue) : `${p.count} Transaksi`;
+    const dateStr = p.date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+    return `
+      <g class="wave-dot-group cursor-pointer"
+         data-date="${dateStr}"
+         data-val="${valStr}"
+         data-revenue="${formatIDR(p.revenue)}"
+         data-count="${p.count} pesanan"
+         onmouseenter="showWaveTooltip(event, this)"
+         onmouseleave="hideWaveTooltip()">
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#FF9B85" opacity="0.18" class="hover:opacity-40 transition-opacity" />
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#F26B57" stroke-width="3" class="hover:scale-125 transition-transform origin-center" />
+      </g>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto overflow-visible select-none">
+      <defs>
+        <linearGradient id="wavePrimaryGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F26B57" stop-opacity="0.45" />
+          <stop offset="50%" stop-color="#FF9B85" stop-opacity="0.22" />
+          <stop offset="95%" stop-color="#FF9B85" stop-opacity="0.02" />
+          <stop offset="100%" stop-color="#FF9B85" stop-opacity="0.00" />
+        </linearGradient>
+
+        <linearGradient id="waveSecondaryGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFAA5B" stop-opacity="0.25" />
+          <stop offset="100%" stop-color="#FFAA5B" stop-opacity="0.00" />
+        </linearGradient>
+
+        <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#F26B57" flood-opacity="0.35" />
+        </filter>
+      </defs>
+
+      ${gridSvg}
+
+      <line x1="${padL}" y1="${bottomY}" x2="${svgW - padR}" y2="${bottomY}" stroke="#DFC6B2" stroke-width="1.5" />
+
+      <path d="${bgAreaPath}" fill="url(#waveSecondaryGrad)" />
+
+      <path d="${areaPath}" fill="url(#wavePrimaryGrad)" />
+
+      <path d="${linePath}" fill="none" stroke="#F26B57" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#waveGlow)" />
+
+      <path d="${bgWavePath}" fill="none" stroke="#FFB085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" stroke-dasharray="6,4" />
+
+      ${xLabelsSvg}
+
+      ${dotsSvg}
+    </svg>
+  `;
+}
+
 function renderAdminDashboard() {
   const revEl = document.getElementById('admin-dash-revenue');
   const ordEl = document.getElementById('admin-dash-orders');
@@ -1722,6 +1972,7 @@ function renderAdminDashboard() {
   if (ordEl) ordEl.textContent = `${totalOrders} pesanan`;
   if (prodEl) prodEl.textContent = `${totalProds} produk`;
   if (critEl) critEl.textContent = `${criticalItems.length} item`;
+  renderTransactionWaveChart();
 
   // Render 5 transaksi terbaru
   if (recentTxContainer) {
