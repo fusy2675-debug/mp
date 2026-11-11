@@ -1324,6 +1324,7 @@ function updateFilterUI() {
 
 // Switch Views
 function switchView(viewName) {
+  if (typeof closeNavDrawer === 'function') closeNavDrawer();
   store.currentView = viewName;
   const catalogSection = document.getElementById('catalog-section');
   const reportsSection = document.getElementById('reports-section');
@@ -1660,6 +1661,30 @@ function handleProductFileSelect(input) {
     showToast('Gagal memproses gambar: ' + e.message, 'error');
     input.value = '';
   });
+}
+
+function openNavDrawer() {
+  const drawer = document.getElementById('nav-drawer');
+  const overlay = document.getElementById('nav-drawer-overlay');
+  if (drawer && overlay) {
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+      overlay.classList.remove('opacity-0');
+      drawer.classList.remove('-translate-x-full');
+    }, 10);
+  }
+}
+
+function closeNavDrawer() {
+  const drawer = document.getElementById('nav-drawer');
+  const overlay = document.getElementById('nav-drawer-overlay');
+  if (drawer && overlay) {
+    drawer.classList.add('-translate-x-full');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+    }, 300);
+  }
 }
 
 function openCartDrawer() {
