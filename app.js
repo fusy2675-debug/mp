@@ -2033,6 +2033,34 @@ function renderAdminDashboard() {
   }
 }
 
+function toggleAuthPasswordVisibility() {
+  const pwdInput = document.getElementById('auth-password');
+  const icon = document.getElementById('auth-password-icon');
+  if (!pwdInput) return;
+
+  if (pwdInput.type === 'password') {
+    pwdInput.type = 'text';
+    if (icon) icon.textContent = '👁️';
+  } else {
+    pwdInput.type = 'password';
+    if (icon) icon.textContent = '🙈';
+  }
+}
+
+function toggleAccountPasswordVisibility() {
+  const pwdInput = document.getElementById('account-password');
+  const icon = document.getElementById('account-password-icon');
+  if (!pwdInput) return;
+
+  if (pwdInput.type === 'password') {
+    pwdInput.type = 'text';
+    if (icon) icon.textContent = '👁️';
+  } else {
+    pwdInput.type = 'password';
+    if (icon) icon.textContent = '🙈';
+  }
+}
+
 function openNavDrawer() {
   updateNavDrawerAccess();
   const drawer = document.getElementById('nav-drawer');
