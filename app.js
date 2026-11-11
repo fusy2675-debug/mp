@@ -1326,32 +1326,49 @@ function updateFilterUI() {
 function switchView(viewName) {
   if (typeof closeNavDrawer === 'function') closeNavDrawer();
   store.currentView = viewName;
+  const dashboardSection = document.getElementById('dashboard-section');
   const catalogSection = document.getElementById('catalog-section');
   const reportsSection = document.getElementById('reports-section');
   const inventorySection = document.getElementById('inventory-section');
   const akunSection = document.getElementById('akun-section');
+  const navDashboardBtn = document.getElementById('nav-btn-dashboard');
   const navCatalogBtn = document.getElementById('nav-btn-catalog');
   const navReportsBtn = document.getElementById('nav-btn-reports');
   const navInventoryBtn = document.getElementById('nav-btn-inventory');
   const navAkunBtn = document.getElementById('nav-btn-akun');
 
+  // Check admin permission if accessing dashboard
+  if (viewName === 'dashboard' && !isCurrentUserAdmin()) {
+    showToast('Akses ditolak: Hanya admin yang dapat mengakses Dashboard!', 'error');
+    switchView('catalog');
+    return;
+  }
+
   // Hide all sections
-  catalogSection.classList.add('hidden');
-  reportsSection.classList.add('hidden');
+  if (dashboardSection) dashboardSection.classList.add('hidden');
+  if (catalogSection) catalogSection.classList.add('hidden');
+  if (reportsSection) reportsSection.classList.add('hidden');
   if (inventorySection) inventorySection.classList.add('hidden');
   if (akunSection) akunSection.classList.add('hidden');
 
   // Reset nav buttons
   const activeClass = ['text-coral-600', 'bg-coral-400/20'];
   const inactiveClass = ['text-caramel-500', 'bg-transparent'];
-  [navCatalogBtn, navReportsBtn, navInventoryBtn, navAkunBtn].forEach(btn => {
+  [navDashboardBtn, navCatalogBtn, navReportsBtn, navInventoryBtn, navAkunBtn].forEach(btn => {
     if (btn) {
       activeClass.forEach(c => btn.classList.remove(c));
       inactiveClass.forEach(c => btn.classList.add(c));
     }
   });
 
-  if (viewName === 'catalog') {
+  if (viewName === 'dashboard') {
+    if (dashboardSection) dashboardSection.classList.remove('hidden');
+    if (navDashboardBtn) {
+      inactiveClass.forEach(c => navDashboardBtn.classList.remove(c));
+      activeClass.forEach(c => navDashboardBtn.classList.add(c));
+    }
+    renderAdminDashboard();
+  } else if (viewName === 'catalog') {
     catalogSection.classList.remove('hidden');
     if (navCatalogBtn) {
       inactiveClass.forEach(c => navCatalogBtn.classList.remove(c));
@@ -1663,7 +1680,110 @@ function handleProductFileSelect(input) {
   });
 }
 
+function isCurrentUserAdmin() {
+  if (demoMode || store.isDemo) {
+    return true; // Mode demo berjalan sebagai admin penuh
+  }
+  const user = auth && auth.currentUser;
+  if (!user) return false;
+  const acc = store.accounts.find(a => a.uid === user.uid || a.email === user.email || a.id === user.uid);
+  if (acc) {
+    return acc.role === 'admin';
+  }
+  return true; // Default admin untuk pengguna awal
+}
+
+function updateNavDrawerAccess() {
+  const isAdmin = isCurrentUserAdmin();
+  const dashBtn = document.getElementById('nav-btn-dashboard');
+  if (dashBtn) {
+    if (isAdmin) {
+      dashBtn.classList.remove('hidden');
+    } else {
+      dashBtn.classList.add('hidden');
+    }
+  }
+}
+
+function renderAdminDashboard() {
+  const revEl = document.getElementById('admin-dash-revenue');
+  const ordEl = document.getElementById('admin-dash-orders');
+  const prodEl = document.getElementById('admin-dash-products');
+  const critEl = document.getElementById('admin-dash-critical');
+  const recentTxContainer = document.getElementById('admin-dash-recent-tx');
+  const lowStockContainer = document.getElementById('admin-dash-low-stock');
+
+  const totalRev = store.transactions.reduce((sum, t) => sum + (Number(t.total) || 0), 0);
+  const totalOrders = store.transactions.length;
+  const totalProds = store.products.length;
+  const criticalItems = store.products.filter(p => Number(p.stock) <= 5);
+
+  if (revEl) revEl.textContent = formatIDR(totalRev);
+  if (ordEl) ordEl.textContent = `${totalOrders} pesanan`;
+  if (prodEl) prodEl.textContent = `${totalProds} produk`;
+  if (critEl) critEl.textContent = `${criticalItems.length} item`;
+
+  // Render 5 transaksi terbaru
+  if (recentTxContainer) {
+    if (store.transactions.length === 0) {
+      recentTxContainer.innerHTML = '<div class="text-center py-6 text-caramel-500 font-semibold text-xs">Belum ada transaksi tercatat.</div>';
+    } else {
+      const recent = [...store.transactions].slice(0, 5);
+      recentTxContainer.innerHTML = recent.map(tx => {
+        const dateStr = tx.date ? new Date(tx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
+        const itemCount = Array.isArray(tx.items) ? tx.items.reduce((sum, i) => sum + (i.quantity || 1), 0) : 1;
+        return `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-cream-50 hover:bg-cream-100 transition-colors">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-sm shadow-sm flex-shrink-0">🛍️</span>
+              <div class="min-w-0">
+                <p class="font-display font-bold text-xs text-caramel-900 truncate">${tx.customerName || 'Pelanggan Toko'}</p>
+                <p class="text-[10px] text-caramel-500 font-semibold">${dateStr} • ${itemCount} barang</p>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0 pl-2">
+              <p class="font-black text-coral-600 text-xs">${formatIDR(tx.total)}</p>
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Lunas</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // Render produk stok kritis
+  if (lowStockContainer) {
+    if (criticalItems.length === 0) {
+      lowStockContainer.innerHTML = '<div class="text-center py-6 text-sage-600 font-bold text-xs bg-cream-50 rounded-2xl">✅ Semua stok aman terkendali!</div>';
+    } else {
+      lowStockContainer.innerHTML = criticalItems.slice(0, 5).map(p => {
+        const isOut = Number(p.stock) === 0;
+        const badgeColor = isOut ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-700';
+        const badgeText = isOut ? 'Habis' : `Sisa ${p.stock}`;
+        return `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-cream-50 hover:bg-cream-100 transition-colors">
+            <div class="flex items-center gap-3 min-w-0">
+              <img src="${p.image}" alt="${p.name}" class="w-9 h-9 rounded-xl object-cover bg-white shadow-sm flex-shrink-0" onerror="this.src='favicon.svg'" />
+              <div class="min-w-0">
+                <p class="font-display font-bold text-xs text-caramel-900 truncate">${p.name}</p>
+                <p class="text-[10px] text-caramel-500 font-semibold">${p.category}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0 pl-2">
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${badgeColor}">${badgeText}</span>
+              <button onclick="openEditProductModal('${p.id}')" class="px-2.5 py-1 rounded-xl bg-white text-caramel-800 text-[10px] font-black shadow-sm hover:text-coral-600 hover:bg-cream-200 transition-colors cursor-pointer">
+                Restock
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+}
+
 function openNavDrawer() {
+  updateNavDrawerAccess();
   const drawer = document.getElementById('nav-drawer');
   const overlay = document.getElementById('nav-drawer-overlay');
   if (drawer && overlay) {

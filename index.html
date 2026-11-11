@@ -202,6 +202,143 @@
   </div>
 
   <!-- ========================================== -->
+  <!-- >>>>>>> ADMIN DASHBOARD VIEW <<<<<<<<<     -->
+  <!-- ========================================== -->
+  <main id="dashboard-section" class="hidden flex-1 max-w-[1200px] w-full mx-auto px-4 py-5 space-y-6">
+
+    <!-- Admin Welcome Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-coral-500 via-coral-400 to-amber-400 p-6 sm:p-8 rounded-[2rem] text-white shadow-soft relative overflow-hidden">
+      <div class="relative z-10 space-y-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-black tracking-wide uppercase">
+          <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+          <span>Admin Workspace</span>
+        </div>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight">Dashboard Utama</h2>
+        <p class="text-xs sm:text-sm text-white/90 font-medium max-w-xl">
+          Pantau seluruh aktivitas toko, penjualan, persediaan produk, dan akun pengguna dalam satu kendali.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 relative z-10 self-start sm:self-auto flex-wrap">
+        <button onclick="switchView('catalog')" class="px-5 py-2.5 rounded-2xl bg-white text-coral-600 font-black text-xs hover:bg-cream-100 hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+          <span>🛍️</span> Buka Katalog
+        </button>
+        <button onclick="openAddProductModal()" class="px-5 py-2.5 rounded-2xl bg-caramel-900/80 hover:bg-caramel-900 text-white font-black text-xs hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+          <span>➕</span> Tambah Produk
+        </button>
+      </div>
+      <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+    </div>
+
+    <!-- Quick Overview Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div class="card-soft p-4 sm:p-5 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Total Omset</span>
+          <span class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-sm">💰</span>
+        </div>
+        <div id="admin-dash-revenue" class="text-xl sm:text-2xl font-black text-coral-600 font-display">Rp 0</div>
+        <span class="text-[10px] text-caramel-500 font-semibold">Total dari semua transaksi</span>
+      </div>
+
+      <div class="card-soft p-4 sm:p-5 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Total Transaksi</span>
+          <span class="w-8 h-8 rounded-xl bg-sage-100 flex items-center justify-center text-sm">🧾</span>
+        </div>
+        <div id="admin-dash-orders" class="text-xl sm:text-2xl font-black text-sage-600 font-display">0</div>
+        <span class="text-[10px] text-sage-600 font-semibold">Pesanan berhasil diproses</span>
+      </div>
+
+      <div class="card-soft p-4 sm:p-5 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Total Produk</span>
+          <span class="w-8 h-8 rounded-xl bg-cream-200 flex items-center justify-center text-sm">📦</span>
+        </div>
+        <div id="admin-dash-products" class="text-xl sm:text-2xl font-black text-caramel-800 font-display">0</div>
+        <span class="text-[10px] text-caramel-500 font-semibold">Produk aktif dalam katalog</span>
+      </div>
+
+      <div class="card-soft p-4 sm:p-5 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-caramel-500">Stok Kritis / Habis</span>
+          <span class="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center text-sm">⚠️</span>
+        </div>
+        <div id="admin-dash-critical" class="text-xl sm:text-2xl font-black text-rose-500 font-display">0</div>
+        <span class="text-[10px] text-rose-500 font-semibold">Perlu restock segera</span>
+      </div>
+    </div>
+
+    <!-- Admin Quick Navigation Tiles -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div onclick="switchView('inventory')" class="card-cute p-4 flex items-center gap-3 cursor-pointer hover:border-coral-400 hover:shadow-btn transition-all group">
+        <span class="w-11 h-11 rounded-2xl bg-coral-400/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📦</span>
+        <div class="min-w-0">
+          <h4 class="font-display font-bold text-sm text-caramel-900 group-hover:text-coral-600 transition-colors">Kelola Produk</h4>
+          <p class="text-[10px] text-caramel-500 font-semibold truncate">Inventaris & stok barang</p>
+        </div>
+      </div>
+
+      <div onclick="switchView('reports')" class="card-cute p-4 flex items-center gap-3 cursor-pointer hover:border-coral-400 hover:shadow-btn transition-all group">
+        <span class="w-11 h-11 rounded-2xl bg-sage-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📊</span>
+        <div class="min-w-0">
+          <h4 class="font-display font-bold text-sm text-caramel-900 group-hover:text-coral-600 transition-colors">Laporan Toko</h4>
+          <p class="text-[10px] text-caramel-500 font-semibold truncate">Statistik & mutasi kas</p>
+        </div>
+      </div>
+
+      <div onclick="switchView('akun')" class="card-cute p-4 flex items-center gap-3 cursor-pointer hover:border-coral-400 hover:shadow-btn transition-all group">
+        <span class="w-11 h-11 rounded-2xl bg-amber-400/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">👥</span>
+        <div class="min-w-0">
+          <h4 class="font-display font-bold text-sm text-caramel-900 group-hover:text-coral-600 transition-colors">Kelola Akun</h4>
+          <p class="text-[10px] text-caramel-500 font-semibold truncate">Hak akses & peran staf</p>
+        </div>
+      </div>
+
+      <div onclick="openAddAccountModal()" class="card-cute p-4 flex items-center gap-3 cursor-pointer hover:border-coral-400 hover:shadow-btn transition-all group">
+        <span class="w-11 h-11 rounded-2xl bg-rose-400/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">👤➕</span>
+        <div class="min-w-0">
+          <h4 class="font-display font-bold text-sm text-caramel-900 group-hover:text-coral-600 transition-colors">Tambah Akun</h4>
+          <p class="text-[10px] text-caramel-500 font-semibold truncate">Daftarkan kasir / admin</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two Columns: Recent Transactions & Critical Stock -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Recent Transactions -->
+      <div class="card-cute p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🧾</span>
+            <h3 class="font-display font-bold text-base text-caramel-900">Transaksi Terbaru</h3>
+          </div>
+          <button onclick="switchView('reports')" class="text-xs font-bold text-coral-600 hover:underline">Lihat Semua →</button>
+        </div>
+        <div id="admin-dash-recent-tx" class="space-y-2">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Critical Stock Alert -->
+      <div class="card-cute p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">⚠️</span>
+            <h3 class="font-display font-bold text-base text-caramel-900">Perhatian Stok Menipis</h3>
+          </div>
+          <button onclick="switchView('inventory')" class="text-xs font-bold text-coral-600 hover:underline">Buka Stok →</button>
+        </div>
+        <div id="admin-dash-low-stock" class="space-y-2">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
   <!-- >>>>>>> CATALOG VIEW <<<<<<<<<             -->
   <!-- ========================================== -->
   <main id="catalog-section" class="flex-1 max-w-[1200px] w-full mx-auto px-4 py-5 space-y-6">
@@ -876,6 +1013,22 @@
     <!-- Nav Items -->
     <div class="flex-1 overflow-y-auto p-5 space-y-2">
       <div class="text-[11px] font-black text-caramel-500 uppercase tracking-wider px-3 mb-2">Navigasi Utama</div>
+
+      <!-- Dashboard (Admin Only - Paling Atas) -->
+      <button
+        onclick="switchView('dashboard'); closeNavDrawer();"
+        id="nav-btn-dashboard"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-500 bg-transparent hover:bg-cream-100 hover:text-coral-600"
+      >
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">⚡</span>
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <span class="leading-tight">Dashboard</span>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-coral-500/15 text-coral-600 tracking-wider">Admin</span>
+          </div>
+          <div class="text-[10px] font-semibold opacity-70">Workspace & performa toko</div>
+        </div>
+      </button>
 
       <!-- Katalog -->
       <button
