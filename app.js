@@ -671,13 +671,93 @@ class StoreState {
   }
 
   async loadTransactions() {
-    if (!this.uid) return;
-    try { const snap = await db.collection('transactions').get(); this.transactions = snap.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { this.transactions = []; }
+    let localTrx = null;
+    try {
+      localTrx = JSON.parse(localStorage.getItem('nexamart_transactions') || 'null');
+    } catch (e) {}
+
+    if (Array.isArray(localTrx) && localTrx.length > 0) {
+      this.transactions = localTrx;
+    } else {
+      this.transactions = typeof INITIAL_TRANSACTIONS !== 'undefined' ? [...INITIAL_TRANSACTIONS] : [];
+    }
+
+    // Pastikan setiap transaksi memiliki total dan totalAmount yang valid
+    this.transactions.forEach(t => {
+      const amt = Number(t.totalAmount) || Number(t.total) || 0;
+      t.total = amt;
+      t.totalAmount = amt;
+    });
+
+    try {
+      localStorage.setItem('nexamart_transactions', JSON.stringify(this.transactions));
+    } catch (e) {}
+
+    // Sinkronisasi data cloud Firestore (best-effort)
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try {
+        const snap = await db.collection('transactions').get();
+        if (!snap.empty) {
+          const remoteTrx = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          remoteTrx.forEach(rt => {
+            const amt = Number(rt.totalAmount) || Number(rt.total) || 0;
+            rt.total = amt;
+            rt.totalAmount = amt;
+            if (!this.transactions.some(t => t.id === rt.id)) {
+              this.transactions.push(rt);
+            }
+          });
+          localStorage.setItem('nexamart_transactions', JSON.stringify(this.transactions));
+        }
+      } catch (e) {}
+    }
   }
 
   async addTransaction(transactionData) {
-    try { await db.collection('transactions').add(transactionData); } catch (e) { showToast('Gagal menyimpan transaksi: ' + e.message, 'error'); }
-    await this.loadTransactions();
+    const amt = Number(transactionData.totalAmount) || Number(transactionData.total) || 0;
+    transactionData.total = amt;
+    transactionData.totalAmount = amt;
+
+    // 1. Simpan ke transaksi lokal di memory
+    this.transactions.unshift(transactionData);
+
+    // 2. Simpan permanen ke localStorage browser
+    try {
+      localStorage.setItem('nexamart_transactions', JSON.stringify(this.transactions));
+    } catch (e) {
+      console.error('Gagal menyimpan transaksi ke localStorage:', e);
+    }
+
+    // 3. Kurangi stok produk secara otomatis
+    if (Array.isArray(transactionData.items)) {
+      transactionData.items.forEach(cartItem => {
+        const prod = this.products.find(p => p.id === cartItem.id);
+        if (prod) {
+          const qty = Number(cartItem.quantity || 1);
+          prod.stock = Math.max(0, (Number(prod.stock) || 0) - qty);
+        }
+      });
+      try {
+        localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+      } catch (e) {}
+    }
+
+    // 4. Sinkronisasi Firestore jika ada koneksi cloud
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try {
+        await db.collection('transactions').add(transactionData);
+      } catch (e) {
+        console.warn('Notice simpan cloud transaksi:', e.message);
+      }
+    }
+
+    // 5. Perbarui dashboard, omset, grafik gelombang, laporan, dan stok secara otomatis!
+    renderAdminDashboard();
+    renderTransactionWaveChart();
+    renderReportsView();
+    renderDashboardStats();
+    renderProductGrid();
+    renderInventoryTable();
   }
 
   async clearAllTransactions() {
@@ -785,6 +865,7 @@ function applyUserLogin(account, notify = true) {
   renderInventoryTable();
   renderDashboardStats();
   renderReportsView();
+  renderAdminDashboard();
 
   if (notify) {
     showToast(`Selamat datang, ${account.displayName || account.email}! (${isAdmin ? '👑 Admin' : '🛒 Kasir'})`, 'success');
@@ -2219,7 +2300,7 @@ function renderAdminDashboard() {
   const recentTxContainer = document.getElementById('admin-dash-recent-tx');
   const lowStockContainer = document.getElementById('admin-dash-low-stock');
 
-  const totalRev = store.transactions.reduce((sum, t) => sum + (Number(t.total) || 0), 0);
+  const totalRev = store.transactions.reduce((sum, t) => sum + (Number(t.totalAmount) || Number(t.total) || 0), 0);
   const totalOrders = store.transactions.length;
   const totalProds = store.products.length;
   const criticalItems = store.products.filter(p => Number(p.stock) <= 5);
@@ -2239,6 +2320,7 @@ function renderAdminDashboard() {
       recentTxContainer.innerHTML = recent.map(tx => {
         const dateStr = tx.date ? new Date(tx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
         const itemCount = Array.isArray(tx.items) ? tx.items.reduce((sum, i) => sum + (i.quantity || 1), 0) : 1;
+        const trxAmount = Number(tx.totalAmount) || Number(tx.total) || 0;
         return `
           <div class="flex items-center justify-between p-3 rounded-2xl bg-cream-50 hover:bg-cream-100 transition-colors">
             <div class="flex items-center gap-3 min-w-0">
@@ -2249,7 +2331,7 @@ function renderAdminDashboard() {
               </div>
             </div>
             <div class="text-right flex-shrink-0 pl-2">
-              <p class="font-black text-coral-600 text-xs">${formatIDR(tx.total)}</p>
+              <p class="font-black text-coral-600 text-xs">${formatIDR(trxAmount)}</p>
               <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Lunas</span>
             </div>
           </div>
@@ -2422,14 +2504,16 @@ function processCheckout(e) {
 
   const trxId = 'TRX-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
 
+  const totalCartValue = store.getCartTotal();
   const newTransaction = {
     id: trxId,
     date: new Date().toISOString(),
     customerName: nameInput.value,
     customerPhone: phoneInput.value,
     customerAddress: addressInput.value,
-    items: [...store.cart],
-    totalAmount: store.getCartTotal(),
+    items: store.cart.map(i => ({ ...i })),
+    totalAmount: totalCartValue,
+    total: totalCartValue,
     paymentMethod: paymentInput ? paymentInput.value : 'Transfer Bank (BCA)',
     status: 'Selesai'
   };
@@ -3558,9 +3642,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     updateNavDrawerAccess();
+    await store.loadTransactions();
     renderProductGrid();
     renderInventoryTable();
     renderReportsView();
+    renderAdminDashboard();
   }
 
   // Search input listener
