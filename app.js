@@ -514,6 +514,10 @@ class StoreState {
     this.bestSellerOnly = false;
     this.currentView = 'catalog';
 
+    if (auth && typeof auth.setPersistence === 'function') {
+      try { auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(() => {}); } catch(e) {}
+    }
+
     if (!auth || !auth.onAuthStateChanged) return;
     auth.onAuthStateChanged((user) => {
       // Do NOT manipulate auth-overlay here!
@@ -712,9 +716,10 @@ function applyUserLogin(account, notify = true) {
   store.uid = account.uid || account.id || 'usr-local';
   demoMode = false;
 
-  // Persist session
+  // Persist session di sessionStorage (otomatis terhapus saat tab/browser di-close)
   try {
-    localStorage.setItem('nexamart_session', JSON.stringify(account));
+    sessionStorage.setItem('nexamart_session', JSON.stringify(account));
+    localStorage.removeItem('nexamart_session');
   } catch (e) {}
 
   // Hide auth overlay & show logout button
@@ -1040,6 +1045,7 @@ function handleLogout() {
   store.currentUser = null;
   store.uid = null;
   try {
+    sessionStorage.removeItem('nexamart_session');
     localStorage.removeItem('nexamart_session');
   } catch (e) {}
 
@@ -1908,7 +1914,7 @@ function isCurrentUserAdmin() {
     return store.currentUser.role === 'admin';
   }
   try {
-    const session = JSON.parse(localStorage.getItem('nexamart_session') || 'null');
+    const session = JSON.parse(sessionStorage.getItem('nexamart_session') || 'null');
     if (session) {
       return session.role === 'admin';
     }
@@ -3534,10 +3540,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCartBadge();
   startFlashSaleCountdown();
 
-  // Check persisted session
+  // Bersihkan sisa sesi permanent lama dari localStorage
+  try { localStorage.removeItem('nexamart_session'); } catch (e) {}
+
+  // Cek sesi aktif di sessionStorage (otomatis hilang saat browser/tab ditutup)
   let activeSession = null;
   try {
-    activeSession = JSON.parse(localStorage.getItem('nexamart_session') || 'null');
+    activeSession = JSON.parse(sessionStorage.getItem('nexamart_session') || 'null');
   } catch (e) {}
 
   if (activeSession && activeSession.isActive !== false) {

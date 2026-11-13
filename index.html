@@ -41,10 +41,11 @@
     }
   </script>
 
-  <!-- Session Check Helper to prevent overlay flash -->
+  <!-- Session Check Helper (sessionStorage: sesi berakhir otomatis saat tab/browser di-close) -->
   <script>
     try {
-      var _s = localStorage.getItem('nexamart_session');
+      localStorage.removeItem('nexamart_session');
+      var _s = sessionStorage.getItem("nexamart_session");
       if (_s && JSON.parse(_s).isActive !== false) {
         document.documentElement.classList.add('user-logged-in');
       }
