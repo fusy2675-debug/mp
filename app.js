@@ -516,37 +516,11 @@ class StoreState {
 
     if (!auth || !auth.onAuthStateChanged) return;
     auth.onAuthStateChanged((user) => {
-      if (demoMode || store.currentUser) return;
-      let hasSession = null;
-      try { hasSession = JSON.parse(localStorage.getItem('nexamart_session') || 'null'); } catch(e) {}
-      if (user) {
+      // Do NOT manipulate auth-overlay here!
+      // Auth overlay visibility is strictly controlled by explicit user actions.
+      if (user && store.currentUser) {
         this.uid = user.uid;
-        Promise.all([this.loadProducts(), this.loadCart(), this.loadTransactions()]).then(() => {
-          updateFilterUI();
-          renderProductGrid();
-          renderInventoryTable();
-          renderDashboardStats();
-          renderReportsView();
-        }).catch(() => {});
-      } else {
-        if (hasSession && hasSession.isActive !== false) return;
-        this.uid = null;
-        this.products = [];
-        this.cart = [];
-        this.transactions = [];
-        this.accounts = [];
-        updateFilterUI();
-        renderProductGrid();
-        renderInventoryTable();
-        renderDashboardStats();
-        renderReportsView();
-        updateCartBadge();
       }
-      const overlay = document.getElementById('auth-overlay');
-      const logoutBtn = document.getElementById('btn-logout');
-      const isAuthed = !!(user || (hasSession && hasSession.isActive !== false));
-      if (overlay) { if (isAuthed) overlay.classList.add('hidden'); else overlay.classList.remove('hidden'); }
-      if (logoutBtn) { if (isAuthed) logoutBtn.classList.remove('hidden'); else logoutBtn.classList.add('hidden'); }
     });
   }
 
@@ -744,6 +718,7 @@ function applyUserLogin(account, notify = true) {
   } catch (e) {}
 
   // Hide auth overlay & show logout button
+  document.documentElement.classList.add('user-logged-in');
   const overlay = document.getElementById('auth-overlay');
   const logoutBtn = document.getElementById('btn-logout');
   if (overlay) overlay.classList.add('hidden');
@@ -1068,9 +1043,18 @@ function handleLogout() {
     localStorage.removeItem('nexamart_session');
   } catch (e) {}
 
+  document.documentElement.classList.remove('user-logged-in');
+
   if (auth && typeof auth.signOut === 'function') {
     auth.signOut().catch(() => {});
   }
+
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  const errEl = document.getElementById('auth-error');
+  if (emailEl) emailEl.value = '';
+  if (passEl) passEl.value = '';
+  if (errEl) errEl.classList.add('hidden');
 
   const overlay = document.getElementById('auth-overlay');
   const logoutBtn = document.getElementById('btn-logout');

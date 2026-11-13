@@ -288,3 +288,8 @@ body {
     margin: 0 !important;
   }
 }
+
+/* Prevent overlay flash when already authenticated */
+.user-logged-in #auth-overlay {
+  display: none !important;
+}

@@ -41,6 +41,16 @@
     }
   </script>
 
+  <!-- Session Check Helper to prevent overlay flash -->
+  <script>
+    try {
+      var _s = localStorage.getItem('nexamart_session');
+      if (_s && JSON.parse(_s).isActive !== false) {
+        document.documentElement.classList.add('user-logged-in');
+      }
+    } catch(e) {}
+  </script>
+
   <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css" />
 </head>
