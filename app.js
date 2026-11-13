@@ -791,6 +791,45 @@ function applyUserLogin(account, notify = true) {
   }
 }
 
+function quickLogin(role) {
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  const errEl = document.getElementById('auth-error');
+  if (errEl) errEl.classList.add('hidden');
+
+  // Cari akun yang sesuai dengan peran yang diminta
+  const matchedAcc = store.accounts.find(a => 
+    role === 'admin' 
+      ? a.role === 'admin' 
+      : (a.role === 'staff' || a.role === 'kasir')
+  );
+
+  if (matchedAcc && matchedAcc.email && matchedAcc.password) {
+    if (authMode === 'register') {
+      toggleAuthMode();
+    }
+    if (emailEl) emailEl.value = matchedAcc.email;
+    if (passEl) passEl.value = matchedAcc.password;
+    const form = document.getElementById('auth-form');
+    if (form) {
+      form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  } else {
+    // Jika belum ada akun tersimpan, buka form daftar dan pilihkan perannya
+    if (authMode === 'login') {
+      toggleAuthMode();
+    }
+    const roleSelect = document.getElementById('auth-role');
+    if (roleSelect) {
+      roleSelect.value = role === 'admin' ? 'admin' : 'staff';
+    }
+    if (errEl) {
+      errEl.textContent = `Silakan daftarkan akun ${role === 'admin' ? '👑 Admin' : '🛒 Kasir'} Anda melalui form di atas.`;
+      errEl.classList.remove('hidden');
+    }
+  }
+}
+
 function enterDemoMode() {
   demoMode = true;
   store.currentUser = {
