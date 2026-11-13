@@ -416,87 +416,8 @@ const INITIAL_PRODUCTS = [
   }
 ];
 
-// Seed Initial Transactions Sample Data
-const INITIAL_TRANSACTIONS = [
-  {
-    "id": "TRX-20260806-001",
-    "date": "2026-08-06T14:20:00.000Z",
-    "customerName": "Budi Santoso",
-    "customerPhone": "081234567890",
-    "customerAddress": "Jl. Sudirman No. 45, Jakarta Selatan",
-    "items": [
-      {
-        "id": "PRD-008",
-        "name": "Barbie Princess Mahkota Bintang Emas",
-        "price": 185000,
-        "quantity": 1,
-        "image": "assets/toys/barbie-princess.svg"
-      },
-      {
-        "id": "PRD-012",
-        "name": "Barbie Ballerina Gaun Tutu Pink Rose",
-        "price": 145000,
-        "quantity": 1,
-        "image": "assets/toys/barbie-ballerina.svg"
-      }
-    ],
-    "totalAmount": 330000,
-    "paymentMethod": "Transfer Bank (BCA)",
-    "status": "Selesai"
-  },
-  {
-    "id": "TRX-20260806-002",
-    "date": "2026-08-06T16:45:00.000Z",
-    "customerName": "Siti Rahmawati",
-    "customerPhone": "085712345678",
-    "customerAddress": "Jl. Dago Atas No. 12, Bandung",
-    "items": [
-      {
-        "id": "PRD-015",
-        "name": "Rumah Boneka Kayu Pastel 3 Lantai Lengkap",
-        "price": 345000,
-        "quantity": 1,
-        "image": "assets/toys/rumah-kayu.svg"
-      },
-      {
-        "id": "PRD-002",
-        "name": "Boneka Kelinci Pinkie Velvet Telinga Panjang",
-        "price": 89000,
-        "quantity": 2,
-        "image": "assets/toys/boneka-kelinci.svg"
-      }
-    ],
-    "totalAmount": 523000,
-    "paymentMethod": "E-Wallet (Gopay)",
-    "status": "Selesai"
-  },
-  {
-    "id": "TRX-20260807-003",
-    "date": "2026-08-07T09:15:00.000Z",
-    "customerName": "Rian Hidayat",
-    "customerPhone": "087899887766",
-    "customerAddress": "Jl. Malioboro No. 88, Yogyakarta",
-    "items": [
-      {
-        "id": "PRD-001",
-        "name": "Boneka Teddy Bear Pastel Fluffy",
-        "price": 95000,
-        "quantity": 2,
-        "image": "assets/toys/boneka-beruang.svg"
-      },
-      {
-        "id": "PRD-027",
-        "name": "Set Teko & Cangkir Pesta Teh Keramik Mini",
-        "price": 110000,
-        "quantity": 1,
-        "image": "assets/toys/pesta-teh.svg"
-      }
-    ],
-    "totalAmount": 300000,
-    "paymentMethod": "Cash on Delivery (COD)",
-    "status": "Selesai"
-  }
-];
+// Inisialisasi Riwayat Transaksi (Kosong secara default, bertambah otomatis saat ada transaksi kasir)
+const INITIAL_TRANSACTIONS = [];
 
 // ==========================================
 // 2. APP STATE MANAGEMENT (Firestore-backed)
@@ -677,9 +598,10 @@ class StoreState {
     } catch (e) {}
 
     if (Array.isArray(localTrx) && localTrx.length > 0) {
-      this.transactions = localTrx;
+      // Bersihkan data contoh/dummy lama jika ada
+      this.transactions = localTrx.filter(t => !String(t.id || '').startsWith('TRX-202608') && t.customerName !== 'Budi Santoso' && t.customerName !== 'Siti Rahmawati' && t.customerName !== 'Rian Hidayat');
     } else {
-      this.transactions = typeof INITIAL_TRANSACTIONS !== 'undefined' ? [...INITIAL_TRANSACTIONS] : [];
+      this.transactions = [];
     }
 
     // Pastikan setiap transaksi memiliki total dan totalAmount yang valid
@@ -852,9 +774,11 @@ function applyUserLogin(account, notify = true) {
   if (!store.transactions || store.transactions.length === 0) {
     try {
       const savedTrx = JSON.parse(localStorage.getItem('nexamart_transactions') || 'null');
-      store.transactions = (Array.isArray(savedTrx) && savedTrx.length > 0) ? savedTrx : [...INITIAL_TRANSACTIONS];
+      store.transactions = (Array.isArray(savedTrx) && savedTrx.length > 0)
+        ? savedTrx.filter(t => !String(t.id || '').startsWith('TRX-202608') && t.customerName !== 'Budi Santoso' && t.customerName !== 'Siti Rahmawati' && t.customerName !== 'Rian Hidayat')
+        : [];
     } catch (e) {
-      store.transactions = [...INITIAL_TRANSACTIONS];
+      store.transactions = [];
     }
   }
 
@@ -936,7 +860,7 @@ function enterDemoMode() {
     store.products = [...INITIAL_PRODUCTS];
   }
   store.cart = [];
-  store.transactions = [...INITIAL_TRANSACTIONS];
+  store.transactions = [];
   store.ensureBarcodes();
   const overlay = document.getElementById('auth-overlay');
   const logoutBtn = document.getElementById('btn-logout');
