@@ -508,6 +508,7 @@ class StoreState {
     this.transactions = [];
     this.accounts = [];
     this.uid = null;
+    this.currentUser = null;
     this.activeCategory = 'Semua';
     this.searchQuery = '';
     this.bestSellerOnly = false;
@@ -515,7 +516,9 @@ class StoreState {
 
     if (!auth || !auth.onAuthStateChanged) return;
     auth.onAuthStateChanged((user) => {
-      if (demoMode) return;
+      if (demoMode || store.currentUser) return;
+      let hasSession = null;
+      try { hasSession = JSON.parse(localStorage.getItem('nexamart_session') || 'null'); } catch(e) {}
       if (user) {
         this.uid = user.uid;
         Promise.all([this.loadProducts(), this.loadCart(), this.loadTransactions()]).then(() => {
@@ -526,6 +529,7 @@ class StoreState {
           renderReportsView();
         }).catch(() => {});
       } else {
+        if (hasSession && hasSession.isActive !== false) return;
         this.uid = null;
         this.products = [];
         this.cart = [];
@@ -540,8 +544,9 @@ class StoreState {
       }
       const overlay = document.getElementById('auth-overlay');
       const logoutBtn = document.getElementById('btn-logout');
-      if (overlay) { if (user) overlay.classList.add('hidden'); else overlay.classList.remove('hidden'); }
-      if (logoutBtn) { if (user) logoutBtn.classList.remove('hidden'); else logoutBtn.classList.add('hidden'); }
+      const isAuthed = !!(user || (hasSession && hasSession.isActive !== false));
+      if (overlay) { if (isAuthed) overlay.classList.add('hidden'); else overlay.classList.remove('hidden'); }
+      if (logoutBtn) { if (isAuthed) logoutBtn.classList.remove('hidden'); else logoutBtn.classList.add('hidden'); }
     });
   }
 
@@ -722,11 +727,124 @@ class StoreState {
 let demoMode = false;
 const store = new StoreState();
 
-// Auth helpers
+// ==========================================
+// AUTH HELPERS, SESSIONS & ROLES
+// ==========================================
 let authMode = 'login';
+
+function applyUserLogin(account, notify = true) {
+  if (!account) return;
+  store.currentUser = account;
+  store.uid = account.uid || account.id || 'usr-local';
+  demoMode = false;
+
+  // Persist session
+  try {
+    localStorage.setItem('nexamart_session', JSON.stringify(account));
+  } catch (e) {}
+
+  // Hide auth overlay & show logout button
+  const overlay = document.getElementById('auth-overlay');
+  const logoutBtn = document.getElementById('btn-logout');
+  if (overlay) overlay.classList.add('hidden');
+  if (logoutBtn) logoutBtn.classList.remove('hidden');
+
+  // Update Drawer User Profile Card
+  const drawerName = document.getElementById('drawer-user-name');
+  const drawerEmail = document.getElementById('drawer-user-email');
+  const drawerAvatar = document.getElementById('drawer-user-avatar');
+  const drawerBadge = document.getElementById('drawer-user-role-badge');
+
+  const isAdmin = account.role === 'admin';
+  if (drawerName) drawerName.textContent = account.displayName || account.email;
+  if (drawerEmail) drawerEmail.textContent = account.email;
+  if (drawerAvatar) drawerAvatar.textContent = isAdmin ? '👑' : '🛒';
+  if (drawerBadge) {
+    drawerBadge.textContent = isAdmin ? 'Admin' : 'Kasir';
+    if (isAdmin) {
+      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-coral-500/15 text-coral-600';
+    } else {
+      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600';
+    }
+  }
+
+  // Update Navigation Drawer access (show/hide Dashboard)
+  updateNavDrawerAccess();
+
+  // If non-admin is viewing dashboard, redirect to catalog
+  if (!isAdmin && store.currentView === 'dashboard') {
+    switchView('catalog');
+  }
+
+  // Ensure products and transactions are loaded
+  if (!store.products || store.products.length === 0) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
+      if (Array.isArray(saved) && saved.length > 0) {
+        store.products = saved;
+      } else {
+        store.products = [...INITIAL_PRODUCTS];
+      }
+    } catch (e) {
+      store.products = [...INITIAL_PRODUCTS];
+    }
+  }
+  if (!store.transactions || store.transactions.length === 0) {
+    try {
+      const savedTrx = JSON.parse(localStorage.getItem('nexamart_transactions') || 'null');
+      store.transactions = (Array.isArray(savedTrx) && savedTrx.length > 0) ? savedTrx : [...INITIAL_TRANSACTIONS];
+    } catch (e) {
+      store.transactions = [...INITIAL_TRANSACTIONS];
+    }
+  }
+
+  store.ensureBarcodes();
+  updateFilterUI();
+  updateCartBadge();
+  renderProductGrid();
+  renderInventoryTable();
+  renderDashboardStats();
+  renderReportsView();
+
+  if (notify) {
+    showToast(`Selamat datang, ${account.displayName || account.email}! (${isAdmin ? '👑 Admin' : '🛒 Kasir'})`, 'success');
+  }
+}
+
+function quickLogin(role) {
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  const errEl = document.getElementById('auth-error');
+  if (errEl) errEl.classList.add('hidden');
+
+  if (authMode === 'register') {
+    toggleAuthMode();
+  }
+
+  if (role === 'admin') {
+    if (emailEl) emailEl.value = 'admin@daisyfumarket.com';
+    if (passEl) passEl.value = 'admin123';
+  } else {
+    if (emailEl) emailEl.value = 'kasir@daisyfumarket.com';
+    if (passEl) passEl.value = 'kasir123';
+  }
+
+  const form = document.getElementById('auth-form');
+  if (form) {
+    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  }
+}
 
 function enterDemoMode() {
   demoMode = true;
+  store.currentUser = {
+    id: 'demo-admin',
+    uid: 'demo-admin',
+    email: 'admin@daisyfumarket.com',
+    displayName: 'Admin Daisyfu (Demo)',
+    role: 'admin',
+    isActive: true
+  };
   store.uid = 'demo';
   try {
     const saved = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
@@ -748,13 +866,27 @@ function enterDemoMode() {
   const logoutBtn = document.getElementById('btn-logout');
   if (overlay) overlay.classList.add('hidden');
   if (logoutBtn) logoutBtn.classList.remove('hidden');
+
+  const drawerName = document.getElementById('drawer-user-name');
+  const drawerEmail = document.getElementById('drawer-user-email');
+  const drawerAvatar = document.getElementById('drawer-user-avatar');
+  const drawerBadge = document.getElementById('drawer-user-role-badge');
+  if (drawerName) drawerName.textContent = 'Admin Daisyfu (Demo)';
+  if (drawerEmail) drawerEmail.textContent = 'admin@daisyfumarket.com';
+  if (drawerAvatar) drawerAvatar.textContent = '👑';
+  if (drawerBadge) {
+    drawerBadge.textContent = 'Admin';
+    drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-coral-500/15 text-coral-600';
+  }
+
+  updateNavDrawerAccess();
   updateFilterUI();
   renderProductGrid();
   renderInventoryTable();
   renderDashboardStats();
   renderReportsView();
   updateCartBadge();
-  showToast('Mode Demo aktif — data hanya tersimpan di browser ini.', 'success');
+  showToast('Mode Demo aktif — data tersimpan di browser.', 'success');
 }
 
 function toggleAuthMode() {
@@ -764,15 +896,18 @@ function toggleAuthMode() {
   const nameField = document.getElementById('auth-name-field');
   const submitBtn = document.getElementById('auth-submit-btn');
   const switchLink = document.getElementById('auth-switch-link');
+  const errEl = document.getElementById('auth-error');
+  if (errEl) errEl.classList.add('hidden');
+
   if (authMode === 'register') {
-    if (title) title.textContent = 'Daftar';
-    if (subtitle) subtitle.textContent = 'Buat akun dashboard';
+    if (title) title.textContent = 'Daftar 📝';
+    if (subtitle) subtitle.textContent = 'Buat akun pengguna baru';
     if (nameField) nameField.classList.remove('hidden');
-    if (submitBtn) submitBtn.textContent = 'Daftar';
+    if (submitBtn) submitBtn.textContent = 'Daftar Akun';
     if (switchLink) switchLink.textContent = 'Sudah punya akun? Masuk';
   } else {
-    if (title) title.textContent = 'Masuk';
-    if (subtitle) subtitle.textContent = 'Masuk ke dashboard daisyfumarket';
+    if (title) title.textContent = 'Masuk 👋';
+    if (subtitle) subtitle.textContent = 'Masuk ke akun daisyfumarket';
     if (nameField) nameField.classList.add('hidden');
     if (submitBtn) submitBtn.textContent = 'Masuk';
     if (switchLink) switchLink.textContent = 'Belum punya akun? Daftar';
@@ -787,47 +922,138 @@ async function handleAuthSubmit(e) {
   const btn = document.getElementById('auth-submit-btn');
   const errEl = document.getElementById('auth-error');
   const loadingEl = document.getElementById('auth-loading');
+
   const email = emailEl?.value?.trim() || '';
   const password = passEl?.value || '';
   const name = nameEl?.value?.trim() || '';
-  if (!email || !password) { showToast('Isi email dan password.', 'error'); return; }
+
+  if (!email || !password) {
+    showToast('Isi email dan password.', 'error');
+    return;
+  }
+
   btn.disabled = true;
   if (loadingEl) loadingEl.classList.remove('hidden');
   if (errEl) errEl.classList.add('hidden');
+
   try {
+    await loadAccounts();
+
     if (authMode === 'login') {
-      const cred = await auth.signInWithEmailAndPassword(email, password);
-      // Cek apakah akun dinonaktifkan (best-effort; gagal baca tidak memblokir login)
-      try {
-        const doc = await db.collection('users').doc(cred.user.uid).get();
-        if (doc.exists && doc.data().isActive === false) {
-          await auth.signOut();
+      const normalizedEmail = email.toLowerCase();
+      const localAcc = store.accounts.find(a => String(a.email || '').toLowerCase() === normalizedEmail);
+
+      if (localAcc) {
+        if (localAcc.password && localAcc.password !== password) {
+          throw new Error('Password salah. Periksa kembali password Anda.');
+        }
+        if (localAcc.isActive === false) {
           throw new Error('Akun Anda telah dinonaktifkan. Hubungi admin toko.');
         }
-      } catch (e) {
-        if (String(e.message).includes('dinonaktifkan')) throw e;
-        // Abaikan error baca (mis. Firestore rules) agar login tidak terblokir
+        applyUserLogin(localAcc);
+        return;
       }
+
+      // Try Firebase Auth if available
+      let firebaseUser = null;
+      if (auth && typeof auth.signInWithEmailAndPassword === 'function') {
+        try {
+          const cred = await auth.signInWithEmailAndPassword(email, password);
+          firebaseUser = cred.user;
+        } catch (fbErr) {
+          if (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
+            throw new Error('Email atau password tidak cocok.');
+          }
+        }
+      }
+
+      if (firebaseUser) {
+        let role = 'staff';
+        let displayName = firebaseUser.displayName || name || email.split('@')[0];
+        try {
+          const doc = await db.collection('users').doc(firebaseUser.uid).get();
+          if (doc.exists) {
+            const data = doc.data();
+            if (data.isActive === false) {
+              await auth.signOut();
+              throw new Error('Akun Anda telah dinonaktifkan. Hubungi admin toko.');
+            }
+            if (data.role) role = data.role;
+            if (data.displayName) displayName = data.displayName;
+          }
+        } catch (dbErr) {
+          if (String(dbErr.message).includes('dinonaktifkan')) throw dbErr;
+        }
+        const userObj = {
+          id: firebaseUser.uid,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || email,
+          displayName: displayName,
+          role: role,
+          isActive: true
+        };
+        applyUserLogin(userObj);
+        return;
+      }
+
+      throw new Error('Akun tidak ditemukan. Gunakan tombol Akses Cepat (👑 Admin / 🛒 Kasir) atau buat akun baru.');
     } else {
-      const cred = await auth.createUserWithEmailAndPassword(email, password);
-      await cred.user.updateProfile({ displayName: name });
-      try {
-        await db.collection('users').doc(cred.user.uid).set({
-          uid: cred.user.uid,
-          email: email,
-          displayName: name,
-          role: 'staff',
-          isActive: true,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (e) {
-        // Jangan gagalkan registrasi hanya karena gagal menulis profil akun
-        console.warn('Gagal menyimpan profil akun:', e);
+      // Register Mode
+      if (password.length < 6) {
+        throw new Error('Password minimal 6 karakter.');
       }
+      const normalizedEmail = email.toLowerCase();
+      const existing = store.accounts.find(a => String(a.email || '').toLowerCase() === normalizedEmail);
+      if (existing) {
+        throw new Error('Email ini sudah terdaftar. Silakan langsung Masuk.');
+      }
+
+      const newId = 'acc-' + Date.now();
+      const newAcc = {
+        id: newId,
+        uid: newId,
+        email: email,
+        password: password,
+        displayName: name || email.split('@')[0],
+        role: 'staff',
+        isActive: true,
+        createdAt: new Date().toISOString()
+      };
+
+      if (auth && typeof auth.createUserWithEmailAndPassword === 'function') {
+        try {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          newAcc.uid = cred.user.uid;
+          newAcc.id = cred.user.uid;
+          await cred.user.updateProfile({ displayName: name });
+          if (db) {
+            await db.collection('users').doc(cred.user.uid).set({
+              uid: cred.user.uid,
+              email: email,
+              displayName: name,
+              role: 'staff',
+              isActive: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        } catch (fbRegErr) {
+          console.warn('Firebase registration notice:', fbRegErr.message);
+        }
+      }
+
+      store.accounts.push(newAcc);
+      try {
+        localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+      } catch (e) {}
+
+      applyUserLogin(newAcc);
+      showToast(`Akun berhasil dibuat! Selamat datang, ${newAcc.displayName}.`, 'success');
     }
   } catch (err) {
-    if (errEl) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
+    if (errEl) {
+      errEl.textContent = err.message;
+      errEl.classList.remove('hidden');
+    }
   } finally {
     btn.disabled = false;
     if (loadingEl) loadingEl.classList.add('hidden');
@@ -835,24 +1061,37 @@ async function handleAuthSubmit(e) {
 }
 
 function handleLogout() {
-  if (demoMode) {
-    demoMode = false;
-    store.uid = null;
-    store.products = [];
-    store.cart = [];
-    store.transactions = [];
-    store.accounts = [];
-    const overlay = document.getElementById('auth-overlay');
-    const logoutBtn = document.getElementById('btn-logout');
-    if (overlay) overlay.classList.remove('hidden');
-    if (logoutBtn) logoutBtn.classList.add('hidden');
-    updateCartBadge();
-    renderProductGrid();
-    renderInventoryTable();
-    renderReportsView();
-    return;
+  demoMode = false;
+  store.currentUser = null;
+  store.uid = null;
+  try {
+    localStorage.removeItem('nexamart_session');
+  } catch (e) {}
+
+  if (auth && typeof auth.signOut === 'function') {
+    auth.signOut().catch(() => {});
   }
-  auth.signOut();
+
+  const overlay = document.getElementById('auth-overlay');
+  const logoutBtn = document.getElementById('btn-logout');
+  if (overlay) overlay.classList.remove('hidden');
+  if (logoutBtn) logoutBtn.classList.add('hidden');
+
+  const drawerName = document.getElementById('drawer-user-name');
+  const drawerEmail = document.getElementById('drawer-user-email');
+  const drawerAvatar = document.getElementById('drawer-user-avatar');
+  const drawerBadge = document.getElementById('drawer-user-role-badge');
+  if (drawerName) drawerName.textContent = 'Belum Masuk';
+  if (drawerEmail) drawerEmail.textContent = '-';
+  if (drawerAvatar) drawerAvatar.textContent = '👤';
+  if (drawerBadge) {
+    drawerBadge.textContent = 'Tamu';
+    drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-cream-200 text-caramel-600';
+  }
+
+  updateNavDrawerAccess();
+  switchView('catalog');
+  showToast('Anda telah keluar dari akun.', 'info');
 }
 
 // Helper: Format Rupiah
@@ -1681,6 +1920,15 @@ function handleProductFileSelect(input) {
 }
 
 function isCurrentUserAdmin() {
+  if (store.currentUser) {
+    return store.currentUser.role === 'admin';
+  }
+  try {
+    const session = JSON.parse(localStorage.getItem('nexamart_session') || 'null');
+    if (session) {
+      return session.role === 'admin';
+    }
+  } catch (e) {}
   if (demoMode || store.isDemo) {
     return true; // Mode demo berjalan sebagai admin penuh
   }
@@ -1690,7 +1938,7 @@ function isCurrentUserAdmin() {
   if (acc) {
     return acc.role === 'admin';
   }
-  return true; // Default admin untuk pengguna awal
+  return false;
 }
 
 function updateNavDrawerAccess() {
@@ -2952,56 +3200,71 @@ function formatAccountDate(value) {
   }
 }
 
-// Muat akun dari Firestore 'users' collection (atau localStorage saat Mode Demo)
+const DEFAULT_ACCOUNTS = [
+  {
+    id: 'admin-01',
+    uid: 'admin-01',
+    email: 'admin@daisyfumarket.com',
+    password: 'admin123',
+    displayName: 'Admin Daisyfu',
+    role: 'admin',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'kasir-01',
+    uid: 'kasir-01',
+    email: 'kasir@daisyfumarket.com',
+    password: 'kasir123',
+    displayName: 'Kasir Daisyfu',
+    role: 'staff',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+// Muat akun dari Firestore 'users' collection atau localStorage
 async function loadAccounts() {
-  if (demoMode) {
-    try {
-      const saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
-      if (saved && Array.isArray(saved)) {
-        store.accounts = saved;
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
+  } catch (e) {}
+
+  if (!saved || !Array.isArray(saved) || saved.length === 0) {
+    store.accounts = [...DEFAULT_ACCOUNTS];
+  } else {
+    DEFAULT_ACCOUNTS.forEach(def => {
+      const match = saved.find(a => String(a.email || '').toLowerCase() === def.email.toLowerCase());
+      if (!match) {
+        saved.push(def);
       } else {
-        store.accounts = [{
-          id: 'demo-admin',
-          uid: 'demo-admin',
-          email: 'admin@daisyfumarket.com',
-          displayName: 'Admin Daisyfu',
-          role: 'admin',
-          isActive: true,
-          createdAt: new Date().toISOString()
-        }];
+        if (!match.password) match.password = def.password;
+        if (!match.role) match.role = def.role;
+      }
+    });
+    store.accounts = saved;
+  }
+  try {
+    localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
+  } catch (e) {}
+
+  // Synchronize with Firestore if online & available
+  if (!demoMode && store.uid && db) {
+    try {
+      const snap = await db.collection('users').get();
+      if (!snap.empty) {
+        const firestoreAccounts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        firestoreAccounts.forEach(fa => {
+          const idx = store.accounts.findIndex(a => (a.uid && a.uid === fa.uid) || (a.email && a.email.toLowerCase() === (fa.email || '').toLowerCase()));
+          if (idx > -1) {
+            store.accounts[idx] = { ...store.accounts[idx], ...fa };
+          } else {
+            store.accounts.push(fa);
+          }
+        });
         localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
       }
-    } catch (e) {
-      store.accounts = [];
-    }
-    renderAccountsTable();
-    return;
-  }
-
-  if (!store.uid) { store.accounts = []; renderAccountsTable(); return; }
-
-  try {
-    const snap = await db.collection('users').get();
-    if (snap.empty && auth.currentUser) {
-      // Seed user yang sedang login sebagai admin pertama
-      const u = auth.currentUser;
-      await db.collection('users').doc(u.uid).set({
-        uid: u.uid,
-        email: u.email || '',
-        displayName: u.displayName || u.email || 'Admin',
-        role: 'admin',
-        isActive: true,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      const snap2 = await db.collection('users').get();
-      store.accounts = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
-    } else {
-      store.accounts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
-  } catch (e) {
-    store.accounts = [];
-    showToast('Gagal memuat daftar akun: ' + e.message, 'error');
+    } catch (e) {}
   }
   renderAccountsTable();
 }
@@ -3207,17 +3470,19 @@ async function processAccountSubmit(e) {
         btn.disabled = false;
         return;
       }
+      const uid = 'acc-' + Date.now();
+      const newAccObj = {
+        id: uid,
+        uid: uid,
+        email: email,
+        password: password,
+        displayName: name,
+        role: role,
+        isActive: isActive,
+        createdAt: new Date().toISOString()
+      };
       if (demoMode) {
-        const uid = 'demo-' + Date.now();
-        store.accounts.unshift({
-          id: uid,
-          uid: uid,
-          email: email,
-          displayName: name,
-          role: role,
-          isActive: isActive,
-          createdAt: new Date().toISOString()
-        });
+        store.accounts.unshift(newAccObj);
         localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
       } else {
         const uid = await createAuthAccount(email, password, name);
@@ -3270,20 +3535,53 @@ async function toggleAccountStatus(accountId, currentlyActive) {
 // ==========================================
 // 5. INITIALIZATION & EVENT LISTENERS
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Pre-load default accounts
+  await loadAccounts();
+
   // Auth form listeners
   const authForm = document.getElementById('auth-form');
   if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
   const authSwitchLink = document.getElementById('auth-switch-link');
   if (authSwitchLink) authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); toggleAuthMode(); });
 
-  // Initial render
+  // Initial render setup
   updateFilterUI();
   updateCartBadge();
   startFlashSaleCountdown();
-  renderProductGrid();
-  renderInventoryTable();
-  renderReportsView();
+
+  // Check persisted session
+  let activeSession = null;
+  try {
+    activeSession = JSON.parse(localStorage.getItem('nexamart_session') || 'null');
+  } catch (e) {}
+
+  if (activeSession && activeSession.isActive !== false) {
+    applyUserLogin(activeSession, false);
+  } else {
+    // Show auth overlay, hide logout button
+    const overlay = document.getElementById('auth-overlay');
+    const logoutBtn = document.getElementById('btn-logout');
+    if (overlay) overlay.classList.remove('hidden');
+    if (logoutBtn) logoutBtn.classList.add('hidden');
+
+    const drawerName = document.getElementById('drawer-user-name');
+    const drawerEmail = document.getElementById('drawer-user-email');
+    const drawerAvatar = document.getElementById('drawer-user-avatar');
+    const drawerBadge = document.getElementById('drawer-user-role-badge');
+    if (drawerName) drawerName.textContent = 'Belum Masuk';
+    if (drawerEmail) drawerEmail.textContent = 'Silakan Masuk';
+    if (drawerAvatar) drawerAvatar.textContent = '👤';
+    if (drawerBadge) {
+      drawerBadge.textContent = 'Tamu';
+      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-cream-200 text-caramel-600';
+    }
+
+    updateNavDrawerAccess();
+    renderProductGrid();
+    renderInventoryTable();
+    renderReportsView();
+  }
 
   // Search input listener
   const searchInput = document.getElementById('search-input');
