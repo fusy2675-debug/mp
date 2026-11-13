@@ -450,33 +450,33 @@ class StoreState {
   }
 
   async loadProducts() {
-    if (!this.uid) return;
+    let local = null;
     try {
-      const snap = await db.collection('products').get();
-      if (snap.empty) {
-        let local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
-        if (Array.isArray(local) && local.length > 0 && (!local[0].image || !local[0].image.includes('assets/toys/'))) {
-          local = [...INITIAL_PRODUCTS];
-          localStorage.removeItem('nexamart_products');
-        }
-        for (const p of local) {
-          const id = p.id || ('PRD-' + Date.now().toString().slice(-6).toUpperCase());
-          await db.collection('products').doc(id).set({ ...p, id });
-        }
-        this.products = local.map(p => ({ id: p.id, ...p }));
-      } else {
-        this.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      }
-    } catch (e) {
-      showToast('Gagal memuat produk dari cloud: ' + e.message, 'error');
-      let local = JSON.parse(localStorage.getItem('nexamart_products')) || [...INITIAL_PRODUCTS];
-      if (Array.isArray(local) && local.length > 0 && (!local[0].image || !local[0].image.includes('assets/toys/'))) {
-        local = [...INITIAL_PRODUCTS];
-        localStorage.removeItem('nexamart_products');
-      }
+      local = JSON.parse(localStorage.getItem('nexamart_products') || 'null');
+    } catch (e) {}
+
+    if (Array.isArray(local) && local.length > 0) {
       this.products = local;
+    } else {
+      this.products = [...INITIAL_PRODUCTS];
+      try {
+        localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+      } catch (e) {}
     }
+
     this.ensureBarcodes();
+
+    // Sinkronisasi data cloud Firestore jika tersedia dan user terhubung
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try {
+        const snap = await db.collection('products').get();
+        if (!snap.empty) {
+          this.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          this.ensureBarcodes();
+          localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+        }
+      } catch (e) {}
+    }
   }
 
   async addProduct(product) {
@@ -488,42 +488,65 @@ class StoreState {
     product.isBestSeller = product.isBestSeller || false;
     product.reviewsCount = product.reviewsCount || 0;
     this.products.unshift(product);
-    if (demoMode) {
-      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-          showToast('Storage penuh! Hapus produk lama atau gunakan gambar lebih kecil.', 'error');
-        }
+
+    // Selalu simpan ke localStorage agar tidak hilang saat browser ditutup
+    try {
+      localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        showToast('Penyimpanan lokal penuh!', 'error');
       }
     }
-    try { await db.collection('products').doc(id).set(product); } catch (e) { showToast('Gagal menyimpan produk ke cloud: ' + e.message, 'error'); }
-    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
+
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try { await db.collection('products').doc(id).set(product); } catch (e) {}
+    }
+
+    renderProductGrid();
+    renderInventoryTable();
+    renderDashboardStats();
+    renderAdminDashboard();
   }
 
   async updateProduct(updatedProduct) {
     const idx = this.products.findIndex(p => p.id === updatedProduct.id);
     if (idx > -1) this.products[idx] = { ...this.products[idx], ...updatedProduct };
-    if (demoMode) {
-      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-          showToast('Storage penuh! Hapus produk lama atau gunakan gambar lebih kecil.', 'error');
-        }
+
+    // Selalu simpan ke localStorage agar tidak hilang saat browser ditutup
+    try {
+      localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        showToast('Penyimpanan lokal penuh!', 'error');
       }
     }
-    try { await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) { showToast('Gagal memperbarui produk: ' + e.message, 'error'); }
-    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
+
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try { await db.collection('products').doc(updatedProduct.id).set(updatedProduct, { merge: true }); } catch (e) {}
+    }
+
+    renderProductGrid();
+    renderInventoryTable();
+    renderDashboardStats();
+    renderAdminDashboard();
   }
 
   async deleteProduct(productId) {
     this.products = this.products.filter(p => p.id !== productId);
-    if (demoMode) {
-      try { localStorage.setItem('nexamart_products', JSON.stringify(this.products)); } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-          showToast('Storage penuh!', 'error');
-        }
-      }
+
+    // Selalu simpan ke localStorage agar tidak hilang saat browser ditutup
+    try {
+      localStorage.setItem('nexamart_products', JSON.stringify(this.products));
+    } catch (e) {}
+
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try { await db.collection('products').doc(productId).delete(); } catch (e) {}
     }
-    try { await db.collection('products').doc(productId).delete(); } catch (e) { showToast('Gagal menghapus produk: ' + e.message, 'error'); }
-    renderProductGrid(); renderInventoryTable(); renderDashboardStats();
+
+    renderProductGrid();
+    renderInventoryTable();
+    renderDashboardStats();
+    renderAdminDashboard();
   }
 
   ensureBarcodes() {
@@ -543,12 +566,27 @@ class StoreState {
   }
 
   async loadCart() {
-    if (!this.uid) return;
-    try { const snap = await db.collection('carts').doc(this.uid).get(); this.cart = snap.exists() ? (snap.data().items || []) : []; } catch (e) { this.cart = []; }
-    updateCartBadge(); renderCartDrawer();
+    let localCart = null;
+    try {
+      localCart = JSON.parse(localStorage.getItem('nexamart_cart') || 'null');
+    } catch (e) {}
+    if (Array.isArray(localCart)) {
+      this.cart = localCart;
+    } else {
+      this.cart = [];
+    }
+    updateCartBadge();
+    renderCartDrawer();
   }
 
-  saveCart() { if (!this.uid) return; db.collection('carts').doc(this.uid).set({ items: this.cart }).catch(() => {}); }
+  saveCart() {
+    try {
+      localStorage.setItem('nexamart_cart', JSON.stringify(this.cart));
+    } catch (e) {}
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      db.collection('carts').doc(this.uid).set({ items: this.cart }).catch(() => {});
+    }
+  }
 
   addToCart(productId, qty = 1) {
     const product = this.products.find(p => p.id === productId);
@@ -683,14 +721,22 @@ class StoreState {
   }
 
   async clearAllTransactions() {
+    this.transactions = [];
     try {
-      const snap = await db.collection('transactions').get();
-      const batch = db.batch();
-      snap.docs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-      this.transactions = [];
-    } catch (e) { showToast('Gagal menghapus transaksi: ' + e.message, 'error'); }
-    renderReportsView(); renderDashboardStats();
+      localStorage.setItem('nexamart_transactions', JSON.stringify([]));
+    } catch (e) {}
+    if (typeof db !== 'undefined' && db && !demoMode && this.uid) {
+      try {
+        const snap = await db.collection('transactions').get();
+        const batch = db.batch();
+        snap.docs.forEach(d => batch.delete(d.ref));
+        await batch.commit();
+      } catch (e) {}
+    }
+    renderAdminDashboard();
+    renderTransactionWaveChart();
+    renderReportsView();
+    renderDashboardStats();
   }
 
   async uploadImage(file) {
@@ -3434,12 +3480,15 @@ async function processAccountSubmit(e) {
         isActive: isActive,
         updatedAt: demoMode ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp()
       };
-      if (demoMode) {
-        const idx = store.accounts.findIndex(a => a.id === editId);
-        if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], ...updates };
+      // Selalu update di memory dan localStorage
+      const idx = store.accounts.findIndex(a => a.id === editId);
+      if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], ...updates };
+      try {
         localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
-      } else {
-        await db.collection('users').doc(editId).update(updates);
+      } catch (e) {}
+
+      if (typeof db !== 'undefined' && db && !demoMode) {
+        try { await db.collection('users').doc(editId).update(updates); } catch (e) {}
       }
       showToast(`Akun "${name}" berhasil diperbarui!`, 'success');
     } else {
@@ -3466,20 +3515,27 @@ async function processAccountSubmit(e) {
         isActive: isActive,
         createdAt: new Date().toISOString()
       };
-      if (demoMode) {
-        store.accounts.unshift(newAccObj);
+
+      // Selalu simpan ke akun lokal agar tetap ada saat browser ditutup
+      store.accounts.unshift(newAccObj);
+      try {
         localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
-      } else {
-        const uid = await createAuthAccount(email, password, name);
-        await db.collection('users').doc(uid).set({
-          uid: uid,
-          email: email,
-          displayName: name,
-          role: role,
-          isActive: isActive,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+      } catch (e) {}
+
+      if (typeof db !== 'undefined' && db && !demoMode) {
+        try {
+          const authUid = await createAuthAccount(email, password, name);
+          newAccObj.uid = authUid;
+          await db.collection('users').doc(authUid).set({
+            uid: authUid,
+            email: email,
+            displayName: name,
+            role: role,
+            isActive: isActive,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (e) {}
       }
       showToast(`Akun "${name}" berhasil ditambahkan!`, 'success');
     }
@@ -3500,15 +3556,19 @@ async function toggleAccountStatus(accountId, currentlyActive) {
   const newStatus = !currentlyActive;
 
   try {
-    if (demoMode) {
-      const idx = store.accounts.findIndex(a => a.id === accountId);
-      if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], isActive: newStatus };
+    const idx = store.accounts.findIndex(a => a.id === accountId);
+    if (idx > -1) store.accounts[idx] = { ...store.accounts[idx], isActive: newStatus };
+    try {
       localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
-    } else {
-      await db.collection('users').doc(accountId).update({
-        isActive: newStatus,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    } catch (e) {}
+
+    if (typeof db !== 'undefined' && db && !demoMode) {
+      try {
+        await db.collection('users').doc(accountId).update({
+          isActive: newStatus,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {}
     }
     showToast(`Akun "${acc.displayName || acc.email}" ${newStatus ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
     await loadAccounts();
@@ -3521,24 +3581,27 @@ async function toggleAccountStatus(accountId, currentlyActive) {
 // 5. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-  // Pre-load default accounts
+  // 1. Muat seluruh data permanen yang tersimpan di browser
+  await store.loadProducts();
+  await store.loadTransactions();
   await loadAccounts();
+  await store.loadCart();
 
-  // Auth form listeners
+  // 2. Auth form listeners
   const authForm = document.getElementById('auth-form');
   if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
   const authSwitchLink = document.getElementById('auth-switch-link');
   if (authSwitchLink) authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); toggleAuthMode(); });
 
-  // Initial render setup
+  // 3. Render setup dasar
   updateFilterUI();
   updateCartBadge();
   startFlashSaleCountdown();
 
-  // Bersihkan sisa sesi permanent lama dari localStorage
+  // 4. Bersihkan sisa sesi permanent lama dari localStorage
   try { localStorage.removeItem('nexamart_session'); } catch (e) {}
 
-  // Cek sesi aktif di sessionStorage (otomatis hilang saat browser/tab ditutup)
+  // 5. Cek sesi aktif di sessionStorage (otomatis hilang saat browser/tab ditutup)
   let activeSession = null;
   try {
     activeSession = JSON.parse(sessionStorage.getItem('nexamart_session') || 'null');
@@ -3547,7 +3610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (activeSession && activeSession.isActive !== false) {
     applyUserLogin(activeSession, false);
   } else {
-    // Show auth overlay, hide logout button
+    // Tampilkan modal login, sembunyikan tombol logout
     const overlay = document.getElementById('auth-overlay');
     const logoutBtn = document.getElementById('btn-logout');
     if (overlay) overlay.classList.remove('hidden');
@@ -3566,7 +3629,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     updateNavDrawerAccess();
-    await store.loadTransactions();
     renderProductGrid();
     renderInventoryTable();
     renderReportsView();
