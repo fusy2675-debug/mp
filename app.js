@@ -791,37 +791,13 @@ function applyUserLogin(account, notify = true) {
   }
 }
 
-function quickLogin(role) {
-  const emailEl = document.getElementById('auth-email');
-  const passEl = document.getElementById('auth-password');
-  const errEl = document.getElementById('auth-error');
-  if (errEl) errEl.classList.add('hidden');
-
-  if (authMode === 'register') {
-    toggleAuthMode();
-  }
-
-  if (role === 'admin') {
-    if (emailEl) emailEl.value = 'admin@daisyfumarket.com';
-    if (passEl) passEl.value = 'admin123';
-  } else {
-    if (emailEl) emailEl.value = 'kasir@daisyfumarket.com';
-    if (passEl) passEl.value = 'kasir123';
-  }
-
-  const form = document.getElementById('auth-form');
-  if (form) {
-    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-  }
-}
-
 function enterDemoMode() {
   demoMode = true;
   store.currentUser = {
     id: 'demo-admin',
     uid: 'demo-admin',
-    email: 'admin@daisyfumarket.com',
-    displayName: 'Admin Daisyfu (Demo)',
+    email: 'demo@toko.local',
+    displayName: 'Pengguna Demo',
     role: 'admin',
     isActive: true
   };
@@ -976,7 +952,7 @@ async function handleAuthSubmit(e) {
         return;
       }
 
-      throw new Error('Akun tidak ditemukan. Gunakan tombol Akses Cepat (👑 Admin / 🛒 Kasir) atau buat akun baru.');
+      throw new Error('Email atau password tidak cocok. Jika belum memiliki akun, silakan klik "Daftar" di bawah.');
     } else {
       // Register Mode
       if (password.length < 6) {
@@ -988,6 +964,9 @@ async function handleAuthSubmit(e) {
         throw new Error('Email ini sudah terdaftar. Silakan langsung Masuk.');
       }
 
+      const roleEl = document.getElementById('auth-role');
+      const selectedRole = roleEl ? roleEl.value : (store.accounts.length === 0 ? 'admin' : 'staff');
+
       const newId = 'acc-' + Date.now();
       const newAcc = {
         id: newId,
@@ -995,7 +974,7 @@ async function handleAuthSubmit(e) {
         email: email,
         password: password,
         displayName: name || email.split('@')[0],
-        role: 'staff',
+        role: selectedRole,
         isActive: true,
         createdAt: new Date().toISOString()
       };
@@ -1011,7 +990,7 @@ async function handleAuthSubmit(e) {
               uid: cred.user.uid,
               email: email,
               displayName: name,
-              role: 'staff',
+              role: selectedRole,
               isActive: true,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -3190,49 +3169,18 @@ function formatAccountDate(value) {
   }
 }
 
-const DEFAULT_ACCOUNTS = [
-  {
-    id: 'admin-01',
-    uid: 'admin-01',
-    email: 'admin@daisyfumarket.com',
-    password: 'admin123',
-    displayName: 'Admin Daisyfu',
-    role: 'admin',
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  },
-  {
-    id: 'kasir-01',
-    uid: 'kasir-01',
-    email: 'kasir@daisyfumarket.com',
-    password: 'kasir123',
-    displayName: 'Kasir Daisyfu',
-    role: 'staff',
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  }
-];
-
-// Muat akun dari Firestore 'users' collection atau localStorage
+// Muat akun pengguna dari localStorage atau Firestore (dibuat/ditentukan oleh pengguna)
 async function loadAccounts() {
   let saved = null;
   try {
     saved = JSON.parse(localStorage.getItem('nexamart_accounts') || 'null');
   } catch (e) {}
 
-  if (!saved || !Array.isArray(saved) || saved.length === 0) {
-    store.accounts = [...DEFAULT_ACCOUNTS];
+  if (saved && Array.isArray(saved)) {
+    // Bersihkan akun dummy lama jika masih ada
+    store.accounts = saved.filter(a => a.email !== 'admin@daisyfumarket.com' && a.email !== 'kasir@daisyfumarket.com');
   } else {
-    DEFAULT_ACCOUNTS.forEach(def => {
-      const match = saved.find(a => String(a.email || '').toLowerCase() === def.email.toLowerCase());
-      if (!match) {
-        saved.push(def);
-      } else {
-        if (!match.password) match.password = def.password;
-        if (!match.role) match.role = def.role;
-      }
-    });
-    store.accounts = saved;
+    store.accounts = [];
   }
   try {
     localStorage.setItem('nexamart_accounts', JSON.stringify(store.accounts));
