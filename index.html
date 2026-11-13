@@ -240,27 +240,30 @@
   <!-- ========================================== -->
   <main id="dashboard-section" class="hidden flex-1 max-w-[1200px] w-full mx-auto px-4 py-5 space-y-6">
 
-    <!-- Admin Welcome Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-[2rem] text-white shadow-soft relative overflow-hidden border border-amber-900/10" style="background: linear-gradient(130deg, #422D27 0%, #664339 30%, #A85A4E 65%, #E16854 85%, #F4A261 100%);">
-      <div class="relative z-10 space-y-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-black tracking-wide uppercase">
-          <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+    <!-- Admin Welcome Header (Buttercream gradasi Pink) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-[2rem] shadow-soft relative overflow-hidden border border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+      <div class="relative z-10 space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur text-[11px] font-black tracking-wide uppercase text-pink-700 border border-pink-200/80 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Admin Workspace</span>
         </div>
-        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight">Dashboard Utama</h2>
-        <p class="text-xs sm:text-sm text-white/90 font-medium max-w-xl">
+        <h2 class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-caramel-900 drop-shadow-sm">
+          Dashboard Utama <span class="text-pink-600">✨</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-caramel-800 font-bold max-w-xl">
           Pantau seluruh aktivitas toko, penjualan, persediaan produk, dan akun pengguna dalam satu kendali.
         </p>
       </div>
-      <div class="flex items-center gap-2 relative z-10 self-start sm:self-auto flex-wrap">
-        <button onclick="switchView('catalog')" class="px-5 py-2.5 rounded-2xl bg-white text-caramel-900 hover:text-coral-600 font-black text-xs hover:bg-cream-100 hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+      <div class="flex items-center gap-2.5 relative z-10 self-start sm:self-auto flex-wrap">
+        <button onclick="switchView('catalog')" class="px-5 py-2.5 rounded-2xl bg-white text-pink-700 hover:text-pink-800 font-black text-xs hover:bg-cream-50 hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5 border border-pink-200/80">
           <span>🛍️</span> Buka Kasir
         </button>
-        <button onclick="openAddProductModal()" class="px-5 py-2.5 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-black text-xs hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
+        <button onclick="openAddProductModal()" class="px-5 py-2.5 rounded-2xl bg-caramel-900 hover:bg-caramel-800 text-white font-black text-xs hover:-translate-y-0.5 active:scale-95 transition-all shadow-card cursor-pointer flex items-center gap-1.5">
           <span>➕</span> Tambah Produk
         </button>
       </div>
-      <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+      <div class="absolute -right-10 -bottom-10 w-56 h-56 bg-white/30 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute left-1/3 -top-12 w-48 h-48 bg-pink-200/40 rounded-full blur-xl pointer-events-none"></div>
     </div>
 
     <!-- Quick Overview Stats -->
@@ -306,11 +309,11 @@
     <div class="card-cute p-5 sm:p-6 space-y-4 shadow-soft">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-dashed border-cream-200 pb-4">
         <div class="flex items-center gap-3">
-          <span class="w-12 h-12 rounded-2xl bg-coral-400/20 flex items-center justify-center text-2xl shadow-inner">🌊</span>
+          <span class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl shadow-inner">🌊</span>
           <div>
             <div class="flex items-center gap-2">
               <h3 class="font-display font-bold text-lg text-caramel-900">Gelombang Transaksi</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-wider">Live Wave</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-pink-100 text-pink-700 tracking-wider">Live Wave</span>
             </div>
             <p class="text-xs text-caramel-500 font-semibold mt-0.5">Visualisasi kurva gelombang fluktuasi omset dan volume pesanan masuk</p>
           </div>
@@ -318,10 +321,10 @@
 
         <!-- Mode Toggle -->
         <div class="flex items-center gap-1.5 self-start sm:self-auto bg-cream-100 p-1.5 rounded-2xl border border-cream-200">
-          <button id="wave-mode-revenue" onclick="setWaveChartMode('revenue')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm">
+          <button id="wave-mode-revenue" onclick="setWaveChartMode('revenue')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm">
             💰 Omset (Rp)
           </button>
-          <button id="wave-mode-count" onclick="setWaveChartMode('count')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-coral-600">
+          <button id="wave-mode-count" onclick="setWaveChartMode('count')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-pink-600">
             🧾 Jumlah Pesanan
           </button>
         </div>

@@ -1945,11 +1945,11 @@ function setWaveChartMode(mode) {
   const cntBtn = document.getElementById('wave-mode-count');
   if (revBtn && cntBtn) {
     if (mode === 'revenue') {
-      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm';
-      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-700 hover:text-coral-600';
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm';
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-pink-600';
     } else {
-      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-coral-500 text-white shadow-sm';
-      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-700 hover:text-coral-600';
+      cntBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm';
+      revBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer text-caramel-600 hover:text-pink-600';
     }
   }
   renderTransactionWaveChart();
@@ -2142,8 +2142,8 @@ function renderTransactionWaveChart() {
          data-count="${p.count} pesanan"
          onmouseenter="showWaveTooltip(event, this)"
          onmouseleave="hideWaveTooltip()">
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#FF8A7A" opacity="0.22" class="hover:opacity-40 transition-opacity" />
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#E14E3B" stroke-width="3" class="hover:scale-125 transition-transform origin-center" />
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#FFAEC0" opacity="0.28" class="hover:opacity-50 transition-opacity" />
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#FFFFFF" stroke="#FF4D6D" stroke-width="3" class="hover:scale-125 transition-transform origin-center" />
       </g>
     `;
   }).join('');
@@ -2152,19 +2152,19 @@ function renderTransactionWaveChart() {
     <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto overflow-visible select-none">
       <defs>
         <linearGradient id="wavePrimaryGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#E14E3B" stop-opacity="0.36" />
-          <stop offset="35%" stop-color="#FF8A7A" stop-opacity="0.22" />
-          <stop offset="75%" stop-color="#F4A261" stop-opacity="0.09" />
+          <stop offset="0%" stop-color="#FF4D6D" stop-opacity="0.35" />
+          <stop offset="35%" stop-color="#FFAEC0" stop-opacity="0.22" />
+          <stop offset="75%" stop-color="#FFF0D6" stop-opacity="0.10" />
           <stop offset="100%" stop-color="#FFFDF7" stop-opacity="0.00" />
         </linearGradient>
 
         <linearGradient id="waveSecondaryGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#F4A261" stop-opacity="0.22" />
-          <stop offset="100%" stop-color="#F4A261" stop-opacity="0.00" />
+          <stop offset="0%" stop-color="#FFAEC0" stop-opacity="0.20" />
+          <stop offset="100%" stop-color="#FFF0D6" stop-opacity="0.00" />
         </linearGradient>
 
         <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#E14E3B" flood-opacity="0.28" />
+          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FF4D6D" flood-opacity="0.28" />
         </filter>
       </defs>
 
@@ -2176,9 +2176,9 @@ function renderTransactionWaveChart() {
 
       <path d="${areaPath}" fill="url(#wavePrimaryGrad)" />
 
-      <path d="${linePath}" fill="none" stroke="#E14E3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#waveGlow)" />
+      <path d="${linePath}" fill="none" stroke="#FF4D6D" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#waveGlow)" />
 
-      <path d="${bgWavePath}" fill="none" stroke="#F4A261" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" stroke-dasharray="6,4" />
+      <path d="${bgWavePath}" fill="none" stroke="#FFAEC0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" stroke-dasharray="6,4" />
 
       ${xLabelsSvg}
 
