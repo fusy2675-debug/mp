@@ -1068,46 +1068,48 @@
   <!-- ========================================== -->
   <div id="nav-drawer-overlay" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 bg-caramel-900/60" onclick="closeNavDrawer()"></div>
 
-  <aside id="nav-drawer" class="fixed top-0 left-0 h-full w-full max-w-xs sm:max-w-sm bg-cream-50 shadow-soft z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between rounded-r-[2rem] border-r-2 border-cream-200">
-    <!-- Header -->
-    <div class="p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between text-white rounded-tr-[2rem]">
-      <div class="flex items-center gap-3">
-        <img src="favicon.svg" alt="daisyfumarket logo" class="w-10 h-10 rounded-2xl bg-white p-1 shadow-sm object-contain" />
+  <aside id="nav-drawer" class="fixed top-0 left-0 h-full w-full max-w-xs sm:max-w-sm shadow-soft z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between rounded-r-[2rem] border-r-2 border-pink-200/80" style="background: linear-gradient(180deg, #FFFDF8 0%, #FFF5F7 100%);">
+    <!-- Header (Buttercream gradasi Pink sama seperti Dashboard Utama) -->
+    <div class="p-5 flex items-center justify-between rounded-tr-[2rem] relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+      <div class="flex items-center gap-3 relative z-10">
+        <img src="favicon.svg" alt="daisyfumarket logo" class="w-10 h-10 rounded-2xl bg-white/90 p-1 shadow-card object-contain border border-pink-200/80" />
         <div>
-          <h3 class="font-display font-bold text-lg leading-tight">daisyfu<span class="text-amber-100">market</span></h3>
-          <p class="text-[11px] text-white/85 font-semibold">Menu & Navigasi Toko</p>
+          <h3 class="font-display font-extrabold text-lg leading-tight text-caramel-900 drop-shadow-sm">daisyfu<span class="text-pink-700">market</span></h3>
+          <p class="text-[11px] text-caramel-800 font-bold">Menu & Navigasi Toko</p>
         </div>
       </div>
-      <button onclick="closeNavDrawer()" class="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer font-bold text-base" title="Tutup Menu">✕</button>
+      <button onclick="closeNavDrawer()" class="w-10 h-10 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center transition-all cursor-pointer font-black text-base shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup Menu">✕</button>
+      <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/30 rounded-full blur-xl pointer-events-none"></div>
+      <div class="absolute left-1/3 -top-6 w-20 h-20 bg-pink-200/40 rounded-full blur-lg pointer-events-none"></div>
     </div>
 
     <!-- Nav Items -->
     <div class="flex-1 overflow-y-auto p-5 space-y-2">
       <!-- Active User Profile Card -->
-      <div id="drawer-user-info" class="mb-4 p-3.5 bg-white rounded-2xl border border-cream-200 shadow-sm flex items-center gap-3">
-        <div id="drawer-user-avatar" class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold shrink-0 shadow-sm">👑</div>
+      <div id="drawer-user-info" class="mb-4 p-3.5 bg-white/90 rounded-2xl border border-pink-200/80 shadow-sm flex items-center gap-3">
+        <div id="drawer-user-avatar" class="w-10 h-10 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-center text-xl font-bold shrink-0 shadow-sm">👑</div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
             <span id="drawer-user-name" class="font-display font-bold text-xs text-caramel-900 truncate">Admin Daisyfu</span>
-            <span id="drawer-user-role-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-coral-500/15 text-coral-600">Admin</span>
+            <span id="drawer-user-role-badge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-pink-100 text-pink-700 border border-pink-200/70">Admin</span>
           </div>
           <p id="drawer-user-email" class="text-[10px] text-caramel-500 font-semibold truncate mt-0.5">admin@daisyfumarket.com</p>
         </div>
       </div>
 
-      <div class="text-[11px] font-black text-caramel-500 uppercase tracking-wider px-3 mb-2">Navigasi Utama</div>
+      <div class="text-[11px] font-black text-pink-700/80 uppercase tracking-wider px-3 mb-2">Navigasi Utama</div>
 
       <!-- Dashboard (Admin Only - Paling Atas) -->
       <button
         onclick="switchView('dashboard'); closeNavDrawer();"
         id="nav-btn-dashboard"
-        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-500 bg-transparent hover:bg-cream-100 hover:text-coral-600"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-600 bg-transparent hover:bg-pink-50/80 hover:text-pink-600"
       >
-        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">⚡</span>
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">⚡</span>
         <div class="flex-1">
           <div class="flex items-center justify-between">
             <span class="leading-tight">Dashboard</span>
-            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-coral-500/15 text-coral-600 tracking-wider">Admin</span>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-pink-100 text-pink-700 border border-pink-200/70 tracking-wider">Admin</span>
           </div>
           <div class="text-[10px] font-semibold opacity-70">Workspace & performa toko</div>
         </div>
@@ -1117,9 +1119,9 @@
       <button
         onclick="switchView('catalog'); closeNavDrawer();"
         id="nav-btn-catalog"
-        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-coral-600 bg-coral-400/20 shadow-sm"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-pink-700 bg-pink-100/80 border border-pink-200/80 shadow-sm"
       >
-        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">🛒</span>
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">🛒</span>
         <div class="flex-1">
           <div class="leading-tight">Kasir</div>
           <div class="text-[10px] font-semibold opacity-70">Transaksi & belanja produk</div>
@@ -1130,9 +1132,9 @@
       <button
         onclick="switchView('inventory'); closeNavDrawer();"
         id="nav-btn-inventory"
-        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-500 bg-transparent hover:bg-cream-100 hover:text-coral-600"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-600 bg-transparent hover:bg-pink-50/80 hover:text-pink-600"
       >
-        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">📦</span>
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">📦</span>
         <div class="flex-1">
           <div class="leading-tight">Produk</div>
           <div class="text-[10px] font-semibold opacity-70">Kelola inventaris & stok</div>
@@ -1143,9 +1145,9 @@
       <button
         onclick="switchView('reports'); closeNavDrawer();"
         id="nav-btn-reports"
-        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-500 bg-transparent hover:bg-cream-100 hover:text-coral-600"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-600 bg-transparent hover:bg-pink-50/80 hover:text-pink-600"
       >
-        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">📊</span>
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">📊</span>
         <div class="flex-1">
           <div class="leading-tight">Laporan</div>
           <div class="text-[10px] font-semibold opacity-70">Statistik penjualan & transaksi</div>
@@ -1156,9 +1158,9 @@
       <button
         onclick="switchView('akun'); closeNavDrawer();"
         id="nav-btn-akun"
-        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-500 bg-transparent hover:bg-cream-100 hover:text-coral-600"
+        class="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer text-left text-caramel-600 bg-transparent hover:bg-pink-50/80 hover:text-pink-600"
       >
-        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm">👤</span>
+        <span class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg shadow-sm border border-pink-100">👤</span>
         <div class="flex-1">
           <div class="leading-tight">Akun</div>
           <div class="text-[10px] font-semibold opacity-70">Manajemen akun pengguna</div>
@@ -1166,19 +1168,19 @@
       </button>
 
       <!-- Bantuan & Aksi Cepat -->
-      <div class="pt-4 mt-4 border-t-2 border-dashed border-cream-200">
-        <div class="text-[11px] font-black text-caramel-500 uppercase tracking-wider px-3 mb-2">Aksi Cepat</div>
-        <button onclick="openCartDrawer(); closeNavDrawer();" class="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-bold text-caramel-700 hover:bg-cream-100 transition-colors text-left cursor-pointer">
+      <div class="pt-4 mt-4 border-t-2 border-dashed border-pink-200/80">
+        <div class="text-[11px] font-black text-pink-700/80 uppercase tracking-wider px-3 mb-2">Aksi Cepat</div>
+        <button onclick="openCartDrawer(); closeNavDrawer();" class="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-bold text-caramel-700 hover:bg-pink-50/80 hover:text-pink-600 transition-colors text-left cursor-pointer">
           <span class="text-base">🛒</span> Keranjang Belanja
         </button>
-        <a href="#quick-scan-section" onclick="closeNavDrawer();" class="flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-bold text-caramel-700 hover:bg-cream-100 transition-colors">
+        <a href="#quick-scan-section" onclick="closeNavDrawer();" class="flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-bold text-caramel-700 hover:bg-pink-50/80 hover:text-pink-600 transition-colors">
           <span class="text-base">📷</span> Scan Barcode
         </a>
       </div>
     </div>
 
     <!-- Drawer Footer with Logout Button -->
-    <div class="p-5 bg-white border-t-2 border-dashed border-cream-200 space-y-3 rounded-br-[2rem]">
+    <div class="p-5 bg-white/80 border-t-2 border-dashed border-pink-200/80 space-y-3 rounded-br-[2rem]">
       <button
         onclick="handleLogout(); closeNavDrawer();"
         id="btn-logout"
@@ -1189,8 +1191,8 @@
         </svg>
         Keluar
       </button>
-      <div class="text-[10px] text-center text-caramel-500 font-semibold">
-        daisyfumarket • Buttercream UI
+      <div class="text-[10px] text-center text-pink-700/70 font-bold">
+        daisyfumarket • Buttercream & Pink UI
       </div>
     </div>
   </aside>
@@ -1200,10 +1202,14 @@
   <!-- ========================================== -->
   <div id="cart-overlay" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 bg-caramel-900/60" onclick="closeCartDrawer()"></div>
 
-  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-cream-50 shadow-soft z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between rounded-l-[2rem]">
-    <div class="p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
-      <div class="flex items-center gap-2"><span class="text-2xl">🛒</span><h3 class="font-display font-bold text-lg text-white">Keranjang Belanja</h3></div>
-      <button onclick="closeCartDrawer()" class="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer font-bold">✕</button>
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md shadow-soft z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between rounded-l-[2rem] border-l-2 border-pink-200/80" style="background: linear-gradient(180deg, #FFFDF8 0%, #FFF5F7 100%);">
+    <div class="p-5 flex items-center justify-between rounded-tl-[2rem] relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+      <div class="flex items-center gap-2 relative z-10">
+        <span class="text-2xl">🛒</span>
+        <h3 class="font-display font-extrabold text-lg text-caramel-900 drop-shadow-sm">Keranjang Belanja</h3>
+      </div>
+      <button onclick="closeCartDrawer()" class="w-10 h-10 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center transition-all cursor-pointer font-black text-base shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup Keranjang">✕</button>
+      <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/30 rounded-full blur-xl pointer-events-none"></div>
     </div>
 
     <div class="flex-1 overflow-y-auto p-4 space-y-3">

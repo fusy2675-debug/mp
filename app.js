@@ -786,13 +786,18 @@ function applyUserLogin(account, notify = true) {
   const isAdmin = account.role === 'admin';
   if (drawerName) drawerName.textContent = account.displayName || account.email;
   if (drawerEmail) drawerEmail.textContent = account.email;
-  if (drawerAvatar) drawerAvatar.textContent = isAdmin ? '👑' : '🛒';
+  if (drawerAvatar) {
+    drawerAvatar.textContent = isAdmin ? '👑' : '🛒';
+    drawerAvatar.className = isAdmin
+      ? 'w-10 h-10 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-center text-xl font-bold shrink-0 shadow-sm border border-pink-200/70'
+      : 'w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold shrink-0 shadow-sm border border-emerald-200/70';
+  }
   if (drawerBadge) {
     drawerBadge.textContent = isAdmin ? 'Admin' : 'Kasir';
     if (isAdmin) {
-      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-coral-500/15 text-coral-600';
+      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-pink-100 text-pink-700 border border-pink-200/70';
     } else {
-      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600';
+      drawerBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200/70';
     }
   }
 
@@ -1649,9 +1654,9 @@ function switchView(viewName) {
   if (inventorySection) inventorySection.classList.add('hidden');
   if (akunSection) akunSection.classList.add('hidden');
 
-  // Reset nav buttons
-  const activeClass = ['text-coral-600', 'bg-coral-400/20'];
-  const inactiveClass = ['text-caramel-500', 'bg-transparent'];
+  // Reset nav buttons (Buttercream & Pink palette)
+  const activeClass = ['text-pink-700', 'bg-pink-100/80', 'border', 'border-pink-200/80', 'shadow-sm'];
+  const inactiveClass = ['text-caramel-600', 'bg-transparent', 'border-transparent'];
   [navDashboardBtn, navCatalogBtn, navReportsBtn, navInventoryBtn, navAkunBtn].forEach(btn => {
     if (btn) {
       activeClass.forEach(c => btn.classList.remove(c));
