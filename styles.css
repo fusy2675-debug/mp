@@ -17,10 +17,11 @@
   --caramel-700: #6D4C41;
   --caramel-500: #8D6E63;
 
-  --coral-400: #FF9B85;
-  --coral-500: #F26B57;
-  --coral-600: #E14E3B;
-  --coral-700: #C63E2E;
+  /* Buttercream & Pink Theme Palette (matches Dashboard Utama) */
+  --coral-400: #FF8EA7;
+  --coral-500: #FF6086;
+  --coral-600: #F24E72;
+  --coral-700: #D83359;
 
   --sage-400: #93B48B;
   --sage-500: #7FA36F;
@@ -28,7 +29,7 @@
 
   --shadow-soft: 0 18px 45px -18px rgba(88, 60, 50, .35);
   --shadow-card: 0 12px 32px -12px rgba(88, 60, 50, .22);
-  --shadow-btn: 0 10px 22px -8px rgba(225, 78, 59, .55);
+  --shadow-btn: 0 10px 22px -8px rgba(242, 78, 114, .55);
   --shadow-btn-sage: 0 10px 22px -8px rgba(95, 133, 98, .5);
 
   --radius-xl: 1rem;
@@ -43,7 +44,7 @@ body {
   background-color: var(--cream-50);
   /* playful polka-dot buttercream pattern */
   background-image:
-    radial-gradient(rgba(242, 107, 87, .10) 1.6px, transparent 1.7px),
+    radial-gradient(rgba(242, 78, 114, .10) 1.6px, transparent 1.7px),
     radial-gradient(rgba(245, 184, 65, .14) 1.6px, transparent 1.7px);
   background-size: 26px 26px, 26px 26px;
   background-position: 0 0, 13px 13px;
@@ -52,7 +53,7 @@ body {
 
 .font-display { font-family: 'Quicksand', 'Nunito', system-ui, sans-serif; }
 
-::selection { background: var(--coral-500); color: #fff; }
+::selection { background: #F24E72; color: #fff; }
 
 /* ---------- Cute Card ---------- */
 .card-cute {
@@ -79,17 +80,17 @@ body {
   box-shadow: 0 6px 20px -8px rgba(88, 60, 50, .18);
 }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons (Buttercream & Pink Theme) ---------- */
 .btn-cute {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
   border: none; cursor: pointer; border-radius: var(--radius-2xl);
-  background: linear-gradient(160deg, var(--coral-400) 0%, var(--coral-500) 55%, var(--coral-600) 100%);
+  background: linear-gradient(135deg, #FF94B4 0%, #FF6584 45%, #F24E72 85%, #DE365F 100%);
   color: #fff; font-family: 'Nunito', sans-serif; font-weight: 800;
-  box-shadow: var(--shadow-btn);
+  box-shadow: 0 10px 22px -8px rgba(242, 78, 114, .55);
   transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
-.btn-cute:hover { transform: translateY(-2px); filter: brightness(1.03); box-shadow: 0 14px 30px -10px rgba(225, 78, 59, .6); }
-.btn-cute:active { transform: translateY(1px) scale(.97); }
+.btn-cute:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 14px 30px -10px rgba(242, 78, 114, .68); }
+.btn-cute:active { transform: translateY(1px) scale(.97); filter: brightness(0.98); }
 .btn-cute:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
 .btn-sage {
@@ -105,12 +106,12 @@ body {
 
 .btn-cream {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  border: none; cursor: pointer; border-radius: var(--radius-2xl);
-  background: var(--cream-100); color: var(--caramel-800); font-weight: 800;
-  box-shadow: 0 4px 14px -4px rgba(88, 60, 50, .25);
-  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(255, 182, 198, .6); cursor: pointer; border-radius: var(--radius-2xl);
+  background: #FFF9E6; color: var(--caramel-800); font-weight: 800;
+  box-shadow: 0 4px 14px -4px rgba(88, 60, 50, .15);
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease, color .18s ease;
 }
-.btn-cream:hover { background: var(--cream-200); transform: translateY(-2px); }
+.btn-cream:hover { background: #FFE5EB; transform: translateY(-2px); color: #F24E72; }
 .btn-cream:active { transform: translateY(1px) scale(.97); }
 
 /* ---------- Inputs ---------- */
@@ -120,14 +121,14 @@ body {
   transition: box-shadow .18s ease, background .18s ease;
 }
 .input-cute::placeholder { color: #B49B88; }
-.input-cute:focus { background: #fff; box-shadow: 0 0 0 4px var(--coral-400), 0 8px 22px -10px rgba(225, 78, 59, .5); }
+.input-cute:focus { background: #fff; box-shadow: 0 0 0 4px #FFB6C6, 0 8px 22px -10px rgba(242, 78, 114, .45); }
 
 .select-cute {
   width: 100%; border: none; outline: none; border-radius: 1.1rem;
   background: var(--cream-100); color: var(--caramel-800); cursor: pointer;
   transition: box-shadow .18s ease, background .18s ease;
 }
-.select-cute:focus { background: #fff; box-shadow: 0 0 0 4px var(--coral-400), 0 8px 22px -10px rgba(225,78,59,.5); }
+.select-cute:focus { background: #fff; box-shadow: 0 0 0 4px #FFB6C6, 0 8px 22px -10px rgba(242, 78, 114, .45); }
 
 /* ---------- Chips / Pills ---------- */
 .chip {
@@ -137,9 +138,9 @@ body {
   transition: transform .18s ease, background .18s ease, color .18s ease;
   white-space: nowrap;
 }
-.chip:hover { transform: translateY(-2px); background: var(--cream-200); }
-.chip-active { background: var(--coral-500); color: #fff; box-shadow: 0 8px 18px -8px rgba(225, 78, 59, .6); }
-.chip-active:hover { background: var(--coral-600); color: #fff; }
+.chip:hover { transform: translateY(-2px); background: #FFE5EB; color: #F24E72; }
+.chip-active { background: linear-gradient(135deg, #FF7A98 0%, #F24E72 100%); color: #fff; box-shadow: 0 8px 18px -8px rgba(242, 78, 114, .6); }
+.chip-active:hover { background: linear-gradient(135deg, #FF6086 0%, #DE365F 100%); color: #fff; }
 
 /* ---------- Wavy squiggle underline for headlines ---------- */
 .squiggle {

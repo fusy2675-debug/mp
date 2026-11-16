@@ -2631,7 +2631,7 @@ function generateReceiptContent(transaction) {
   </div>
 
   <div class="no-print" style="text-align:center;margin-top:16px;">
-    <button onclick="window.print()" style="padding:10px 24px;background:#F26B57;color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px -6px rgba(242,107,87,0.5);">
+    <button onclick="window.print()" style="padding:10px 24px;background:linear-gradient(135deg, #FF7A98, #F24E72);color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px -6px rgba(242,78,114,0.5);">
       🖨️ Cetak Ulang Struk
     </button>
   </div>

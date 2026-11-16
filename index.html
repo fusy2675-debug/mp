@@ -24,7 +24,7 @@
           colors: {
             cream: { 50: '#FDFBF7', 100: '#FFF9E6', 200: '#FFF1CE', 300: '#FBE7B2' },
             caramel: { 500: '#8D6E63', 700: '#6D4C41', 800: '#583C32', 900: '#3E2C26' },
-            coral: { 400: '#FF9B85', 500: '#F26B57', 600: '#E14E3B', 700: '#C63E2E' },
+            coral: { 400: '#FF8EA7', 500: '#FF6086', 600: '#F24E72', 700: '#D83359' },
             sage: { 400: '#93B48B', 500: '#7FA36F', 600: '#5F8562' }
           },
           fontFamily: {
@@ -34,7 +34,7 @@
           boxShadow: {
             card: '0 12px 32px -12px rgba(88,60,50,.22)',
             soft: '0 18px 45px -18px rgba(88,60,50,.35)',
-            btn: '0 10px 22px -8px rgba(225,78,59,.55)'
+            btn: '0 10px 22px -8px rgba(242,78,114,.55)'
           }
         }
       }
@@ -666,9 +666,9 @@
 
     <!-- Product Table -->
     <div class="card-cute overflow-hidden">
-      <div class="p-4 sm:p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
-        <h3 class="font-display font-bold text-base text-white flex items-center gap-2"><span>📋</span> Daftar Produk</h3>
-        <span id="inventory-count" class="text-xs text-white/85 font-bold">0 produk</span>
+      <div class="p-4 sm:p-5 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+        <h3 class="font-display font-extrabold text-base text-caramel-900 drop-shadow-sm flex items-center gap-2"><span>📋</span> Daftar Produk</h3>
+        <span id="inventory-count" class="text-xs text-caramel-800 font-black px-3 py-1 rounded-full bg-white/80 border border-pink-200/70 shadow-sm">0 produk</span>
       </div>
 
       <div class="overflow-x-auto bg-white">
@@ -838,9 +838,9 @@
 
     <!-- Accounts Table -->
     <div class="card-cute overflow-hidden">
-      <div class="p-4 sm:p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
-        <h3 class="font-display font-bold text-base text-white flex items-center gap-2"><span>📋</span> Daftar Akun</h3>
-        <span id="akun-count" class="text-xs text-white/85 font-bold">0 akun</span>
+      <div class="p-4 sm:p-5 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+        <h3 class="font-display font-extrabold text-base text-caramel-900 drop-shadow-sm flex items-center gap-2"><span>👥</span> Daftar Akun</h3>
+        <span id="akun-count" class="text-xs text-caramel-800 font-black px-3 py-1 rounded-full bg-white/80 border border-pink-200/70 shadow-sm">0 akun</span>
       </div>
 
       <div class="overflow-x-auto bg-white">
@@ -873,12 +873,13 @@
   <!-- ========================================== -->
   <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 overflow-y-auto bg-caramel-900/60">
     <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-soft overflow-hidden my-8 animate-fadeIn">
-      <div class="p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
+      <div class="p-5 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
         <div>
-          <h3 id="product-modal-title" class="font-display font-bold text-lg text-white">Tambah Produk Baru</h3>
-          <p class="text-xs text-white/85 mt-0.5 font-semibold">Lengkapi data produk untuk ditambahkan</p>
+          <h3 id="product-modal-title" class="font-display font-extrabold text-lg text-caramel-900 drop-shadow-sm">Tambah Produk Baru</h3>
+          <p class="text-xs text-caramel-800 mt-0.5 font-bold">Lengkapi data produk untuk ditambahkan</p>
         </div>
-        <button onclick="closeProductModal()" class="w-10 h-10 rounded-2xl bg-white/20 text-white hover:bg-white/35 flex items-center justify-center cursor-pointer font-bold transition-colors">✕</button>
+        <button onclick="closeProductModal()" class="w-10 h-10 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center cursor-pointer font-black transition-all shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup">✕</button>
+        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/30 rounded-full blur-xl pointer-events-none"></div>
       </div>
 
       <form id="product-form" class="p-6 space-y-4">
@@ -965,12 +966,13 @@
   <!-- ========================================== -->
   <div id="account-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 overflow-y-auto bg-caramel-900/60">
     <div class="bg-white w-full max-w-md rounded-[2rem] shadow-soft overflow-hidden my-8 animate-fadeIn">
-      <div class="p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
+      <div class="p-5 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
         <div>
-          <h3 id="account-modal-title" class="font-display font-bold text-lg text-white">Tambah Akun Baru</h3>
-          <p class="text-xs text-white/85 mt-0.5 font-semibold">Lengkapi data untuk membuat akun pengguna</p>
+          <h3 id="account-modal-title" class="font-display font-extrabold text-lg text-caramel-900 drop-shadow-sm">Tambah Akun Baru</h3>
+          <p class="text-xs text-caramel-800 mt-0.5 font-bold">Lengkapi data untuk membuat akun pengguna</p>
         </div>
-        <button onclick="closeAccountModal()" class="w-10 h-10 rounded-2xl bg-white/20 text-white hover:bg-white/35 flex items-center justify-center cursor-pointer font-bold transition-colors">✕</button>
+        <button onclick="closeAccountModal()" class="w-10 h-10 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center cursor-pointer font-black transition-all shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup">✕</button>
+        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/30 rounded-full blur-xl pointer-events-none"></div>
       </div>
 
       <form id="account-form" class="p-6 space-y-4">
@@ -1050,14 +1052,12 @@
   <!-- ========================================== -->
   <div id="scan-result-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-caramel-900/60">
     <div class="bg-white w-full max-w-sm rounded-[2rem] shadow-soft overflow-hidden animate-fadeIn">
-      <div class="p-4 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6V6a2 2 0 012-2h1m6 0h1a2 2 0 012 2v1m0 10v1a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2v-1m-1-8h3m10 0h3M6 9v6m4-6v6m4-6v6m4-6v6"/>
-          </svg>
-          <h3 class="font-display font-bold text-white">Hasil Scan Barcode</h3>
+      <div class="p-4 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
+        <div class="flex items-center gap-2 relative z-10">
+          <span class="text-xl">📷</span>
+          <h3 class="font-display font-extrabold text-caramel-900 drop-shadow-sm">Hasil Scan Barcode</h3>
         </div>
-        <button onclick="closeScanResultModal()" class="w-9 h-9 rounded-2xl bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer font-bold">✕</button>
+        <button onclick="closeScanResultModal()" class="w-9 h-9 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center transition-all cursor-pointer font-black shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup">✕</button>
       </div>
       <div id="scan-result-content" class="p-5"></div>
     </div>
@@ -1232,12 +1232,13 @@
   <!-- ========================================== -->
   <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 overflow-y-auto bg-caramel-900/60">
     <div class="bg-white w-full max-w-lg rounded-[2rem] shadow-soft overflow-hidden my-8 animate-fadeIn">
-      <div class="p-5 bg-gradient-to-r from-coral-500 to-coral-400 flex items-center justify-between">
+      <div class="p-5 flex items-center justify-between relative overflow-hidden border-b border-pink-200/70" style="background: linear-gradient(135deg, #FFF4DF 0%, #FFE5EB 28%, #FFB6C6 62%, #FF7A98 88%, #F24E72 100%);">
         <div>
-          <h3 class="font-display font-bold text-lg text-white">Formulir Checkout & Pembayaran</h3>
-          <p class="text-xs text-white/85 mt-0.5 font-semibold">Lengkapi data untuk menyelesaikan pemesanan</p>
+          <h3 class="font-display font-extrabold text-lg text-caramel-900 drop-shadow-sm">Formulir Checkout & Pembayaran</h3>
+          <p class="text-xs text-caramel-800 mt-0.5 font-bold">Lengkapi data untuk menyelesaikan pemesanan</p>
         </div>
-        <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white/35 text-white flex items-center justify-center cursor-pointer font-bold transition-colors">✕</button>
+        <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-2xl bg-white/80 hover:bg-white text-pink-700 flex items-center justify-center cursor-pointer font-black transition-all shadow-sm border border-pink-200/70 active:scale-95 relative z-10" title="Tutup">✕</button>
+        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/30 rounded-full blur-xl pointer-events-none"></div>
       </div>
 
       <form id="checkout-form" class="p-6 space-y-5">
