@@ -688,13 +688,14 @@ class StoreState {
       console.error('Gagal menyimpan transaksi ke localStorage:', e);
     }
 
-    // 3. Kurangi stok produk secara otomatis
+    // 3. Kurangi stok produk dan tambahkan jumlah terjual secara otomatis
     if (Array.isArray(transactionData.items)) {
       transactionData.items.forEach(cartItem => {
         const prod = this.products.find(p => p.id === cartItem.id);
         if (prod) {
           const qty = Number(cartItem.quantity || 1);
           prod.stock = Math.max(0, (Number(prod.stock) || 0) - qty);
+          prod.reviewsCount = (Number(prod.reviewsCount) || 0) + qty;
         }
       });
       try {
@@ -1310,7 +1311,7 @@ function renderProductGrid() {
 
         <div class="flex items-center gap-1.5 mt-1.5 text-[11px]">
           <span class="text-amber-500 font-black">⭐ ${product.rating}</span>
-          <span class="text-caramel-500 font-semibold">· Terjual ${product.reviewsCount}</span>
+          <span class="text-caramel-500 font-semibold">· Terjual ${Number(product.reviewsCount) || 0}</span>
         </div>
 
         <div class="mt-2">
@@ -3254,6 +3255,9 @@ function processProductSubmit(e) {
     return;
   }
 
+  const existingProd = editId ? store.products.find(p => p.id === editId) : null;
+  const currentReviewsCount = existingProd ? (Number(existingProd.reviewsCount) || 0) : 0;
+
   const productData = {
     name: document.getElementById('product-name').value.trim(),
     description: document.getElementById('product-description').value.trim(),
@@ -3264,7 +3268,7 @@ function processProductSubmit(e) {
     isBestSeller: document.getElementById('product-bestseller').checked,
     image: document.getElementById('product-image').value.trim(),
     barcode: barcode,
-    reviewsCount: 0
+    reviewsCount: currentReviewsCount
   };
 
   if (editId) {
