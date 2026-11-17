@@ -1328,9 +1328,9 @@ function renderProductGrid() {
           <button 
             onclick="handleBuyNow('${product.id}')"
             class="btn-cute px-3 py-1.5 text-xs rounded-2xl"
-            title="Langsung Beli Produk Ini"
+            title="Beli Produk Ini"
           >
-            🛍️ Langsung Beli
+            🛍️ Beli
           </button>
         </div>
       </div>
@@ -1768,6 +1768,10 @@ function handleBuyNow(productId) {
     store.saveCart();
   }
 
+  // Sembunyikan banner mode tambah jika sedang aktif
+  const banner = document.getElementById('catalog-appending-banner');
+  if (banner) banner.classList.add('hidden');
+
   // Buka popup checkout langsung
   openCheckoutModal();
 }
@@ -1892,7 +1896,7 @@ function openScanResultModal(product) {
     <div class="flex gap-2 mt-5">
       <button onclick="closeScanResultModal(); handleBuyNow('${product.id}');"
         class="btn-cute flex-1 py-3 text-xs">
-        🛍️ Langsung Beli
+        🛍️ Beli
       </button>
       <button onclick="switchView('inventory'); closeScanResultModal(); openEditProductModal('${product.id}');"
         class="btn-cream px-4 py-3 text-xs">
@@ -2552,6 +2556,10 @@ function openCheckoutModal() {
   const addPanel = document.getElementById('checkout-add-product-panel');
   if (addPanel) addPanel.classList.add('hidden');
 
+  // Sembunyikan banner mode tambah
+  const banner = document.getElementById('catalog-appending-banner');
+  if (banner) banner.classList.add('hidden');
+
   renderCheckoutSummary();
 
   const modal = document.getElementById('checkout-modal');
@@ -2564,6 +2572,8 @@ function openCheckoutModal() {
 function closeCheckoutModal(resetAppending = true) {
   if (resetAppending) {
     isAppendingProducts = false;
+    const banner = document.getElementById('catalog-appending-banner');
+    if (banner) banner.classList.add('hidden');
   }
   const modal = document.getElementById('checkout-modal');
   if (modal) {
@@ -2654,8 +2664,17 @@ function browseCatalogForMore() {
   isAppendingProducts = true;
   closeCheckoutModal(false);
   switchView('catalog');
+  const banner = document.getElementById('catalog-appending-banner');
+  if (banner) banner.classList.remove('hidden');
   window.scrollTo({ top: 350, behavior: 'smooth' });
-  showToast('Silakan cari & klik "Langsung Beli" pada produk yang ingin ditambahkan.', 'info');
+  showToast('Silakan cari & klik tombol "Beli" pada produk yang ingin ditambahkan.', 'info');
+}
+
+function cancelAppendingMode() {
+  isAppendingProducts = false;
+  const banner = document.getElementById('catalog-appending-banner');
+  if (banner) banner.classList.add('hidden');
+  showToast('Mode tambah produk dibatalkan.', 'info');
 }
 
 function processCheckout(e) {
