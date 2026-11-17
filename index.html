@@ -1217,9 +1217,41 @@
           </div>
         </div>
 
-        <div class="bg-cream-100 p-4 rounded-2xl space-y-2">
-          <div class="text-xs font-extrabold text-caramel-700 border-b-2 border-dashed border-cream-200 pb-2">Ringkasan Pesanan:</div>
-          <div id="checkout-items-summary" class="max-h-28 overflow-y-auto space-y-1"></div>
+        <div class="bg-cream-100 p-4 rounded-2xl space-y-2.5">
+          <div class="flex items-center justify-between border-b-2 border-dashed border-cream-200 pb-2">
+            <span class="text-xs font-extrabold text-caramel-700">Ringkasan Pesanan:</span>
+            <button type="button" onclick="toggleAddMoreProducts()" class="text-[11px] font-black text-pink-700 hover:text-pink-800 flex items-center gap-1 bg-pink-100/70 hover:bg-pink-100 px-2.5 py-1 rounded-xl transition-all border border-pink-200/80 cursor-pointer shadow-sm active:scale-95">
+              <span>➕</span> Beli Produk Lain
+            </button>
+          </div>
+
+          <!-- Panel Pilihan Tambah Produk Lain -->
+          <div id="checkout-add-product-panel" class="hidden bg-white/95 p-3 rounded-2xl border border-pink-200/80 shadow-sm space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-extrabold text-caramel-800 flex items-center gap-1.5">
+                <span>🛍️</span> Pilih Produk Tambahan:
+              </span>
+              <button type="button" onclick="toggleAddMoreProducts(false)" class="text-[10px] text-caramel-500 hover:text-rose-500 font-bold px-1.5 py-0.5 rounded-lg hover:bg-cream-100 cursor-pointer">
+                ✕ Tutup
+              </button>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <select id="checkout-other-product-select" class="input-cute py-2 px-3 text-xs flex-1 bg-white border border-pink-200/70 focus:border-pink-500">
+                <option value="">-- Pilih Produk Lain --</option>
+              </select>
+              <button type="button" onclick="addSelectedProductToCheckout()" class="btn-cute px-3.5 py-2 text-xs flex-shrink-0 cursor-pointer">
+                <span>+ Tambah</span>
+              </button>
+            </div>
+            <div class="pt-1.5 border-t border-dashed border-pink-100 flex items-center justify-between">
+              <span class="text-[10px] text-caramel-500">Ingin melihat etalase?</span>
+              <button type="button" onclick="browseCatalogForMore()" class="text-[10px] text-pink-600 hover:text-pink-700 font-bold hover:underline cursor-pointer">
+                Pilih langsung dari katalog &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div id="checkout-items-summary" class="max-h-36 overflow-y-auto space-y-1"></div>
           <div class="flex justify-between items-center pt-2 border-t-2 border-dashed border-cream-200 text-caramel-900 font-black text-sm sm:text-base"><span>Total Tagihan:</span><span id="checkout-total-price" class="text-coral-600 font-display">Rp 0</span></div>
         </div>
 
