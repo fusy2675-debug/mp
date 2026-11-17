@@ -1325,11 +1325,11 @@ function renderProductGrid() {
         <div class="mt-auto pt-2.5 flex items-center justify-between gap-1">
           <span class="text-[10px] font-bold text-caramel-500">Stok: ${product.stock}</span>
           <button 
-            onclick="handleAddToCart('${product.id}')"
+            onclick="handleBuyNow('${product.id}')"
             class="btn-cute px-3 py-1.5 text-xs rounded-2xl"
-            title="Tambah ke keranjang"
+            title="Langsung Beli Produk Ini"
           >
-            🛒 + Keranjang
+            🛍️ Langsung Beli
           </button>
         </div>
       </div>
@@ -1718,8 +1718,34 @@ function switchView(viewName) {
 // 4. ACTION HANDLERS
 // ==========================================
 
+function handleBuyNow(productId) {
+  const product = store.products.find(p => p.id === productId);
+  if (!product) {
+    showToast('Produk tidak ditemukan.', 'error');
+    return;
+  }
+  if ((Number(product.stock) || 0) <= 0) {
+    showToast(`Maaf, stok "${product.name}" sedang habis!`, 'error');
+    return;
+  }
+
+  // Set pesanan langsung untuk produk ini
+  store.cart = [{
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image,
+    category: product.category,
+    quantity: 1
+  }];
+  store.saveCart();
+
+  // Buka popup checkout langsung
+  openCheckoutModal();
+}
+
 function handleAddToCart(productId) {
-  store.addToCart(productId, 1);
+  handleBuyNow(productId);
 }
 
 function handleCartQty(productId, delta) {
@@ -1836,9 +1862,9 @@ function openScanResultModal(product) {
     </div>
 
     <div class="flex gap-2 mt-5">
-      <button onclick="handleAddToCart('${product.id}'); closeScanResultModal();"
+      <button onclick="closeScanResultModal(); handleBuyNow('${product.id}');"
         class="btn-cute flex-1 py-3 text-xs">
-        🛒 + Keranjang
+        🛍️ Langsung Beli
       </button>
       <button onclick="switchView('inventory'); closeScanResultModal(); openEditProductModal('${product.id}');"
         class="btn-cream px-4 py-3 text-xs">
@@ -2426,23 +2452,28 @@ function closeCartDrawer() {
   }
 }
 
-function openCheckoutModal() {
-  if (store.cart.length === 0) {
-    showToast('Keranjang Anda masih kosong!', 'error');
-    return;
-  }
-
-  closeCartDrawer();
-
-  // Populate order summary in checkout modal
+function renderCheckoutSummary() {
   const checkoutSummary = document.getElementById('checkout-items-summary');
   const checkoutTotal = document.getElementById('checkout-total-price');
 
   if (checkoutSummary) {
     checkoutSummary.innerHTML = store.cart.map(item => `
-      <div class="flex justify-between items-center text-xs py-2 border-b-2 border-dashed border-cream-200">
-        <span class="font-bold text-caramel-800 truncate max-w-[200px]">${item.name} (${item.quantity}x)</span>
-        <span class="font-black text-coral-600 font-display">${formatIDR(item.price * item.quantity)}</span>
+      <div class="flex justify-between items-center text-xs py-2 border-b-2 border-dashed border-cream-200 gap-2">
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <img src="${item.image}" alt="${item.name}" class="w-9 h-9 object-cover rounded-xl bg-cream-100 flex-shrink-0 shadow-sm border border-pink-100" onerror="this.src='favicon.svg'" />
+          <div class="min-w-0">
+            <span class="font-bold text-caramel-800 truncate block max-w-[170px]">${item.name}</span>
+            <span class="text-[10px] text-coral-600 font-extrabold">${formatIDR(item.price)}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <div class="flex items-center border border-cream-300 rounded-xl overflow-hidden bg-white shadow-inner">
+            <button type="button" onclick="adjustCheckoutQty('${item.id}', -1)" class="px-2 py-0.5 text-caramel-700 hover:bg-cream-100 font-black text-xs transition-colors cursor-pointer">-</button>
+            <span class="px-2.5 py-0.5 text-xs font-black text-caramel-900">${item.quantity}</span>
+            <button type="button" onclick="adjustCheckoutQty('${item.id}', 1)" class="px-2 py-0.5 text-caramel-700 hover:bg-cream-100 font-black text-xs transition-colors cursor-pointer">+</button>
+          </div>
+          <span class="font-black text-coral-600 font-display text-xs sm:text-sm min-w-[70px] text-right">${formatIDR(item.price * item.quantity)}</span>
+        </div>
       </div>
     `).join('');
   }
@@ -2450,6 +2481,39 @@ function openCheckoutModal() {
   if (checkoutTotal) {
     checkoutTotal.textContent = formatIDR(store.getCartTotal());
   }
+}
+
+function adjustCheckoutQty(productId, delta) {
+  const item = store.cart.find(i => i.id === productId);
+  if (!item) return;
+  const product = store.products.find(p => p.id === productId);
+  const maxStock = product ? Number(product.stock) || 1 : 999;
+
+  const newQty = item.quantity + delta;
+  if (newQty <= 0) {
+    closeCheckoutModal();
+    store.cart = [];
+    store.saveCart();
+    return;
+  }
+  if (newQty > maxStock) {
+    showToast(`Stok maksimal yang tersedia hanya ${maxStock} unit.`, 'error');
+    return;
+  }
+  item.quantity = newQty;
+  store.saveCart();
+  renderCheckoutSummary();
+}
+
+function openCheckoutModal() {
+  if (store.cart.length === 0) {
+    showToast('Pilih produk yang ingin dibeli terlebih dahulu!', 'error');
+    return;
+  }
+
+  if (typeof closeCartDrawer === 'function') closeCartDrawer();
+
+  renderCheckoutSummary();
 
   const modal = document.getElementById('checkout-modal');
   if (modal) {
