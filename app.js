@@ -2491,7 +2491,7 @@ function processCheckout(e) {
     items: store.cart.map(i => ({ ...i })),
     totalAmount: totalCartValue,
     total: totalCartValue,
-    paymentMethod: paymentInput ? paymentInput.value : 'Transfer Bank (BCA)',
+    paymentMethod: paymentInput ? paymentInput.value : 'Tunai (Cash)',
     status: 'Selesai'
   };
 
