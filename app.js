@@ -1215,9 +1215,20 @@ function renderBarcodes(scope) {
 }
 
 // Helper: Toast Notification
+let lastToastMessage = '';
+let lastToastTime = 0;
+
 function showToast(message, type = 'success') {
   const container = document.getElementById('toast-container');
   if (!container) return;
+
+  // Cegah notifikasi duplikat yang sama dalam rentang 1 detik
+  const now = Date.now();
+  if (message === lastToastMessage && now - lastToastTime < 1000) {
+    return;
+  }
+  lastToastMessage = message;
+  lastToastTime = now;
 
   const toast = document.createElement('div');
   const isSuccess = type === 'success';
@@ -1709,23 +1720,14 @@ function switchView(viewName) {
 
 function handleAddToCart(productId) {
   store.addToCart(productId, 1);
-  updateCartBadge();
-  renderCartDrawer();
-  const product = store.products.find(p => p.id === productId);
-  showToast(`"${product ? product.name : 'Produk'}" ditambahkan ke keranjang!`, 'success');
 }
 
 function handleCartQty(productId, delta) {
   store.updateCartQty(productId, delta);
-  updateCartBadge();
-  renderCartDrawer();
 }
 
 function handleCartRemove(productId) {
   store.removeFromCart(productId);
-  updateCartBadge();
-  renderCartDrawer();
-  showToast('Item berhasil dihapus dari keranjang.', 'success');
 }
 
 function handleCategoryChange(category) {
